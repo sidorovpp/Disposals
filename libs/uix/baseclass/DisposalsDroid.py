@@ -195,33 +195,3 @@ def eventloop():
                 if event["data"] == "destroy":
                     return
 
-
-if __name__ == "__main__":
-    # res = GetResult('SetTaskRead', {'id':56564}, [], True)
-
-    res = GetResult('getDisposalList', {'readed': 0}, ['Number', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task'])
-    staff = []
-    for i in res:
-        if i[2] not in staff:
-            staff.append(i[2])
-        if i[3] not in staff:
-            staff.append(i[3])
-
-    if res != []:
-        resStaff = GetResult('getStaff', {'id': staff}, ['_id', 'userName'])
-        if sys.platform.startswith('linux'):
-            import android
-
-            droid = android.Android()
-            try:
-                droid.fullShow(layout)
-                ShowTaskList(droid, res, resStaff)
-                eventloop()
-            finally:
-                droid.fullDismiss()
-        else:
-            print(res)
-            # print('\n'.join(res))
-
-            # GetResult('getStaff', {'readed':0}, [], True)
-            # GetResult('getDisposalNotes', {'disposal_id':14928}, [], True)

@@ -166,6 +166,9 @@ class Disposals(App):
         self.screen.ids.action_bar.title = \
             self.translation._('MIT LICENSE')
 
+    def refresh_list(self, *args):
+        pass
+
     def select_locale(self, *args):
 
         def select_locale(name_locale):
