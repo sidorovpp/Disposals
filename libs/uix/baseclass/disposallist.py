@@ -17,6 +17,8 @@ class DisposalList(MDList):
 
 
 
+        #self.rows = 0
+
         for i in res:
             #текст задачи
             if i[2] != '':
@@ -24,7 +26,7 @@ class DisposalList(MDList):
             else:
                 disposal_text = 'ПУСТО'
             #иконка выполнения
-            if i[6] == '1':
+            if i[6] == '0':
                 icon_text = 'clock'
             else:
                 icon_text = 'calendar-check'

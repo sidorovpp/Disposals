@@ -167,7 +167,9 @@ class Disposals(App):
             self.translation._('MIT LICENSE')
 
     def refresh_list(self, *args):
-        pass
+        self.screen.ids.base.ids.disposal_list.clear_widgets()
+        self.screen.ids.base.ids.disposal_list.refresh_list()
+
 
     def select_locale(self, *args):
 
