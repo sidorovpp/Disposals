@@ -1,0 +1,84 @@
+# -*- coding: utf-8 -*-
+#
+# This file created with KivyCreatorProject
+# <https://github.com/HeaTTheatR/KivyCreatorProgect
+#
+# Copyright © 2017 Easy
+#
+# For suggestions and questions:
+# <kivydevelopment@gmail.com>
+#
+# LICENSE: MIT
+
+#:import MDSeparator kivymd.card.MDSeparator
+#:import License libs.uix.baseclass.license.License
+
+# Экран с текстом лицензии.
+
+<Disposal>:
+    name: 'disposal'
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
+
+        Label:
+            id: number
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+
+        Label:
+            id: sender
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: 0, 0, 0, 1
+            font_size: '13sp'
+
+        Label:
+            id: receiver
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: 0, 0, 0, 1
+            font_size: '13sp'
+
+        MDSeparator:
+
+        Label:
+            id: theme
+            halign: 'left'
+            text_size: self.width, None
+            size_hint: 1, None
+            height: self.texture_size[1]
+            color: 0, 0, 0, 1
+
+        MDSeparator:
+
+        ScrollView:
+            Label:
+                id: task
+                halign: 'left'
+                text_size: self.width, None
+                size_hint: 1, None
+                height: self.texture_size[1]
+                color: 0, 0, 0, 1
+
+        MDSeparator:
+
+        ScrollView:
+            Label:
+                id: comments
+                halign: 'left'
+                text_size: self.width, None
+                size_hint: 1, None
+                height: self.texture_size[1]
+                color: 0, 0, 0, 1
+                markup: True

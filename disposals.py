@@ -138,7 +138,7 @@ class Disposals(App):
                 u'[b]Version:[/b] {version}\n'
                 u'[b]License:[/b] MIT\n\n'
                 u'[size=20][b]Developer[/b][/size]\n\n'
-                u'[ref=]'
+                u'[ref=https://mrcpp.ru]'
                 u'[color={link_color}]mrcpp[/color][/ref]\n\n'
                 u'[b]Source code:[/b] '
                 u'[ref=https://github.com/sidorovpp/Disposals]'
@@ -162,13 +162,14 @@ class Disposals(App):
         self.nav_drawer._toggle()
         self.manager.current = 'license'
         self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen()]]
+            [['chevron-left', lambda x: self.back_screen(27)]]
         self.screen.ids.action_bar.title = \
             self.translation._('MIT LICENSE')
 
     def refresh_list(self, *args):
         self.screen.ids.base.ids.disposal_list.clear_widgets()
         self.screen.ids.base.ids.disposal_list.refresh_list()
+        self.nav_drawer._toggle()
 
 
     def select_locale(self, *args):
