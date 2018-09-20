@@ -12,4 +12,4 @@ def test_plugin(interval):
     ]
 
 
-Clock.schedule_once(test_plugin, 5)
+#Clock.schedule_once(test_plugin, 5)

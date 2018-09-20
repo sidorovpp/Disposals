@@ -11,12 +11,19 @@
 # LICENSE: MIT
 
 #:import MDSeparator kivymd.card.MDSeparator
+#:import MDDropdownMenu kivymd.menu.MDDropdownMenu
 #:import License libs.uix.baseclass.license.License
 
 # Экран с текстом лицензии.
 
 <Disposal>:
     name: 'disposal'
+
+    MDSpinner:
+        id: spinner
+        size_hint: None, None
+        size: dp(23), dp(23)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
     BoxLayout:
         orientation: 'vertical'
@@ -82,3 +89,13 @@
                 height: self.texture_size[1]
                 color: 0, 0, 0, 1
                 markup: True
+
+        AddCommentButton:
+            id: menu_button
+            icon: 'comment'
+            opposite_colors: True
+            elevation_normal: 8
+            pos_hint: {'center_x': 0.9, 'center_y': 0.2}
+
+
+<AddCommentButton>

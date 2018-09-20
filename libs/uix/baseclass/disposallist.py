@@ -12,32 +12,32 @@ class DisposalItem(TwoLineIconListItem):
     def __init__(self, icon_text, data, *args, **kwargs):
         super().__init__( *args, **kwargs)
         self.add_widget(IconLeftSampleWidget(icon=icon_text))
-        self.data = dict({'Number':data[0],'Theme':data[1],'Task':data[5], 'Receiver':data[4], 'Sender':data[3]})
+        self.data = dict({'Number':data[0],'Theme':data[1],'Task':data[5], 'Receiver_id':data[4], 'Sender_id':data[3]})
+
+    def set_readed(self):
+        GetResult('SetTaskRead', {'id': int(self.data['Number'])}, [])
 
     def on_press(self):
         #считываем комментарии, отправите, получателя и добавляем к data
         s = ''
-        Receiver = GetResult('getStaff', {'id': int(self.data['Receiver'])}, ['userName'])[0][0]
-        Sender = GetResult('getStaff', {'id': int(self.data['Sender'])}, ['userName'])[0][0]
-        Notes = GetResult('getDisposalNotes', {'disposal_id': int(self.data['Number'])}, ['DateCreate', 'UserName', 'Unnamed3'])
+        Receiver = GetResult('getStaff', {'id': int(self.data['Receiver_id'])}, ['userName'])[0][0]
+        Sender = GetResult('getStaff', {'id': int(self.data['Sender_id'])}, ['userName'])[0][0]
 
-        for item in Notes:
-            s = s + '[color=ff3333]{0}[/color]  [color=00ff33]{1}[/color]\n\n{2}\n'.format(item[0], item[1], item[2])
-        self.data['Comments'] = s
         self.data['Receiver'] = Receiver
         self.data['Sender'] = Sender
 
         app = App.get_running_app()
         app.screen.ids.disposal.set_params(self.data)
         app.manager.current = 'disposal'
-        app.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: app.back_screen(27)]]
+        app.screen.ids.action_bar.title = app.translation._('Задача')
+        app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: app.back_screen(27)]]
+        app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()]]
 
 class DisposalList(MDList):
-    def __init__(self, *args, **kwargs):
-        MDList.__init__(self, *args, **kwargs)
-        self.refresh_list()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.refresh_list()
 
     def refresh_list(self):
     #обновление списка задач
@@ -71,6 +71,5 @@ class DisposalList(MDList):
                 data=i
             )
             self.add_widget(item)
-
 
 

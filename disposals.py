@@ -41,7 +41,7 @@ from libs.uix.baseclass.disposallist import DisposalList
 
 class Disposals(App):
 
-    title = 'Disposals'
+    title = 'Задачи ВКБ'
     icon = 'icon.png'
     nav_drawer = ObjectProperty()
     theme_cls = ThemeManager()
@@ -164,12 +164,12 @@ class Disposals(App):
         self.screen.ids.action_bar.left_action_items = \
             [['chevron-left', lambda x: self.back_screen(27)]]
         self.screen.ids.action_bar.title = \
-            self.translation._('MIT LICENSE')
+            self.translation._('Лицензия')
 
     def refresh_list(self, *args):
+        self.nav_drawer._toggle()
         self.screen.ids.base.ids.disposal_list.clear_widgets()
         self.screen.ids.base.ids.disposal_list.refresh_list()
-        self.nav_drawer._toggle()
 
 
     def select_locale(self, *args):
