@@ -86,6 +86,11 @@
                     events_callback: app.refresh_list
 
                 SingleIconItem:
+                    icon: 'settings'
+                    text: app.translation._('Настройка')
+                    events_callback: app.show_settings
+
+                SingleIconItem:
                     icon: 'web'
                     text: app.translation._('Язык')
                     events_callback: app.select_locale

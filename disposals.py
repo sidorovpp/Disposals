@@ -38,6 +38,8 @@ from toast import toast
 from dialogs import card
 from libs.uix.baseclass.disposallist import DisposalList
 
+import libs.uix.baseclass.DisposalsDroid as DisposalsDroid
+
 
 class Disposals(App):
 
@@ -81,6 +83,9 @@ class Disposals(App):
 
         self.config.read(os.path.join(self.directory, 'disposals.ini'))
         self.lang = self.config.get('General', 'language')
+        DisposalsDroid.server = self.config.get('General', 'ip')
+        DisposalsDroid.username = self.config.get('General', 'user')
+        DisposalsDroid.password = self.config.get('General', 'password')
 
     def build(self):
         self.set_value_from_config()
@@ -171,6 +176,14 @@ class Disposals(App):
         self.screen.ids.base.ids.disposal_list.clear_widgets()
         self.screen.ids.base.ids.disposal_list.refresh_list()
 
+
+    def show_settings(self, *args):
+        self.nav_drawer._toggle()
+        self.manager.current = 'settings_form'
+        self.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x: self.back_screen(27)]]
+        self.screen.ids.action_bar.title = \
+            self.translation._('Настройки')
 
     def select_locale(self, *args):
 

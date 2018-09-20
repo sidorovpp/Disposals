@@ -1,11 +1,11 @@
 import urllib.request
 import urllib.parse
-import sys
 import base64
 import json
 
-username = 'Sidorov_PP'
-password = 'ppcrm123'
+username = ''
+password = ''
+server = ''
 
 def ping(host):
     """
@@ -20,13 +20,13 @@ def ping(host):
     return subprocess.call("ping " + ping_str + " " + host, shell=True) == 0
 
 
-if sys.platform.startswith('linux'):
-    server = '77.233.5.22'
-else:
-    if ping('test3'):
-        server = '192.168.0.13:8085'
-    else:
-        server = '77.233.5.22'
+#if sys.platform.startswith('linux'):
+#    server = '77.233.5.22'
+#else:
+#    if ping('test3'):
+#        server = '192.168.0.13:8085'
+#    else:
+#        server = '77.233.5.22'
 
 
 # server = '192.168.0.12'
@@ -93,31 +93,25 @@ def OpenJsonUrl(url, params={}, username=None, password=None):
 
 
 def GetResult(name, params={}, columns=['Name'], auth=True):
-    c = []
+    c = [
+
+    ]
     url = 'http://' + server + '/rest/datasnap/rest/TDisposalMethods/"' + name + '"'
-    try:
-        if auth:
-            res = OpenJsonUrl(url, params, username, password)
+    if auth:
+        res = OpenJsonUrl(url, params, username, password)
+    else:
+        res = OpenJsonUrl(url, params)
+
+    for x in res['result'][0]['Data']:
+        if columns == []:
+            collist = [x['Title'] for x in res['result'][0]['Columns']]
         else:
-            res = OpenJsonUrl(url, params)
-    except urllib.error.HTTPError as e:
-        print(e)
-        print(e.read())
-        return c
-        
-    try:
-        for x in res['result'][0]['Data']:
-            if columns == []:
-                collist = [x['Title'] for x in res['result'][0]['Columns']]
-            else:
-                collist = columns
-            item = []
-            for y in collist:
-                item.append(x[res['result'][0]['Columns'].index({'Title': y})])
-            c.append(item)
-    except:
-        print('Ошибка чтения данных, результат:')
-        print(res)
+            collist = columns
+        item = []
+        for y in collist:
+            item.append(x[res['result'][0]['Columns'].index({'Title': y})])
+        c.append(item)
+
     return c
 
 

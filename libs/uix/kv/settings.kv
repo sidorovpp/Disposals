@@ -1,0 +1,55 @@
+
+#:import SettingsForm libs.uix.baseclass.settings.SettingsForm
+#:import MDSeparator kivymd.card.MDSeparator
+#:import MDTextField kivymd.textfields.MDTextField
+
+# Экран настроек.
+
+<SettingsForm>:
+    name: 'settings_form'
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
+
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('IP адрес')
+
+        MDTextField:
+            id: ip
+            hint_text: app.translation._('Введите IP')
+
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('Логин')
+
+        MDTextField:
+            id: user
+            hint_text: app.translation._('Введите логин')
+
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('Пароль')
+
+        MDTextField:
+            id: password
+            hint_text: app.translation._('Введите пароль')
+            password: True
+        Widget:
