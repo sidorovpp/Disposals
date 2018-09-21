@@ -93,9 +93,7 @@ def OpenJsonUrl(url, params={}, username=None, password=None):
 
 
 def GetResult(name, params={}, columns=['Name'], auth=True):
-    c = [
-
-    ]
+    c = []
     url = 'http://' + server + '/rest/datasnap/rest/TDisposalMethods/"' + name + '"'
     if auth:
         res = OpenJsonUrl(url, params, username, password)

@@ -18,7 +18,10 @@ class DisposalItem(TwoLineIconListItem):
         self.data = dict({'Number':data[0],'Theme':data[1],'Task':data[5], 'Receiver_id':data[4], 'Sender_id':data[3]})
 
     def set_readed(self):
-        GetResult('SetTaskRead', {'id': int(self.data['Number'])}, [])
+        try:
+            GetResult('SetTaskRead', {'id': int(self.data['Number'])}, [])
+        except:
+            pass
 
     def on_press(self):
         #считываем комментарии, отправите, получателя и добавляем к data
@@ -44,9 +47,13 @@ class DisposalList(MDList):
 
     def refresh_list(self):
     #обновление списка задач
+        def get_number(i):
+            return i[0]
         try:
             res = GetResult('getDisposalList', {'readed': 0}, ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute'])
 
+
+            res = sorted(res, key=get_number)
             for i in res:
                 # текст задачи
                 if i[2] != '':

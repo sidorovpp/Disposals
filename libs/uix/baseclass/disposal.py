@@ -22,7 +22,11 @@ class AddCommentButton(MDFloatingActionButton):
 
     def commit(self):
         if self.dialog.content.text.strip() != "":
-            GetResult('SendComment', {'disposal_id': int(self.parent.parent.ids.number.text), 'comment': self.dialog.content.text.strip()}, [])
+            try:
+                GetResult('SendComment', {'disposal_id': int(self.parent.parent.ids.number.text), 'comment': self.dialog.content.text.strip()}, [])
+            except:
+                pass
+
             self.dialog.dismiss()
             self.parent.parent.load_comments()
 
