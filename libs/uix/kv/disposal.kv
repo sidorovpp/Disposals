@@ -1,6 +1,7 @@
 #:import MDSeparator kivymd.card.MDSeparator
 #:import MDDropdownMenu kivymd.menu.MDDropdownMenu
 #:import License libs.uix.baseclass.license.License
+#:import RecycleView kivy.uix.recycleview
 
 # Экран задачи.
 
@@ -19,7 +20,7 @@
         padding: dp(10), dp(10)
         spacing: dp(10)
 
-        MDLabel:
+        Label:
             id: number
             size_hint: None, None
             height: dp(16)
@@ -28,7 +29,7 @@
             color: app.theme_cls.primary_color
             font_size: '14sp'
 
-        MDLabel:
+        Label:
             id: sender
             size_hint: None, None
             height: dp(14)
@@ -37,7 +38,7 @@
             color: 0, 0, 0, 1
             font_size: '12sp'
 
-        MDLabel:
+        Label:
             id: receiver
             size_hint: None, None
             height: dp(14)
@@ -48,7 +49,7 @@
 
         MDSeparator:
 
-        MDLabel:
+        Label:
             id: theme
             halign: 'left'
             text_size: self.width, None
@@ -60,8 +61,8 @@
 
         MDSeparator:
 
-        ScrollView:
-            MDLabel:
+        RecycleView:
+            Label:
                 id: task
                 halign: 'left'
                 text_size: self.width, None
@@ -71,8 +72,8 @@
 
         MDSeparator:
 
-        ScrollView:
-            MDLabel:
+        RecycleView:
+            Label:
                 id: comments
                 halign: 'left'
                 text_size: self.width, None
