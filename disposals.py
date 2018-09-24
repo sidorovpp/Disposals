@@ -36,10 +36,11 @@ from kivymd.label import MDLabel
 
 from toast import toast
 from dialogs import card
-from libs.uix.baseclass.disposallist import DisposalList
+import os.path
+from shutil import copyfile
 
 import libs.uix.baseclass.DisposalsDroid as DisposalsDroid
-
+from libs.uix.baseclass.disposallist import DisposalList
 
 class Disposals(App):
 
@@ -93,7 +94,19 @@ class Disposals(App):
         DisposalsDroid.username = self.config.get('General', 'user')
         DisposalsDroid.password = self.config.get('General', 'password')
 
+        #скидываем копию конфигураций в пользовательскую папку
+        copyfile(os.path.join(self.directory, 'disposals.ini'),
+                 os.path.join(self.user_data_dir, 'disposals.ini')
+                 )
+
     def build(self):
+
+        #грузим файл конфигураций из пользовательской папки, если есть
+        if os.path.isfile(os.path.join(self.user_data_dir, 'disposals.ini')):
+            copyfile(os.path.join(self.user_data_dir, 'disposals.ini'),
+                     os.path.join(self.directory, 'disposals.ini')
+                     )
+
         self.set_value_from_config()
         self.load_all_kv_files(os.path.join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()

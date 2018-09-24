@@ -82,9 +82,18 @@ class Disposal(Screen):
         app = App.get_running_app()
         self.ids.number.text = params['Number']
         self.ids.theme.text = params['Theme']
-        self.ids.task.data = [{'text':params['Task']}]
         self.ids.sender.text = app.translation._('Отправитель:') + ' ' +params['Sender']
         self.ids.receiver.text = app.translation._('Получатель:') + ' ' + params['Receiver']
+        #бьём текст задачи на куски по Enter
+        s = params['Task']
+        self.ids.task.data = []
+        k = s.find('\n')
+        while k > 0:
+            self.ids.task.data.append({'text':s[:k].replace('\r', '')})
+            s = s[k+1:]
+            k = s.find('\n')
+        self.ids.task.data.append({'text':s})
+
         self.load_comments()
 
     def on_leave(self, *args):
