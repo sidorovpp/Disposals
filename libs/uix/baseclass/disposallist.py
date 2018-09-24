@@ -80,9 +80,10 @@ class DisposalList(MDList):
                 self.add_widget(item)
         except:
             #сообщение об ошибке
+            app = App.get_running_app()
             content = MDLabel(
                 font_style='Body1',
-                text='Не подключения, проверьте настройки!',
+                text=app.translation._('Нет подключения, проверьте настройки!'),
                 size_hint_y=None,
                 valign='top')
             content.bind(texture_size=content.setter('size'))
