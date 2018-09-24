@@ -72,15 +72,15 @@
 
         MDSeparator:
 
-        RecycleView:
-            Label:
-                id: comments
-                halign: 'left'
-                text_size: self.width, None
-                size_hint: 1, None
-                height: self.texture_size[1]
-                color: 0, 0, 0, 1
-                markup: True
+        Notes:
+            id: notes
+            viewclass: 'NoteLabel'
+            RecycleBoxLayout:
+                default_size: None, dp(56)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
 
         MDSeparator:
 
@@ -93,3 +93,11 @@
 
 
 <AddCommentButton>
+<Notes>
+<NoteLabel>
+    halign: 'left'
+    text_size: self.width, None
+    size_hint: 1, None
+    height: self.texture_size[1]
+    color: 0, 0, 0, 1
+    markup: True

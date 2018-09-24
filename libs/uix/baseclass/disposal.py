@@ -17,6 +17,8 @@ from kivymd.textfields import MDTextField
 from kivy.metrics import dp
 from libs.uix.baseclass.DisposalsDroid import GetResult
 from kivy.app import App
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.label import Label
 
 class AddCommentButton(MDFloatingActionButton):
 
@@ -47,17 +49,24 @@ class AddCommentButton(MDFloatingActionButton):
         self.dialog.open()
 
 
+class Notes(RecycleView):
+    def __init__(self, **kwargs):
+        super(Notes, self).__init__(**kwargs)
+        self.data = []
+
+class NoteLabel(Label):
+    pass
+
 class Disposal(Screen):
 
 
     def load_comments(self):
         self.ids.spinner.active = True
         try:
-            s= ''
+            self.ids.notes.data.clear()
             Notes = GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
             for item in Notes:
-                s = s + '[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]\n\n{2}\n\n'.format(item[0], item[1], item[2])
-            self.ids.comments.text = s
+                self.ids.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]\n\n{2}\n\n'.format(item[0], item[1], item[2])})
         finally:
             self.ids.spinner.active = False
 
