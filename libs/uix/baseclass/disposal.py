@@ -57,13 +57,21 @@ class Notes(RecycleView):
 class NoteLabel(Label):
     pass
 
+class Task(RecycleView):
+    def __init__(self, **kwargs):
+        super(Task, self).__init__(**kwargs)
+        self.data = []
+
+class TaskLabel(Label):
+    pass
+
 class Disposal(Screen):
 
 
     def load_comments(self):
         self.ids.spinner.active = True
         try:
-            self.ids.notes.data.clear()
+            self.ids.notes.data = []
             Notes = GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
             for item in Notes:
                 self.ids.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]\n\n{2}\n\n'.format(item[0], item[1], item[2])})
@@ -74,7 +82,7 @@ class Disposal(Screen):
         app = App.get_running_app()
         self.ids.number.text = params['Number']
         self.ids.theme.text = params['Theme']
-        self.ids.task.text = params['Task']
+        self.ids.task.data = [{'text':params['Task']}]
         self.ids.sender.text = app.translation._('Отправитель:') + ' ' +params['Sender']
         self.ids.receiver.text = app.translation._('Получатель:') + ' ' + params['Receiver']
         self.load_comments()
