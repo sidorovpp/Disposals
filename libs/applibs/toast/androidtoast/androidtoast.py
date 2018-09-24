@@ -14,7 +14,7 @@ Copyright © 2010-2018 HeaTTheatR
 '''
 
 from jnius import autoclass, PythonJavaClass, java_method, cast
-from android.runnable import run_on_ui_thread
+#from android.runnable import run_on_ui_thread
 
 Toast = autoclass('android.widget.Toast')
 context = autoclass('org.renpy.android.PythonActivity').mActivity    

@@ -34,7 +34,7 @@ from libs.utils.showplugins import ShowPlugins
 from kivymd.theming import ThemeManager
 from kivymd.label import MDLabel
 
-from toast import toast
+#from toast import toast
 from dialogs import card
 from libs.uix.baseclass.disposallist import DisposalList
 
@@ -227,6 +227,6 @@ class Disposals(App):
             sys.exit(0)
             
         Clock.schedule_interval(check_interval_press, 1)
-        toast(self.translation._('Нажмите еще раз для выхода'))
+        #toast(self.translation._('Нажмите еще раз для выхода'))
     def on_lang(self, instance, lang):
         self.translation.switch_lang(lang)
