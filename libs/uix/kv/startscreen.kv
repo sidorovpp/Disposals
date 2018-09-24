@@ -29,7 +29,7 @@
             Toolbar:
                 id: action_bar
                 background_color: app.theme_cls.primary_color
-                title: app.title
+                title: app.translation._(app.title)
                 left_action_items: [['menu', lambda x: nav_drawer._toggle()]]
                 elevation: 10
                 md_bg_color: app.theme_cls.primary_color

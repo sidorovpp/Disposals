@@ -62,11 +62,12 @@ class Disposal(Screen):
             self.ids.spinner.active = False
 
     def set_params(self, params):
+        app = App.get_running_app()
         self.ids.number.text = params['Number']
         self.ids.theme.text = params['Theme']
         self.ids.task.text = params['Task']
-        self.ids.sender.text = 'Отправитель: ' + params['Sender']
-        self.ids.receiver.text = 'Получатель : ' + params['Receiver']
+        self.ids.sender.text = app.translation._('Отправитель:') + ' ' +params['Sender']
+        self.ids.receiver.text = app.translation._('Получатель:') + ' ' + params['Receiver']
         self.load_comments()
 
     def on_leave(self, *args):

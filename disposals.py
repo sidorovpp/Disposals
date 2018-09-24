@@ -34,7 +34,7 @@ from libs.utils.showplugins import ShowPlugins
 from kivymd.theming import ThemeManager
 from kivymd.label import MDLabel
 
-#from toast import toast
+from toast import toast
 from dialogs import card
 from libs.uix.baseclass.disposallist import DisposalList
 
@@ -42,6 +42,7 @@ import libs.uix.baseclass.DisposalsDroid as DisposalsDroid
 
 
 class Disposals(App):
+
 
     title = 'Задачи ВКБ'
     icon = 'icon.png'
@@ -69,6 +70,8 @@ class Disposals(App):
         self.translation = Translation(
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
+
+
 
     def get_application_config(self):
         return super(Disposals, self).get_application_config(
@@ -224,6 +227,6 @@ class Disposals(App):
             sys.exit(0)
             
         Clock.schedule_interval(check_interval_press, 1)
-        #toast(self.translation._('Press Back to Exit'))
+        toast(self.translation._('Нажмите еще раз для выхода'))
     def on_lang(self, instance, lang):
         self.translation.switch_lang(lang)
