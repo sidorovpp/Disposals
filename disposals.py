@@ -78,6 +78,9 @@ class Disposals(App):
 
         config.adddefaultsection('General')
         config.setdefault('General', 'language', 'en')
+        config.setdefault('General', 'ip', '77.233.5.22')
+        config.setdefault('General', 'user', 'user')
+        config.setdefault('General', 'password', 'password')
 
     def set_value_from_config(self):
 

@@ -34,10 +34,10 @@ try:
     Config.set('kivy', 'keyboard_mode', 'system')
     Config.set('kivy', 'log_enable', 0)
 
-    from kivy import platform
-    if platform == 'android':
-        from plyer import orientation
-        orientation.set_sensor(mode='any')
+    #from kivy import platform
+    #if platform == 'android':
+    #    from plyer import orientation
+    #    orientation.set_sensor(mode='any')
 
     from kivymd.theming import ThemeManager
 
@@ -66,11 +66,11 @@ def main():
     app = None
 
     try:
-        from loadplugin import load_plugin
+        #from loadplugin import load_plugin
         from disposals import Disposals
 
         app = Disposals()
-        load_plugin(app, __version__)
+        #load_plugin(app, __version__)
         app.run()
     except Exception:
         from kivy.app import App
