@@ -19,7 +19,7 @@
         padding: dp(10), dp(10)
         spacing: dp(10)
 
-        Label:
+        MDLabel:
             id: number
             size_hint: None, None
             height: dp(16)
@@ -28,7 +28,7 @@
             color: app.theme_cls.primary_color
             font_size: '14sp'
 
-        Label:
+        MDLabel:
             id: sender
             size_hint: None, None
             height: dp(14)
@@ -37,7 +37,7 @@
             color: 0, 0, 0, 1
             font_size: '12sp'
 
-        Label:
+        MDLabel:
             id: receiver
             size_hint: None, None
             height: dp(14)
@@ -48,7 +48,7 @@
 
         MDSeparator:
 
-        Label:
+        MDLabel:
             id: theme
             halign: 'left'
             text_size: self.width, None
@@ -61,7 +61,7 @@
         MDSeparator:
 
         ScrollView:
-            Label:
+            MDLabel:
                 id: task
                 halign: 'left'
                 text_size: self.width, None
@@ -72,7 +72,7 @@
         MDSeparator:
 
         ScrollView:
-            Label:
+            MDLabel:
                 id: comments
                 halign: 'left'
                 text_size: self.width, None
