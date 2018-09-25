@@ -99,13 +99,12 @@ class Disposals(App):
     def build(self):
 
         #грузим файл конфигураций из пользовательской папки, если есть
-        from pathlib import Path
-
-        options  = Path(os.path.join(self.user_data_dir, 'disposals.ini'))
-        if options.is_file():
+        try:
             copyfile(os.path.join(self.user_data_dir, 'disposals.ini'),
                      os.path.join(self.directory, 'disposals.ini')
                      )
+        except:
+            pass
 
         self.set_value_from_config()
         self.load_all_kv_files(os.path.join(self.directory, 'libs', 'uix', 'kv'))
