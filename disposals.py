@@ -34,6 +34,7 @@ from kivymd.theming import ThemeManager
 from dialogs import card
 import os.path
 from shutil import copyfile
+from toast import toast
 
 import libs.uix.baseclass.DisposalsDroid as DisposalsDroid
 from libs.uix.baseclass.disposallist import DisposalList
@@ -234,7 +235,6 @@ class Disposals(App):
             
         Clock.schedule_interval(check_interval_press, 1)
 
-        from toast import toast
         toast(self.translation._('Нажмите еще раз для выхода'))
 
     def on_lang(self, instance, lang):

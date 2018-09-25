@@ -6,7 +6,7 @@ from kivy.app import App
 from kivymd.label import MDLabel
 from kivymd.dialog import MDDialog
 from kivy.metrics import dp
-from kivy.properties import ListProperty
+from toast import toast
 
 class IconLeftSampleWidget(ILeftBodyTouch, MDIconButton):
     pass
@@ -85,8 +85,10 @@ class DisposalItem(TwoLineIconListItem):
 
 class DisposalList(MDList):
 
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.app = App.get_running_app()
         self.refresh_list()
 
     def refresh_list(self):
@@ -117,12 +119,13 @@ class DisposalList(MDList):
                     data=i
                 )
                 self.add_widget(item)
+
+            toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
         except:
             #сообщение об ошибке
-            app = App.get_running_app()
             content = MDLabel(
                 font_style='Body1',
-                text=app.translation._('Нет подключения, проверьте настройки!'),
+                text=self.app.translation._('Нет подключения, проверьте настройки!'),
                 size_hint_y=None,
                 valign='top')
             content.bind(texture_size=content.setter('size'))
