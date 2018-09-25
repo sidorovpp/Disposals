@@ -6,15 +6,35 @@ from kivy.app import App
 from kivymd.label import MDLabel
 from kivymd.dialog import MDDialog
 from kivy.metrics import dp
+from kivy.properties import ListProperty
 
 class IconLeftSampleWidget(ILeftBodyTouch, MDIconButton):
     pass
 
 class DisposalItem(TwoLineIconListItem):
 
-    def __init__(self, icon_text, data, *args, **kwargs):
+    def __init__(self, data, *args, **kwargs):
         super().__init__( *args, **kwargs)
+
+        self.app = App.get_running_app()
+
+        # иконка и цвет выполнения
+        if data[6] == '0':
+            icon_text = 'clock'
+        else:
+            icon_text = 'calendar-check'
+            self.secondary_theme_text_color = 'Custom'
+            self.secondary_text_color = [0.2, 0.5, 0.2, 1]
+            self.ripple_color = [0.2, 0.5, 0.2, 1]
+
+        #иконка и шрифт отклонения
+        if data[8] == '1':
+            icon_text = 'stop'
+            self.secondary_theme_text_color = 'Custom'
+            self.secondary_text_color = [1, 0, 0, 1]
+
         self.add_widget(IconLeftSampleWidget(icon=icon_text))
+
         self.data = dict({'Number':data[0],'Theme':data[1],'Task':data[5], 'Receiver_id':data[4], 'Sender_id':data[3]})
 
     def set_readed(self):
@@ -23,21 +43,45 @@ class DisposalItem(TwoLineIconListItem):
         except:
             pass
 
-    def on_press(self):
-        #считываем комментарии, отправите, получателя и добавляем к data
-        s = ''
+    def set_disposal_params(self):
         Receiver = GetResult('getStaff', {'id': int(self.data['Receiver_id'])}, ['userName'])[0][0]
         Sender = GetResult('getStaff', {'id': int(self.data['Sender_id'])}, ['userName'])[0][0]
 
         self.data['Receiver'] = Receiver
         self.data['Sender'] = Sender
 
-        app = App.get_running_app()
-        app.screen.ids.disposal.set_params(self.data)
-        app.manager.current = 'disposal'
-        app.screen.ids.action_bar.title = app.translation._('Задача')
-        app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: app.back_screen(27)]]
-        app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()]]
+        self.app.screen.ids.disposal.set_params(self.data)
+
+    #ищем следующий элемент
+    def show_next(self):
+        k = 0
+        for w in self.parent.walk():
+            if k == 1 and isinstance(w, DisposalItem):
+                w.on_press()
+                break
+            if w == self:
+                k = 1
+
+    #ищем предыдущий элемент
+    def show_prior(self):
+        prior = None
+        for w in self.parent.walk():
+            if w == self and prior != None:
+                prior.on_press()
+            if isinstance(w, DisposalItem):
+                prior = w
+
+    def on_press(self):
+        #считываем отправителя, получателя и добавляем к data
+        self.set_disposal_params()
+        self.app.manager.current = 'disposal'
+        self.app.screen.ids.action_bar.title = self.app.translation._('Задача')
+
+        #добавляем кнопки следующая, предыдущая, назад и прочитано
+        self.app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: self.app.back_screen(27)]]
+        self.app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()],
+                                                             ['skip-previous', lambda x: self.show_prior()],
+                                                             ['skip-next', lambda x: self.show_next()]]
 
 class DisposalList(MDList):
 
@@ -50,7 +94,7 @@ class DisposalList(MDList):
         def get_number(i):
             return i[0]
         try:
-            res = GetResult('getDisposalList', {'readed': 0}, ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute'])
+            res = GetResult('getDisposalList', {'readed': 0}, ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled'])
 
 
             res = sorted(res, key=get_number)
@@ -60,21 +104,16 @@ class DisposalList(MDList):
                     disposal_text = i[2]
                 else:
                     disposal_text = 'ПУСТО'
-                # иконка выполнения
-                if i[6] == '0':
-                    icon_text = 'clock'
-                else:
-                    icon_text = 'calendar-check'
 
                 # номер + тема задачи
                 theme_text = (i[0] + ' ' + i[1])
                 if len(theme_text) > 30:
                     theme_text = theme_text[:27] + '...'
 
+                #позиция задачи
                 item = DisposalItem(
                     text=theme_text,
                     secondary_text=disposal_text,
-                    icon_text=icon_text,
                     data=i
                 )
                 self.add_widget(item)
