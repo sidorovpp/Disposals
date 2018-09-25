@@ -18,6 +18,6 @@ from kivy import platform
 
 
 if platform == 'android': 
-    from . kivytoast import toast
+    from . androidtoast import toast
 else:
     from . kivytoast import toast

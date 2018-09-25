@@ -97,9 +97,4 @@ class Disposal(Screen):
 
         self.load_comments()
 
-    def on_leave(self, *args):
-        app = App.get_running_app()
-        app.screen.ids.action_bar.right_action_items = []
-        app.screen.ids.base.ids.disposal_list.clear_widgets()
-        app.screen.ids.base.ids.disposal_list.refresh_list()
 
