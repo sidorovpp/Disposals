@@ -92,9 +92,12 @@ class Disposals(App):
         DisposalsDroid.password = self.config.get('General', 'password')
 
         #скидываем копию конфигураций в пользовательскую папку
-        copyfile(os.path.join(self.directory, 'disposals.ini'),
-                 os.path.join(self.user_data_dir, 'disposals.ini')
-                 )
+        try:
+            copyfile(os.path.join(self.directory, 'disposals.ini'),
+                     os.path.join(self.user_data_dir, 'disposals.ini')
+                     )
+        except:
+            pass
 
     def build(self):
 
