@@ -147,11 +147,11 @@ class Disposals(App):
             self.screen.ids.action_bar.left_action_items = \
                 [['menu', lambda x: self.nav_drawer._toggle()]]
 
-    def show_plugins(self, *args):
-
-        self.plugin.show_plugins()
-
     def show_about(self, *args):
+        from toast import toast
+        toast(self.translation._('Нажмите еще раз для выхода'))
+
+
         self.nav_drawer.toggle_nav_drawer()
         self.screen.ids.about.ids.label.text = \
             self.translation._(
@@ -237,8 +237,8 @@ class Disposals(App):
             sys.exit(0)
             
         Clock.schedule_interval(check_interval_press, 1)
-        from toast import toast
-        toast(self.translation._('Нажмите еще раз для выхода'))
+        #from toast import toast
+        #toast(self.translation._('Нажмите еще раз для выхода'))
 
     def on_lang(self, instance, lang):
         self.translation.switch_lang(lang)
