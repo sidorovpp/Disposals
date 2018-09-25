@@ -99,7 +99,10 @@ class Disposals(App):
     def build(self):
 
         #грузим файл конфигураций из пользовательской папки, если есть
-        if os.path.isfile(os.path.join(self.user_data_dir, 'disposals.ini')):
+        from pathlib import Path
+
+        options  = Path(os.path.join(self.user_data_dir, 'disposals.ini'))
+        if options.is_file():
             copyfile(os.path.join(self.user_data_dir, 'disposals.ini'),
                      os.path.join(self.directory, 'disposals.ini')
                      )
