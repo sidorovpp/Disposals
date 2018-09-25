@@ -17,7 +17,7 @@ from jnius import autoclass, PythonJavaClass, java_method, cast
 #from android.runnable import run_on_ui_thread
 
 Toast = autoclass('android.widget.Toast')
-context = autoclass('org.renpy.android.PythonActivity').mActivity    
+context = autoclass('org.kivy.android.PythonActivity').mActivity
 
 @run_on_ui_thread
 def toast(text, length_long=False):
