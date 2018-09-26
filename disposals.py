@@ -39,6 +39,7 @@ import os.path
 from shutil import copyfile
 from toast import toast
 from libs.uix.baseclass.disposalsdroid import GetResult
+from kivy.utils import platform
 
 import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 from libs.uix.baseclass.disposallist import DisposalList
@@ -143,7 +144,6 @@ class Disposals(App):
                      )
         except:
             pass
-
         self.set_value_from_config()
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
@@ -156,6 +156,14 @@ class Disposals(App):
         #меню
         self.nav_drawer = self.screen.ids.nav_drawer
         self.screen.ids.base.add_refresh_button()
+
+
+        #запускаем сервис
+        if platform == 'android':
+            from android import AndroidService
+            service = AndroidService('disposals service', 'running')
+            service.start('service started')
+            self.service = service
 
         Clock.schedule_interval(lambda dt: self.check_disposals(), 300)
 
