@@ -103,25 +103,28 @@ class Disposals(App):
         except:
             pass
 
-    #def check_disposals(self):
+    def test(self, *args):
+        self.check_disposals()
 
-    #    from plyer import notification
-    #    from plyer.utils import platform
-    #
-    #    res = GetResult('getDisposalList', {'readed': 0}, ['Number'])
-    #    if len(res) > 0:
-    #        title = self.translation._('Есть непрочитанные задачи')
-    #        message = self.translation._('Непрочитанных задач:' + str(len(res)))
-    #        ticker = self.translation._('Уведомление')
-    #        kwargs = {'title': title, 'message': message}
-    #        kwargs['app_name'] = 'disposals'
-    #        if platform == "win":
-    #            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.ico')
-    #            kwargs['timeout'] = 4
-    #        else:
-    #            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.png')
-    #            kwargs['ticker'] = ticker
-    #        notification.notify(**kwargs)
+    def check_disposals(self):
+
+        from plyer import notification
+        from plyer.utils import platform
+
+        res = GetResult('getDisposalList', {'readed': 0}, ['Number'])
+        if len(res) > 0:
+            title = self.translation._('Есть непрочитанные задачи')
+            message = self.translation._('Непрочитанных задач:' + str(len(res)))
+            ticker = self.translation._('Уведомление')
+            kwargs = {'title': title, 'message': message}
+            kwargs['app_name'] = 'disposals'
+            if platform == "win":
+                kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.ico')
+                kwargs['timeout'] = 4
+            else:
+                kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.png')
+                kwargs['ticker'] = ticker
+            notification.notify(**kwargs)
 
     def build(self):
 
