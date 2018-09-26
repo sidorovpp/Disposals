@@ -2,7 +2,10 @@ from time import sleep
 from libs.uix.baseclass.disposalsdroid import GetResult
 from os.path import dirname
 from os.path import join
+from os.path import pardir
 from os.path import realpath
+from kivy.config import ConfigParser
+import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 
 def check_disposals():
     from plyer import notification
@@ -25,6 +28,12 @@ def check_disposals():
 
 
 if __name__ == '__main__':
+    config = ConfigParser()
     while True:
-        sleep(60)
+        config.read(join(dirname(realpath(__file__)), pardir, 'disposals.ini'))
+        DisposalsDroid.server = config.get('General', 'ip')
+        DisposalsDroid.username = config.get('General', 'user')
+        DisposalsDroid.password = config.get('General', 'password')
+
+        sleep(2)
         check_disposals()
