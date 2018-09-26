@@ -104,7 +104,15 @@ class Disposals(App):
             pass
 
     def test(self, *args):
-        self.check_disposals()
+        from jnius import autoclass, cast
+        PythonActivity = autoclass('org.kivy.android.PythonActivity')
+        Intent = autoclass('android.content.Intent')
+        intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        currentActivity = cast('android.app.Activity', PythonActivity.mActivity)
+        currentActivity.startActivity(intent)
 
     def check_disposals(self):
 
@@ -149,7 +157,7 @@ class Disposals(App):
         self.nav_drawer = self.screen.ids.nav_drawer
         self.screen.ids.base.add_refresh_button()
 
-        #Clock.schedule_interval(lambda dt: self.check_disposals(), 180)
+        Clock.schedule_interval(lambda dt: self.check_disposals(), 300)
 
         return self.screen
 
@@ -185,7 +193,7 @@ class Disposals(App):
                 self.manager.current = self.list_previous_screens.pop()
             except:
                 self.manager.current = 'base'
-            self.screen.ids.action_bar.title = self.title
+            self.screen.ids.action_bar.title = self.translation._(self.title)
             self.screen.ids.action_bar.left_action_items = \
                 [['menu', lambda x: self.nav_drawer._toggle()]]
 
@@ -248,6 +256,7 @@ class Disposals(App):
                     self.lang = locale
                     self.config.set('General', 'language', self.lang)
                     self.config.write()
+                    self.set_value_from_config()
 
         dict_info_locales = {}
         for locale in self.dict_language.keys():
