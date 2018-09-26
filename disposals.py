@@ -228,19 +228,19 @@ class Disposals(App):
             )
         self.window_language.open()
 
-    def dialog_exit(self):
-        def check_interval_press(interval):
-            self.exit_interval += interval
-            if self.exit_interval > 5:
-                self.exit_interval = False
-                Clock.unschedule(check_interval_press)
-
-        if self.exit_interval:
-            self.stop()
-
-        Clock.schedule_interval(check_interval_press, 1)
-
-        toast(self.translation._('Нажмите еще раз для выхода'))
+    #def dialog_exit(self):
+    #    def check_interval_press(interval):
+    #        self.exit_interval += interval
+    #        if self.exit_interval > 5:
+    #            self.exit_interval = False
+    #            Clock.unschedule(check_interval_press)
+    #
+    #   if self.exit_interval:
+    #        self.stop()
+    #
+    #    Clock.schedule_interval(check_interval_press, 1)
+    #
+    #    toast(self.translation._('Нажмите еще раз для выхода'))
 
     def on_lang(self, instance, lang):
         self.translation.switch_lang(lang)
