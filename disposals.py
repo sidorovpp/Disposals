@@ -36,7 +36,7 @@ import os.path
 from shutil import copyfile
 from toast import toast
 
-import libs.uix.baseclass.DisposalsDroid as DisposalsDroid
+import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 from libs.uix.baseclass.disposallist import DisposalList
 
 class Disposals(App):
@@ -112,7 +112,13 @@ class Disposals(App):
         self.set_value_from_config()
         self.load_all_kv_files(os.path.join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
+        #менеджер окон
         self.manager = self.screen.ids.manager
+        #для упрощения доступа к screen
+        self.manager.screen = self.screen
+        #для упрощения доступа к app
+        self.manager.app = self
+        #меню
         self.nav_drawer = self.screen.ids.nav_drawer
         self.screen.ids.base.add_refresh_button()
 

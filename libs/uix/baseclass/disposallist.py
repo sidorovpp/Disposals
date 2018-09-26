@@ -1,6 +1,6 @@
 #список задач
 from kivymd.list import MDList, OneLineIconListItem, ILeftBody, BaseListItem, OneLineListItem, TwoLineIconListItem, ILeftBodyTouch, TwoLineListItem
-from libs.uix.baseclass.DisposalsDroid import GetResult
+from libs.uix.baseclass.disposalsdroid import GetResult
 from kivymd.button import MDIconButton
 from kivy.app import App
 from kivymd.label import MDLabel

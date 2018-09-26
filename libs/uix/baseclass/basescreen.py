@@ -11,11 +11,8 @@
 # LICENSE: MIT
 
 from kivy.uix.screenmanager import Screen
-from kivy.app import App
 
 class BaseScreen(Screen):
-
-    app =  App.get_running_app()
 
     def refresh_list(self):
         self.ids.disposal_list.clear_widgets()
@@ -23,7 +20,7 @@ class BaseScreen(Screen):
 
     def add_refresh_button(self):
         try:
-            self.app.screen.ids.action_bar.right_action_items = [['refresh', lambda x: self.refresh_list()]]
+            self.manager.screen.ids.action_bar.right_action_items = [['refresh', lambda x: self.refresh_list()]]
         except:
             pass
 

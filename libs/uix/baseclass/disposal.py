@@ -15,7 +15,7 @@ from kivymd.button import MDFloatingActionButton
 from kivymd.dialog import MDDialog
 from kivymd.textfields import MDTextField
 from kivy.metrics import dp
-from libs.uix.baseclass.DisposalsDroid import GetResult
+from libs.uix.baseclass.disposalsdroid import GetResult
 from kivy.app import App
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
@@ -80,11 +80,10 @@ class Disposal(Screen):
             self.ids.spinner.active = False
 
     def set_params(self, params):
-        app = App.get_running_app()
         self.ids.number.text = params['Number']
         self.ids.theme.text = params['Theme']
-        self.ids.sender.text = app.translation._('Отправитель:') + ' ' +params['Sender']
-        self.ids.receiver.text = app.translation._('Получатель:') + ' ' + params['Receiver']
+        self.ids.sender.text = self.manager.app.translation._('Отправитель:') + ' ' +params['Sender']
+        self.ids.receiver.text = self.manager.app.translation._('Получатель:') + ' ' + params['Receiver']
         #бьём текст задачи на куски по Enter
         s = params['Task']
         self.ids.task.data = []
