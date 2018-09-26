@@ -13,6 +13,9 @@
 import os
 import sys
 from ast import literal_eval
+from os.path import dirname
+from os.path import join
+from os.path import realpath
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -35,12 +38,13 @@ from dialogs import card
 import os.path
 from shutil import copyfile
 from toast import toast
+from libs.uix.baseclass.disposalsdroid import GetResult
 
 import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 from libs.uix.baseclass.disposallist import DisposalList
 
-class Disposals(App):
 
+class Disposals(App):
 
     title = 'Задачи ВКБ'
     icon = 'icon.png'
@@ -85,7 +89,7 @@ class Disposals(App):
 
     def set_value_from_config(self):
 
-        self.config.read(os.path.join(self.directory, 'disposals.ini'))
+        self.config.read(join(self.directory, 'disposals.ini'))
         self.lang = self.config.get('General', 'language')
         DisposalsDroid.server = self.config.get('General', 'ip')
         DisposalsDroid.username = self.config.get('General', 'user')
@@ -93,24 +97,43 @@ class Disposals(App):
 
         #скидываем копию конфигураций в пользовательскую папку
         try:
-            copyfile(os.path.join(self.directory, 'disposals.ini'),
-                     os.path.join(self.user_data_dir, 'disposals.ini')
+            copyfile(join(self.directory, 'disposals.ini'),
+                     join(self.user_data_dir, 'disposals.ini')
                      )
         except:
             pass
+
+    def check_disposals(self):
+
+        from plyer import notification
+        from plyer.utils import platform
+
+        res = GetResult('getDisposalList', {'readed': 0}, ['Number'])
+        if len(res) > 0:
+            title = self.translation._('Есть непрочитанные задачи')
+            message = self.translation._('Непрочитанных задач:' + str(len(res)))
+            ticker = self.translation._('Уведомление')
+            kwargs = {'title': title, 'message': message, 'ticker': ticker}
+            kwargs['app_name'] = 'disposals'
+            if platform == "win":
+                kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.ico')
+                kwargs['timeout'] = 4
+            else:
+                kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.png')
+                notification.notify(**kwargs)
 
     def build(self):
 
         #грузим файл конфигураций из пользовательской папки, если есть
         try:
-            copyfile(os.path.join(self.user_data_dir, 'disposals.ini'),
-                     os.path.join(self.directory, 'disposals.ini')
+            copyfile(join(self.user_data_dir, 'disposals.ini'),
+                     join(self.directory, 'disposals.ini')
                      )
         except:
             pass
 
         self.set_value_from_config()
-        self.load_all_kv_files(os.path.join(self.directory, 'libs', 'uix', 'kv'))
+        self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
         #менеджер окон
         self.manager = self.screen.ids.manager
@@ -122,11 +145,14 @@ class Disposals(App):
         self.nav_drawer = self.screen.ids.nav_drawer
         self.screen.ids.base.add_refresh_button()
 
+        Clock.schedule_interval(lambda dt: self.check_disposals(), 5)
+
         return self.screen
+
 
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
-            kv_file = os.path.join(directory_kv_files, kv_file)
+            kv_file = join(directory_kv_files, kv_file)
             if os.path.isfile(kv_file):
                 if not PY2:
                     with open(kv_file, encoding='utf-8') as kv:
@@ -183,11 +209,11 @@ class Disposals(App):
         if not PY2:
             self.screen.ids.license.ids.text_license.text = \
                 self.translation._('%s') % open(
-                    os.path.join(self.directory, 'LICENSE'), encoding='utf-8').read()
+                    join(self.directory, 'LICENSE'), encoding='utf-8').read()
         else:
             self.screen.ids.license.ids.text_license.text = \
                 self.translation._('%s') % open(
-                    os.path.join(self.directory, 'LICENSE')).read()
+                    join(self.directory, 'LICENSE')).read()
         self.nav_drawer._toggle()
         self.manager.current = 'license'
         self.screen.ids.action_bar.left_action_items = \
@@ -234,7 +260,8 @@ class Disposals(App):
             )
         self.window_language.open()
 
-    #def dialog_exit(self):
+    def dialog_exit(self):
+        pass
     #    def check_interval_press(interval):
     #        self.exit_interval += interval
     #        if self.exit_interval > 5:
