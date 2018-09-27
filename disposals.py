@@ -105,42 +105,8 @@ class Disposals(App):
             pass
 
     def test(self, *args):
-        #запускаем сервис
-        #from android import AndroidService
-        #service = AndroidService('disposals', 'running')
-        #service.start('service started')
-        #self.service = service
-
-        #import android
-        #android.start_service(title='',
-        #                      description='service description',
-        #                      arg='argument to service')
-
-        if platform == 'android':
-            from jnius import autoclass
-            service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
-            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
-            service.start(mActivity, '')
-
-    def check_disposals(self):
-
-        from plyer import notification
-        from plyer.utils import platform
-
-        res = GetResult('getDisposalList', {'readed': 0}, ['Number'])
-        if len(res) > 0:
-            title = self.translation._('Есть непрочитанные задачи')
-            message = self.translation._('Непрочитанных задач:' + str(len(res)))
-            ticker = self.translation._('Уведомление')
-            kwargs = {'title': title, 'message': message}
-            kwargs['app_name'] = 'disposals'
-            if platform == "win":
-                kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.ico')
-                kwargs['timeout'] = 4
-            else:
-                kwargs['app_icon'] = join(dirname(realpath(__file__)), 'data', 'notify.png')
-                kwargs['ticker'] = ticker
-            notification.notify(**kwargs)
+        from plyer import vibrator
+        vibrator.vibrate(0.5)
 
     def build(self):
 
@@ -164,7 +130,12 @@ class Disposals(App):
         self.nav_drawer = self.screen.ids.nav_drawer
         self.screen.ids.base.add_refresh_button()
 
-        Clock.schedule_interval(lambda dt: self.check_disposals(), 300)
+        #стартуем сервис уведомлений
+        if platform == 'android':
+            from jnius import autoclass
+            service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
+            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
+            service.start(mActivity, '')
 
         return self.screen
 

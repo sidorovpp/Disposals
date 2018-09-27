@@ -39,7 +39,7 @@ if __name__ == '__main__':
         DisposalsDroid.password = config.get('General', 'password')
 
         while True:
-            sleep(5)
+            sleep(60)
             check_disposals()
 
 
