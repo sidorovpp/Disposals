@@ -9,7 +9,9 @@ import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 import traceback
 from shutil import copyfile
 
-# def check_disposals():
+def check_disposals():
+     with open('/sdcard/disposals/error.txt', 'w+') as f:
+         f.write('on check')
 #     from plyer import notification
 #     from plyer.utils import platform
 #
@@ -30,19 +32,18 @@ from shutil import copyfile
 
 
 if __name__ == '__main__':
-    while True:
-        # config.read(join(dirname(realpath(__file__)), pardir,  'disposals.ini'))
+    try:
+        config = ConfigParser()
+        config.read(join(dirname(realpath(__file__)), pardir,  'disposals.ini'))
+        while True:
+            sleep(5)
+            check_disposals()
+
         # DisposalsDroid.server = config.get('General', 'ip')
         # DisposalsDroid.username = config.get('General', 'user')
         # DisposalsDroid.password = config.get('General', 'password')
 
-        sleep(5)
+    except Exception as E:
         with open('/sdcard/disposals/error.txt', 'w+') as f:
-            f.write('test')
-        # try:
-        #     check_disposals()
-        # except:
-        #     traceback.print_exc(file=open(join(dirname(realpath(__file__)), pardir,   'error.log'), 'w'))
-        #     copyfile(join(dirname(realpath(__file__)), pardir, 'error.log'),
-        #              join('/sdcard', 'disposals', 'error.log')
-        #              )
+            f.write('error')
+        traceback.print_exc(file=open('sdcard/disposals/error.log','w'))
