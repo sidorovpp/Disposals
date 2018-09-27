@@ -46,5 +46,5 @@ if __name__ == '__main__':
 
     except Exception as E:
         with open('/sdcard/disposals/error.txt', 'w+') as f:
-            f.write('error')
+            f.write(str(E))
         traceback.print_exc(file=open('sdcard/disposals/error.log','w'))
