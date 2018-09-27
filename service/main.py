@@ -30,7 +30,7 @@ def check_disposals():
 if __name__ == '__main__':
     config = ConfigParser()
     while True:
-        config.read(join(dirname(realpath(__file__)), pardir, 'disposals.ini'))
+        config.read(join(dirname(realpath(__file__)), 'disposals.ini'))
         DisposalsDroid.server = config.get('General', 'ip')
         DisposalsDroid.username = config.get('General', 'user')
         DisposalsDroid.password = config.get('General', 'password')
