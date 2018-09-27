@@ -36,13 +36,14 @@ if __name__ == '__main__':
     try:
         config = ConfigParser()
         config.read(join(dirname(realpath(__file__)), pardir,  'disposals.ini'))
+        DisposalsDroid.server = config.get('General', 'ip')
+        DisposalsDroid.username = config.get('General', 'user')
+        DisposalsDroid.password = config.get('General', 'password')
+
         while True:
             sleep(5)
             check_disposals()
 
-        # DisposalsDroid.server = config.get('General', 'ip')
-        # DisposalsDroid.username = config.get('General', 'user')
-        # DisposalsDroid.password = config.get('General', 'password')
 
     except Exception as E:
         with open('/sdcard/disposals/error.txt', 'w+') as f:
