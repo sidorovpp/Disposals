@@ -106,6 +106,7 @@ class Disposals(App):
 
     def test(self, *args):
         pass
+
     def build(self):
 
         #грузим файл конфигураций из пользовательской папки, если есть
@@ -129,13 +130,16 @@ class Disposals(App):
         self.screen.ids.base.add_refresh_button()
 
         #стартуем сервис уведомлений
+        self.start_service()
+
+        return self.screen
+
+    def start_service(self):
         if platform == 'android':
             from jnius import autoclass
             service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
             mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
             service.start(mActivity, '')
-
-        return self.screen
 
 
     def load_all_kv_files(self, directory_kv_files):
@@ -266,3 +270,7 @@ class Disposals(App):
 
     def on_lang(self, instance, lang):
         self.translation.switch_lang(lang)
+
+    def on_resume(self):
+        # стартуем сервис уведомлений
+        self.start_service()
