@@ -14,6 +14,7 @@ def check_disposals():
     res = GetResult('getDisposalList', {'readed': 0}, ['Number'])
     if len(res) > 0:
         from plyer import notification
+        from plyer import vibrator
         from plyer.utils import platform
 
         title = 'Есть непрочитанные задачи'
@@ -27,6 +28,9 @@ def check_disposals():
         else:
             kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
             kwargs['ticker'] = ticker
+        #вибрация
+        vibrator.vibrate(0.5)
+        #показываем уведомление
         notification.notify(**kwargs)
 
 

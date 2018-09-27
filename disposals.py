@@ -105,9 +105,7 @@ class Disposals(App):
             pass
 
     def test(self, *args):
-        from plyer import vibrator
-        vibrator.vibrate(0.5)
-
+        pass
     def build(self):
 
         #грузим файл конфигураций из пользовательской папки, если есть
