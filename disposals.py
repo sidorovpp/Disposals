@@ -106,21 +106,21 @@ class Disposals(App):
 
     def test(self, *args):
         #запускаем сервис
-        from android import AndroidService
-        service = AndroidService('disposals', 'running')
-        service.start('service started')
-        self.service = service
+        #from android import AndroidService
+        #service = AndroidService('disposals', 'running')
+        #service.start('service started')
+        #self.service = service
 
         #import android
         #android.start_service(title='',
         #                      description='service description',
         #                      arg='argument to service')
 
-        #if platform == 'android':
-        #    from jnius import autoclass
-        #    service = autoclass('ru.mrcpp.disposals.service')
-        #    mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
-        #    service.start(mActivity, '')
+        if platform == 'android':
+            from jnius import autoclass
+            service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
+            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
+            service.start(mActivity, '')
 
     def check_disposals(self):
 
