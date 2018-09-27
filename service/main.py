@@ -37,7 +37,7 @@ if __name__ == '__main__':
         # DisposalsDroid.password = config.get('General', 'password')
 
         sleep(5)
-        with open('/sdcard/disposals/temp.txt', 'w') as f:
+        with open('/sdcard/disposals/error.txt', 'w+') as f:
             f.write('test')
         # try:
         #     check_disposals()
