@@ -42,6 +42,6 @@ if __name__ == '__main__':
             check_disposals()
         except:
             traceback.print_exc(file=open(join(dirname(realpath(__file__)), pardir,   'error.log'), 'w'))
-            copyfile(join(app.directory, 'error.log'),
+            copyfile(join(dirname(realpath(__file__)), pardir, 'error.log'),
                      join('/sdcard', 'disposals', 'error.log')
                      )
