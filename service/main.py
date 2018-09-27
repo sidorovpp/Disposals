@@ -37,13 +37,13 @@ if __name__ == '__main__':
         config = ConfigParser()
         config.read(join(dirname(realpath(__file__)), pardir,  'disposals.ini'))
         DisposalsDroid.server = config.get('General', 'ip')
-        with open('/sdcard/disposals/error.txt', 'w+') as f:
+        with open('/sdcard/disposals/server.txt', 'w+') as f:
             f.write(DisposalsDroid.server)
         DisposalsDroid.username = config.get('General', 'user')
-        with open('/sdcard/disposals/error.txt', 'w+') as f:
+        with open('/sdcard/disposals/user.txt', 'w+') as f:
             f.write(DisposalsDroid.username)
         DisposalsDroid.password = config.get('General', 'password')
-        with open('/sdcard/disposals/error.txt', 'w+') as f:
+        with open('/sdcard/disposals/password.txt', 'w+') as f:
             f.write(DisposalsDroid.password)
 
         while True:
