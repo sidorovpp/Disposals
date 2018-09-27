@@ -14,6 +14,8 @@
 import os
 import sys
 import traceback
+from shutil import copyfile
+from os.path import join
 
 NICK_NAME_AND_NAME_REPOSITORY = 'REPO_PROJECT'
 
@@ -34,10 +36,10 @@ try:
     Config.set('kivy', 'keyboard_mode', 'system')
     Config.set('kivy', 'log_enable', 0)
 
-    #from kivy import platform
-    #if platform == 'android':
-    #    from plyer import orientation
-    #    orientation.set_sensor(mode='any')
+    from kivy import platform
+    if platform == 'android':
+        from plyer import orientation
+        orientation.set_sensor(mode='any')
 
     from kivymd.theming import ThemeManager
 
@@ -79,6 +81,9 @@ def main():
 
         text_error = traceback.format_exc()
         traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
+        copyfile(join(app.directory, 'error.log'),
+                 join(app.user_data_dir, 'error.log')
+                 )
 
         if app:
             try:

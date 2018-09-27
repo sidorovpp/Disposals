@@ -35,5 +35,5 @@ if __name__ == '__main__':
         DisposalsDroid.username = config.get('General', 'user')
         DisposalsDroid.password = config.get('General', 'password')
 
-        sleep(2)
+        sleep(60)
         check_disposals()
