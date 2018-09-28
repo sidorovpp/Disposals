@@ -11,36 +11,24 @@
 # LICENSE: MIT
 
 import os
-import sys
 from ast import literal_eval
-from os.path import dirname
 from os.path import join
-from os.path import realpath
-
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import ConfigParser
 from kivy.logger import PY2
-from kivy.clock import Clock
 from kivy.utils import get_hex_from_color
 from kivy.properties import ObjectProperty, StringProperty
-
 from main import __version__
 from libs.translation import Translation
 from libs.uix.baseclass.startscreen import StartScreen
 from libs.uix.lists import Lists
-from libs.utils.showplugins import ShowPlugins
-
 from kivymd.theming import ThemeManager
-
-from dialogs import card
+from libs.applibs.dialogs import card
 import os.path
 from shutil import copyfile
-from toast import toast
-from libs.uix.baseclass.disposalsdroid import GetResult
 from kivy.utils import platform
-
 import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 from libs.uix.baseclass.disposallist import DisposalList
 
@@ -61,10 +49,10 @@ class Disposals(App):
 
         self.list_previous_screens = ['base']
         self.window = Window
-        self.plugin = ShowPlugins(self)
         self.config = ConfigParser()
         self.manager = None
         self.window_language = None
+        self.window_filter = None
         self.exit_interval = False
         self.dict_language = literal_eval(
             open(
@@ -73,39 +61,7 @@ class Disposals(App):
         self.translation = Translation(
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
-
-
-
-    def get_application_config(self):
-        return super(Disposals, self).get_application_config(
-                        '{}/%(appname)s.ini'.format(self.directory))
-
-    def build_config(self, config):
-
-        config.adddefaultsection('General')
-        config.setdefault('General', 'language', 'en')
-        config.setdefault('General', 'ip', '77.233.5.22')
-        config.setdefault('General', 'user', 'user')
-        config.setdefault('General', 'password', 'password')
-
-    def set_value_from_config(self):
-
-        self.config.read(join(self.directory, 'disposals.ini'))
-        self.lang = self.config.get('General', 'language')
-        DisposalsDroid.server = self.config.get('General', 'ip')
-        DisposalsDroid.username = self.config.get('General', 'user')
-        DisposalsDroid.password = self.config.get('General', 'password')
-
-        #скидываем копию конфигураций в пользовательскую папку
-        try:
-            copyfile(join(self.directory, 'disposals.ini'),
-                     join(self.user_data_dir, 'disposals.ini')
-                     )
-        except:
-            pass
-
-    def test(self, *args):
-        pass
+        self.filter_items = {'NotReaded': 'Непрочитанные', 'MyNotComplete': 'Мои невыполенные'}
 
     def build(self):
 
@@ -131,8 +87,43 @@ class Disposals(App):
 
         #стартуем сервис уведомлений
         self.start_service()
+        #обвноляем список
+        self.refresh_list()
 
         return self.screen
+
+    def get_application_config(self):
+        return super(Disposals, self).get_application_config(
+                        '{}/%(appname)s.ini'.format(self.directory))
+
+    def build_config(self, config):
+
+        config.adddefaultsection('General')
+        config.setdefault('General', 'language', 'en')
+        config.setdefault('General', 'ip', '77.233.5.22')
+        config.setdefault('General', 'user', 'user')
+        config.setdefault('General', 'password', 'password')
+        config.setdefault('General', 'filter', 'NotReaded')
+
+    def set_value_from_config(self):
+
+        self.config.read(join(self.directory, 'disposals.ini'))
+        self.lang = self.config.get('General', 'language')
+        self.current_filter = self.config.get('General', 'filter')
+        DisposalsDroid.server = self.config.get('General', 'ip')
+        DisposalsDroid.username = self.config.get('General', 'user')
+        DisposalsDroid.password = self.config.get('General', 'password')
+
+        #скидываем копию конфигураций в пользовательскую папку
+        try:
+            copyfile(join(self.directory, 'disposals.ini'),
+                     join(self.user_data_dir, 'disposals.ini')
+                     )
+        except:
+            pass
+
+    def test(self, *args):
+        pass
 
     def start_service(self):
         if platform == 'android':
@@ -214,7 +205,8 @@ class Disposals(App):
             self.translation._('Лицензия')
 
     def refresh_list(self, *args):
-        self.nav_drawer._toggle()
+        if self.nav_drawer.state == 'open':
+            self.nav_drawer._toggle()
         self.screen.ids.base.ids.disposal_list.clear_widgets()
         self.screen.ids.base.ids.disposal_list.refresh_list()
 
@@ -226,6 +218,32 @@ class Disposals(App):
             [['chevron-left', lambda x: self.back_screen(27)]]
         self.screen.ids.action_bar.title = \
             self.translation._('Настройки')
+
+    def filter_list(self, *args):
+
+        def select_filter(filter):
+            for key in self.filter_items.keys():
+                if filter == self.filter_items[key]:
+                    self.current_filter = key
+                    self.config.set('General', 'filter', self.current_filter)
+                    self.config.write()
+                    self.window_filter.dismiss()
+                    self.refresh_list()
+
+        dict_info_filters = {}
+        for filter in self.filter_items:
+            dict_info_filters[self.filter_items[filter]] = \
+                ['filter', filter == self.current_filter]
+
+        if not self.window_filter:
+            self.window_filter = card(
+                Lists(
+                    dict_items=dict_info_filters,
+                    events_callback=select_filter, flag='one_select_check'
+                ),
+                size=(.85, .55)
+            )
+        self.window_filter.open()
 
     def select_locale(self, *args):
 

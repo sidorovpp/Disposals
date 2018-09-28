@@ -6,7 +6,10 @@ from kivy.app import App
 from kivymd.label import MDLabel
 from kivymd.dialog import MDDialog
 from kivy.metrics import dp
-from toast import toast
+from libs.applibs.toast import toast
+import threading
+from kivy.factory import Factory
+from kivy.clock import Clock, mainthread
 
 class IconLeftSampleWidget(ILeftBodyTouch, MDIconButton):
     pass
@@ -83,59 +86,78 @@ class DisposalItem(TwoLineIconListItem):
                                                              ['skip-previous', lambda x: self.show_prior()],
                                                              ['skip-next', lambda x: self.show_next()]]
 
+def get_number(i):
+    return i[0]
+
 class DisposalList(MDList):
 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.app = App.get_running_app()
-        self.refresh_list()
 
-    def refresh_list(self):
-    #обновление списка задач
-        def get_number(i):
-            return i[0]
-        try:
-            res = GetResult('getDisposalList', {'readed': 0}, ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled'])
+    def show_popup(self, *args):
+        self.pop_up = Factory.PopupBox()
+        self.pop_up.update_pop_up_text('Running some task...')
+        self.pop_up.open()
 
+    #загрузка списка
+    def load_data(self):
 
-            res = sorted(res, key=get_number)
-            for i in res:
-                # текст задачи
-                if i[2] != '':
-                    disposal_text = i[2]
-                else:
-                    disposal_text = 'ПУСТО'
+        if self.app.current_filter == 'NotReaded':
+            res = GetResult('getDisposalList', {'readed': 0},
+                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                             'Disabled'])
+        else:
+            res = GetResult('getDisposalList', {'isExecute': 0},
+                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                             'Disabled'])
 
-                # номер + тема задачи
-                theme_text = (i[0] + ' ' + i[1])
-                if len(theme_text) > 30:
-                    theme_text = theme_text[:27] + '...'
+        res = sorted(res, key=get_number)
+        for i in res:
+            # текст задачи
+            if i[2] != '':
+                disposal_text = i[2]
+            else:
+                disposal_text = 'ПУСТО'
 
-                #позиция задачи
-                item = DisposalItem(
-                    text=theme_text,
-                    secondary_text=disposal_text,
-                    data=i
-                )
-                self.add_widget(item)
+            # номер + тема задачи
+            theme_text = (i[0] + ' ' + i[1])
+            if len(theme_text) > 30:
+                theme_text = theme_text[:27] + '...'
 
+            # позиция задачи
+            item = DisposalItem(
+                text=theme_text,
+                secondary_text=disposal_text,
+                data=i
+            )
+            self.add_widget(item)
+            #self.pop_up.dismiss()
             toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
-        except:
-            #сообщение об ошибке
-            content = MDLabel(
-                font_style='Body1',
-                text=self.app.translation._('Нет подключения, проверьте настройки!'),
-                size_hint_y=None,
-                valign='top')
-            content.bind(texture_size=content.setter('size'))
-            self.dialog = MDDialog(title="Внимание",
-                                   content=content,
-                                   size_hint=(.8, None),
-                                   height=dp(200))
 
-            self.dialog.add_action_button("ОК",
-                                          action=lambda *x: self.dialog.dismiss())
-            self.dialog.open()
+    #обновление списка задач
+    def refresh_list(self):
+        Clock.schedule_once(self.show_popup, 0)
+        #self.load_data()
+        mythread = threading.Thread(target=self.load_data())
+        mythread.start()
+        # try:
+        # except:
+        #     #сообщение об ошибке
+        #     content = MDLabel(
+        #         font_style='Body1',
+        #         text=self.app.translation._('Нет подключения, проверьте настройки!'),
+        #         size_hint_y=None,
+        #         valign='top')
+        #     content.bind(texture_size=content.setter('size'))
+        #     self.dialog = MDDialog(title="Внимание",
+        #                            content=content,
+        #                            size_hint=(.8, None),
+        #                            height=dp(200))
+        #
+        #     self.dialog.add_action_button("ОК",
+        #                                   action=lambda *x: self.dialog.dismiss())
+        #     self.dialog.open()
 
 

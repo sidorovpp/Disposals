@@ -20,7 +20,7 @@ from os.path import join
 NICK_NAME_AND_NAME_REPOSITORY = 'REPO_PROJECT'
 
 directory = os.path.split(os.path.abspath(sys.argv[0]))[0]
-sys.path.insert(0, os.path.join(directory, 'libs/applibs'))
+#sys.path.insert(0, os.path.join(directory, 'libs/applibs'))
 
 try:
     import webbrowser
@@ -43,7 +43,7 @@ try:
 
     from kivymd.theming import ThemeManager
 
-    from bugreporter import BugReporter
+    from libs.applibs.bugreporter import BugReporter
 except Exception:
     traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
     sys.exit(1)

@@ -6,8 +6,6 @@ from os.path import pardir
 from os.path import realpath
 from kivy.config import ConfigParser
 import libs.uix.baseclass.disposalsdroid as DisposalsDroid
-import traceback
-from shutil import copyfile
 
 #проверка непрочитанных задач и уведомление
 def check_disposals():
@@ -15,19 +13,14 @@ def check_disposals():
     if len(res) > 0:
         from plyer import notification
         from plyer import vibrator
-        from plyer.utils import platform
 
         title = 'Есть непрочитанные задачи'
         message = 'Непрочитанных задач:' + str(len(res))
         ticker = 'Уведомление'
         kwargs = {'title': title, 'message': message}
         kwargs['app_name'] = 'disposals'
-        if platform == "win":
-            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
-            kwargs['timeout'] = 4
-        else:
-            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
-            kwargs['ticker'] = ticker
+        kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
+        kwargs['ticker'] = ticker
         #вибрация
         vibrator.vibrate(0.5)
         #показываем уведомление
@@ -48,5 +41,6 @@ if __name__ == '__main__':
 
 
     except Exception as E:
+        #пишу в папку на карту ошибку (андроид)
         with open('/sdcard/disposals/service_error.log', 'w+') as f:
             f.write(str(E))

@@ -86,8 +86,13 @@
                     events_callback: app.refresh_list
 
                 SingleIconItem:
+                    icon: 'filter'
+                    text: app.translation._('Фильтр')
+                    events_callback: app.filter_list
+
+                SingleIconItem:
                     icon: 'settings'
-                    text: app.translation._('Настройка')
+                    text: app.translation._('Настройки')
                     events_callback: app.show_settings
 
                 SingleIconItem:
