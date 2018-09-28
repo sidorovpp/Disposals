@@ -108,7 +108,7 @@ class DisposalList(MDList):
                             ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                              'Disabled'])
         else:
-            res = GetResult('getDisposalList', {'isExecute': 0},
+            res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
                             ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                              'Disabled'])
 
@@ -137,9 +137,9 @@ class DisposalList(MDList):
 
     #обновление списка задач
     def refresh_list(self):
-        Clock.schedule_once(self.show_spinner, 0)
-        #self.load_data()
+
         try:
+            #self.load_data()
             mythread = threading.Thread(target=self.load_data())
             mythread.start()
         except:
