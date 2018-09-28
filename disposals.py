@@ -223,11 +223,12 @@ class Disposals(App):
 
         def select_filter(filter):
             for key in self.filter_items.keys():
-                if filter == self.filter_items[key]:
+                if (filter == self.filter_items[key]) and (self.current_filter != key):
                     self.current_filter = key
                     self.config.set('General', 'filter', self.current_filter)
                     self.config.write()
                     self.window_filter.dismiss()
+                    self.set_value_from_config()
                     self.refresh_list()
 
         dict_info_filters = {}

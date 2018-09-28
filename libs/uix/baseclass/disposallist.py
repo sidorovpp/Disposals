@@ -92,27 +92,19 @@ def get_number(i):
 
 class DisposalList(MDList):
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.app = App.get_running_app()
 
-    def show_spinner(self, *args):
-        self.app.screen.ids.base.ids.spinner.active = True
+    def start_spinner(self, *args):
+        self.app.screen.ids.base.spinner.active = True
 
-    #загрузка списка
-    def load_data(self):
+    @mainthread
+    def stop_spinner(self, *args):
+        self.app.screen.ids.base.spinner.active = False
 
-        if self.app.current_filter == 'NotReaded':
-            res = GetResult('getDisposalList', {'readed': 0},
-                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                             'Disabled'])
-        else:
-            res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
-                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                             'Disabled'])
-
-        res = sorted(res, key=get_number)
+    @mainthread
+    def make_list(self, res):
         for i in res:
             # текст задачи
             if i[2] != '':
@@ -133,14 +125,33 @@ class DisposalList(MDList):
             )
             self.add_widget(item)
             self.app.screen.ids.base.ids.spinner.active = False
-            toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
+        self.stop_spinner()
+        toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
+
+    #загрузка списка
+    def load_data(self):
+
+        Clock.schedule_once(self.start_spinner, 0)
+        if self.app.current_filter == 'NotReaded':
+            res = GetResult('getDisposalList', {'readed': 0},
+                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                             'Disabled'])
+        else:
+            res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
+                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                             'Disabled'])
+
+        res = sorted(res, key=get_number)
+
+        #формируем список
+        self.make_list(res)
 
     #обновление списка задач
     def refresh_list(self):
 
         try:
             #self.load_data()
-            mythread = threading.Thread(target=self.load_data())
+            mythread = threading.Thread(target=self.load_data)
             mythread.start()
         except:
             #сообщение об ошибке
