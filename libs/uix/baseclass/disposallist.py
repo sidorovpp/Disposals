@@ -124,7 +124,6 @@ class DisposalList(MDList):
                 data=i
             )
             self.add_widget(item)
-            self.app.screen.ids.base.ids.spinner.active = False
         self.stop_spinner()
         toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
