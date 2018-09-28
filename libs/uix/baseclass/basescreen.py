@@ -14,11 +14,6 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty
 
-class PopupBox(Popup):
-    pop_up_text = ObjectProperty()
-    def update_pop_up_text(self, p_message):
-        self.pop_up_text.text = p_message
-
 class BaseScreen(Screen):
 
     def refresh_list(self):

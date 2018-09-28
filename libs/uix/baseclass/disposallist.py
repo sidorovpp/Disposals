@@ -10,6 +10,7 @@ from libs.applibs.toast import toast
 import threading
 from kivy.factory import Factory
 from kivy.clock import Clock, mainthread
+import time
 
 class IconLeftSampleWidget(ILeftBodyTouch, MDIconButton):
     pass
@@ -96,10 +97,8 @@ class DisposalList(MDList):
         super().__init__(*args, **kwargs)
         self.app = App.get_running_app()
 
-    def show_popup(self, *args):
-        self.pop_up = Factory.PopupBox()
-        self.pop_up.update_pop_up_text('Running some task...')
-        self.pop_up.open()
+    def show_spinner(self, *args):
+        self.app.screen.ids.base.ids.spinner.active = True
 
     #загрузка списка
     def load_data(self):
@@ -133,31 +132,31 @@ class DisposalList(MDList):
                 data=i
             )
             self.add_widget(item)
-            #self.pop_up.dismiss()
+            self.app.screen.ids.base.ids.spinner.active = False
             toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
     #обновление списка задач
     def refresh_list(self):
-        Clock.schedule_once(self.show_popup, 0)
+        Clock.schedule_once(self.show_spinner, 0)
         #self.load_data()
-        mythread = threading.Thread(target=self.load_data())
-        mythread.start()
-        # try:
-        # except:
-        #     #сообщение об ошибке
-        #     content = MDLabel(
-        #         font_style='Body1',
-        #         text=self.app.translation._('Нет подключения, проверьте настройки!'),
-        #         size_hint_y=None,
-        #         valign='top')
-        #     content.bind(texture_size=content.setter('size'))
-        #     self.dialog = MDDialog(title="Внимание",
-        #                            content=content,
-        #                            size_hint=(.8, None),
-        #                            height=dp(200))
-        #
-        #     self.dialog.add_action_button("ОК",
-        #                                   action=lambda *x: self.dialog.dismiss())
-        #     self.dialog.open()
+        try:
+            mythread = threading.Thread(target=self.load_data())
+            mythread.start()
+        except:
+            #сообщение об ошибке
+            content = MDLabel(
+                font_style='Body1',
+                text=self.app.translation._('Нет подключения, проверьте настройки!'),
+                size_hint_y=None,
+                valign='top')
+            content.bind(texture_size=content.setter('size'))
+            self.dialog = MDDialog(title="Внимание",
+                                   content=content,
+                                   size_hint=(.8, None),
+                                   height=dp(200))
+
+            self.dialog.add_action_button("ОК",
+                                          action=lambda *x: self.dialog.dismiss())
+            self.dialog.open()
 
 
