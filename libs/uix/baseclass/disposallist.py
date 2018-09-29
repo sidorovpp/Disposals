@@ -145,12 +145,12 @@ class DisposalList(RecycleView):
                             ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                              'Disabled'])
         else:
-            #res = GetResult('getDisposalList', {'isExecute': 0},
-            #                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-            #                 'Disabled'])
-            res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
-                             ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                              'Disabled'])
+            res = GetResult('getDisposalList', {'isExecute': 0},
+                           ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                            'Disabled'])
+            # res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
+            #                  ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+            #                   'Disabled'])
 
         res = sorted(res, key=get_number)
 
