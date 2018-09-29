@@ -276,7 +276,11 @@ class Disposals(App):
         self.window_language.open()
 
     def dialog_exit(self):
-        pass
+        #Прячу приложение, при выходе выдаёт ошибку (пока не разобрался)
+        if platform == 'android':
+            from jnius import autoclass
+            activity = autoclass('org.kivy.android.PythonActivity').mActivity
+            activity.moveTaskToBack(True)
     #    def check_interval_press(interval):
     #        self.exit_interval += interval
     #        if self.exit_interval > 5:
