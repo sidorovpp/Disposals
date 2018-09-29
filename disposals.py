@@ -123,7 +123,10 @@ class Disposals(App):
             pass
 
     def test(self, *args):
-        pass
+        if platform == 'android':
+            from jnius import autoclass
+            activity = autoclass('org.kivy.android.PythonActivity').mActivity
+            activity.moveTaskToBack(True)
 
     def start_service(self):
         if platform == 'android':
