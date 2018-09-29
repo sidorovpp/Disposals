@@ -1,7 +1,6 @@
 #список задач
-from kivymd.list import MDList, OneLineIconListItem, ILeftBody, BaseListItem, OneLineListItem, TwoLineIconListItem, ILeftBodyTouch, TwoLineListItem
 from libs.uix.baseclass.disposalsdroid import GetResult
-from kivymd.button import MDIconButton
+from kivymd.button import MDIconButton, MDFlatButton, MDRaisedButton
 from kivy.app import App
 from kivymd.label import MDLabel
 from kivymd.dialog import MDDialog
@@ -10,36 +9,60 @@ from libs.applibs.toast import toast
 import threading
 from kivy.factory import Factory
 from kivy.clock import Clock, mainthread
+from kivy.uix.recycleview import RecycleView
 import time
 
-class IconLeftSampleWidget(ILeftBodyTouch, MDIconButton):
-    pass
+class DisposalItem(MDFlatButton):
 
-class DisposalItem(TwoLineIconListItem):
+    _rawdata = []
 
-    def __init__(self, data, *args, **kwargs):
+    def get_rawdata(self):
+        return self._rawdata
+
+    def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
 
         self.app = App.get_running_app()
 
-        # иконка и цвет выполнения
-        if data[6] == '0':
-            icon_text = 'clock'
+    def set_rawdata(self, val):
+        self._rawdata = val
+        self.data = dict({'Number': self.rawdata[0],
+                          'Theme': self.rawdata[1],
+                          'Task': self.rawdata[5],
+                          'ShortTask': self.rawdata[2],
+                          'Receiver_id': self.rawdata[4],
+                          'Sender_id': self.rawdata[3],
+                          'IsComplete': self.rawdata[6],
+                          'IsDisallowed': self.rawdata[8],
+                          'IsReaded': self.rawdata[7]
+                          })
+        #номер
+        self.number_label.text = '[color=ff3333]{0}[/color]'.format(self.data['Number'])
+        #тема
+        theme = self.data['Theme']
+        if len(theme) > 30:
+            theme = theme[:27] + '...'
+        theme = theme.replace('\n', ' ')
+        text = self.data['ShortTask'].replace('\n', ' ')
+        #иконка и цвет выполнения
+        if self.data['IsComplete'] == '0':
+            self.icon.icon_text = 'clock'
+            self.theme_label.text = '{0}'.format(theme)
+            self.text_label.text = '{0}'.format(text)
         else:
-            icon_text = 'calendar-check'
-            self.secondary_theme_text_color = 'Custom'
-            self.secondary_text_color = [0.2, 0.5, 0.2, 1]
-            self.ripple_color = [0.2, 0.5, 0.2, 1]
+            self.icon.icon_text = 'calendar-check'
+            self.theme_label.text = '[color=#009933]{0}[/color]'.format(theme)
+            self.text_label.text = '[color=#009933]{0}[/color]'.format(text)
 
+        if self.data['IsReaded'] == '0':
+            self.theme_label.text = '[b]{0}[/b]'.format(self.theme_label.text)
+            self.text_label.text = '[b]{0}[/b]'.format(self.text_label.text)
         #иконка и шрифт отклонения
-        if data[8] == '1':
-            icon_text = 'stop'
-            self.secondary_theme_text_color = 'Custom'
-            self.secondary_text_color = [1, 0, 0, 1]
+        if self.data['IsDisallowed'] == '1':
+            self.icon.icon_text = 'stop'
 
-        self.add_widget(IconLeftSampleWidget(icon=icon_text))
 
-        self.data = dict({'Number':data[0],'Theme':data[1],'Task':data[5], 'Receiver_id':data[4], 'Sender_id':data[3]})
+    rawdata = property(get_rawdata, set_rawdata)
 
     def set_readed(self):
         try:
@@ -90,10 +113,10 @@ class DisposalItem(TwoLineIconListItem):
 def get_number(i):
     return i[0]
 
-class DisposalList(MDList):
+class DisposalList(RecycleView):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(DisposalList, self).__init__(*args, **kwargs)
         self.app = App.get_running_app()
 
     def start_spinner(self, *args):
@@ -105,25 +128,11 @@ class DisposalList(MDList):
 
     @mainthread
     def make_list(self, res):
+        self.data = []
+
         for i in res:
-            # текст задачи
-            if i[2] != '':
-                disposal_text = i[2]
-            else:
-                disposal_text = 'ПУСТО'
+            self.data.append({'rawdata': i,'height': 70})
 
-            # номер + тема задачи
-            theme_text = (i[0] + ' ' + i[1])
-            if len(theme_text) > 30:
-                theme_text = theme_text[:27] + '...'
-
-            # позиция задачи
-            item = DisposalItem(
-                text=theme_text,
-                secondary_text=disposal_text,
-                data=i
-            )
-            self.add_widget(item)
         self.stop_spinner()
         toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
@@ -136,9 +145,12 @@ class DisposalList(MDList):
                             ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                              'Disabled'])
         else:
+            #res = GetResult('getDisposalList', {'isExecute': 0},
+            #                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+            #                 'Disabled'])
             res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
-                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                             'Disabled'])
+                             ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                              'Disabled'])
 
         res = sorted(res, key=get_number)
 
@@ -149,7 +161,7 @@ class DisposalList(MDList):
     def refresh_list(self):
 
         try:
-            #self.load_data()
+            self.load_data()
             mythread = threading.Thread(target=self.load_data)
             mythread.start()
         except:

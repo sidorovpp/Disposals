@@ -17,7 +17,7 @@ from kivy.properties import ObjectProperty
 class BaseScreen(Screen):
 
     def refresh_list(self):
-        self.ids.disposal_list.clear_widgets()
+        #self.ids.disposal_list.clear_widgets()
         self.ids.disposal_list.refresh_list()
 
     def add_refresh_button(self):

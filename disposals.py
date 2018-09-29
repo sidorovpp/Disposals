@@ -210,7 +210,7 @@ class Disposals(App):
     def refresh_list(self, *args):
         if self.nav_drawer.state == 'open':
             self.nav_drawer._toggle()
-        self.screen.ids.base.ids.disposal_list.clear_widgets()
+        #self.screen.ids.base.ids.disposal_list.clear_widgets()
         self.screen.ids.base.ids.disposal_list.refresh_list()
 
 

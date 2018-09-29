@@ -22,12 +22,63 @@
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         active: False
 
+    DisposalList:
+        id: disposal_list
+        viewclass: 'DisposalItem'
+        do_scroll_x: False
+        scroll_timeout: 100
+
+        RecycleBoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: self.minimum_height
+            default_size_hint: 1, None
+
+<DisposalList@RecycleView>
+
+<DisposalItem>
+    theme_label: theme_label
+    text_label: text_label
+    number_label: number_label
+    icon: icon
+
+    MDLabel:
+        id: icon
+        icon_text: 'checkbox-blank-circle'
+        font_style: 'Icon'
+        text: u"{}".format(md_icons[self.icon_text])
+        theme_text_color: root.theme_text_color
+        text_color: root.text_color
+        disabled: root.disabled
+        pos_hint: {'x': 1, 'center_y': 0.5}
+        opposite_colors: root.opposite_colors
+
     BoxLayout:
+        padding: [40,0,0,0]
         orientation: 'vertical'
-
-        ScrollView:
-            do_scroll_x: False  # Important for MD compliance
-            DisposalList:
-                id: disposal_list
-
-<DisposalList>
+        MDSeparator:
+        Label:
+            id: number_label
+            halign: 'left'
+            text_size: self.width, None
+            size_hint: 1, None
+            height: self.texture_size[1]
+            color: 0, 0, 0, 1
+            markup: True
+        Label:
+            id: theme_label
+            halign: 'left'
+            text_size: self.width, None
+            size_hint: 1, None
+            height: self.texture_size[1]
+            color: 0, 0, 0, 1
+            markup: True
+        Label:
+            id: text_label
+            halign: 'left'
+            text_size: self.width, None
+            size_hint: 1, None
+            height: self.texture_size[1]
+            color: 0, 0, 0, 1
+            markup: True
+        Widget:
