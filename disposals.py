@@ -124,38 +124,6 @@ class Disposals(App):
 
     def test(self, *args):
         if platform == 'android':
-            from jnius import autoclass
-            Context = autoclass('android.content.Context')
-            Intent = autoclass('android.content.Intent')
-            PendingIntent = autoclass('android.app.PendingIntent')
-            AndroidString = autoclass('java.lang.String')
-            NotificationBuilder = autoclass('android.app.Notification$Builder')
-            Notification = autoclass('android.app.Notification')
-            PythonActivity = autoclass('org.kivy.android.PythonActivity').mActivity
-            service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
-
-            app_context = service.getApplication().getApplicationContext()
-            notification_builder = NotificationBuilder(app_context)
-            title = AndroidString('Уведомления'.encode('utf-8'))
-            message = AndroidString('У вас есть непрочитанные уведомления'.encode('utf-8'))
-            notification_intent = Intent(app_context, PythonActivity)
-            notification_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                         Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
-            notification_intent.setAction(Intent.ACTION_MAIN)
-            notification_intent.addCategory(Intent.CATEGORY_LAUNCHER)
-            intent = PendingIntent.getActivity(service, 0, notification_intent, 0)
-            notification_builder.setContentTitle(title)
-            notification_builder.setContentText(message)
-            notification_builder.setContentIntent(intent)
-            Drawable = autoclass("{}.R$drawable".format(service.getPackageName()))
-            icon = getattr(Drawable, 'icon')
-            notification_builder.setSmallIcon(icon)
-            notification_builder.setAutoCancel(True)
-            new_notification = notification_builder.getNotification()
-            service.startForeground(1, new_notification)
-
-    def start_service(self):
-        if platform == 'android':
             import jnius
             Context = jnius.autoclass('android.content.Context')
             Intent = jnius.autoclass('android.content.Intent')
@@ -166,14 +134,11 @@ class Disposals(App):
             service_name = 'S1'
             package_name = 'com.something'
             service = jnius.autoclass('org.kivy.android.PythonService').mService
-            # Previous version of Kivy had a reference to the service like below.
-            # service = jnius.autoclass('{}.Service{}'.format(package_name, service_name)).mService
             PythonActivity = jnius.autoclass('org.kivy.android' + '.PythonActivity')
             app_context = service.getApplication().getApplicationContext()
             notification_builder = NotificationBuilder(app_context)
             title = AndroidString("EzTunes".encode('utf-8'))
             message = AndroidString("Ready to play music.".encode('utf-8'))
-            app_class = service.getApplication().getClass()
             notification_intent = Intent(app_context, PythonActivity)
             notification_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                          Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -188,9 +153,15 @@ class Disposals(App):
             notification_builder.setSmallIcon(icon)
             notification_builder.setAutoCancel(True)
             new_notification = notification_builder.getNotification()
-            # Below sends the notification to the notification bar; nice but not a foreground service.
-            # notification_service.notify(0, new_noti)
             service.startForeground(1, new_notification)
+
+    def start_service(self):
+        if platform == 'android':
+            from jnius import autoclass
+            service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
+            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
+            service.start(mActivity, '')
+
 
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
