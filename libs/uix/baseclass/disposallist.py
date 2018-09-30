@@ -15,45 +15,35 @@ import time
 
 class DisposalItem(MDFlatButton):
 
-    _rawdata = []
+    _data = []
 
-    def get_rawdata(self):
-        return self._rawdata
+    def get_data(self):
+        return self._data
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
 
         self.app = App.get_running_app()
 
-    def set_rawdata(self, val):
-        self._rawdata = val
-        self.data = dict({'Number': self.rawdata[0],
-                          'Theme': self.rawdata[1],
-                          'Task': self.rawdata[5],
-                          'ShortTask': self.rawdata[2],
-                          'Receiver_id': self.rawdata[4],
-                          'Sender_id': self.rawdata[3],
-                          'IsComplete': self.rawdata[6],
-                          'IsDisallowed': self.rawdata[8],
-                          'IsReaded': self.rawdata[7]
-                          })
+    def set_data(self, val):
+        self._data = val
         # номер
-        self.number_label.text = '[color=ff3333]{0}[/color]'.format(self.data['Number'])
+        self.number_label.text = '[color=#003380]{0}[/color]'.format(self.data['Number'])
         # тема
         theme = self.data['Theme']
-        if len(theme) > 30:
-            theme = theme[:27] + '...'
         theme = theme.replace('\n', ' ')
-        text = self.data['ShortTask'].replace('\n', ' ')
+        text = self.data['Task'].replace('\n', ' ')
+        self.theme_label.text = '{0}'.format(theme)
+        self.text_label.text = '{0}'.format(text)
         # иконка и цвет выполнения
         if self.data['IsComplete'] == '0':
             self.icon.icon_text = 'clock'
-            self.theme_label.text = '{0}'.format(theme)
-            self.text_label.text = '{0}'.format(text)
+            self.icon.text_color = [1, 0, 0, 1]
         else:
             self.icon.icon_text = 'calendar-check'
-            self.theme_label.text = '[color=#009933]{0}[/color]'.format(theme)
-            self.text_label.text = '[color=#009933]{0}[/color]'.format(text)
+            self.icon.text_color = [0, 1, 0, 1]
+            #self.theme_label.text = '[color=#009933]{0}[/color]'.format(theme)
+            #self.text_label.text = '[color=#009933]{0}[/color]'.format(text)
 
         if self.data['IsReaded'] == '0':
             self.theme_label.text = '[b]{0}[/b]'.format(self.theme_label.text)
@@ -62,7 +52,7 @@ class DisposalItem(MDFlatButton):
         if self.data['IsDisallowed'] == '1':
             self.icon.icon_text = 'stop'
 
-    rawdata = property(get_rawdata, set_rawdata)
+    data = property(get_data, set_data)
 
     def set_readed(self):
         try:
@@ -70,37 +60,36 @@ class DisposalItem(MDFlatButton):
         except:
             pass
 
-    def set_disposal_params(self):
-        Receiver = GetResult('getStaff', {'id': int(self.data['Receiver_id'])}, ['userName'])[0][0]
-        Sender = GetResult('getStaff', {'id': int(self.data['Sender_id'])}, ['userName'])[0][0]
+    def set_disposal_params(self, item_data):
+        Receiver = GetResult('getStaff', {'id': int(item_data['Receiver_id'])}, ['userName'])[0][0]
+        Sender = GetResult('getStaff', {'id': int(item_data['Sender_id'])}, ['userName'])[0][0]
 
-        self.data['Receiver'] = Receiver
-        self.data['Sender'] = Sender
+        item_data['Receiver'] = Receiver
+        item_data['Sender'] = Sender
 
-        self.app.screen.ids.disposal.set_params(self.data)
+        self.app.screen.ids.disposal.set_params(item_data)
 
     # ищем следующий элемент
     def show_next(self):
-        k = 0
-        for w in self.parent.walk():
-            if k == 1 and isinstance(w, DisposalItem):
-                w.on_release()
+        number = self.app.screen.ids.disposal.number.text
+
+        for i in self.parent.parent.data:
+            if i['data']['Number'] > number:
+                self.set_disposal_params(i['data'])
                 break
-            if w == self:
-                k = 1
 
     # ищем предыдущий элемент
     def show_prior(self):
-        prior = None
-        for w in self.parent.walk():
-            if w == self and prior != None:
-                prior.on_release()
-            if isinstance(w, DisposalItem):
-                prior = w
+        number = self.app.screen.ids.disposal.number.text
+
+        for i in self.parent.parent.data[::-1]:
+            if i['data']['Number'] < number:
+                self.set_disposal_params(i['data'])
+                break
 
     def on_release(self):
         # считываем отправителя, получателя и добавляем к data
-        self.set_disposal_params()
+        self.set_disposal_params(self.data)
         self.app.manager.current = 'disposal'
         self.app.screen.ids.action_bar.title = self.app.translation._('Задача')
 
@@ -133,10 +122,21 @@ class DisposalList(RecycleView):
         self.data = []
 
         for i in res:
-            self.data.append({'rawdata': i,'height': dp(70)})
+            item = dict({'Number': i[0],
+                        'Theme': i[1],
+                        'Task': i[5],
+                        'ShortTask': i[2],
+                        'Receiver_id': i[4],
+                        'Sender_id': i[3],
+                        'IsComplete': i[6],
+                        'IsDisallowed': i[8],
+                        'IsReaded': i[7]
+                        })
+
+            self.data.append({'data': item,'height': dp(70)})
 
         self.stop_spinner()
-        toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
+        #toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
     # загрузка списка
     def load_data(self):

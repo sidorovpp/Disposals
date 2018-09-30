@@ -47,8 +47,8 @@
         icon_text: 'checkbox-blank-circle'
         font_style: 'Icon'
         text: u"{}".format(md_icons[self.icon_text])
-        theme_text_color: root.theme_text_color
-        text_color: root.text_color
+        theme_text_color: 'Custom'
+        text_color: 1, 0, 0, 1
         disabled: root.disabled
         pos_hint: {'x': 1, 'center_y': 0.5}
         opposite_colors: root.opposite_colors
@@ -62,23 +62,27 @@
             halign: 'left'
             text_size: self.width, None
             size_hint: 1, None
-            height: self.texture_size[1]
+            height: dp(20)
             color: 0, 0, 0, 1
             markup: True
         Label:
             id: theme_label
             halign: 'left'
-            text_size: self.width, None
+            text_size:self.width, dp(20)
             size_hint: 1, None
-            height: self.texture_size[1]
+            height: dp(20)
+            shorten: True
+            shorten_from: 'right'
             color: 0, 0, 0, 1
             markup: True
         Label:
             id: text_label
             halign: 'left'
-            text_size: self.width, None
+            text_size: self.width, dp(20)
             size_hint: 1, None
-            height: self.texture_size[1]
+            height: dp(20)
+            shorten: True
+            shorten_from: 'right'
             color: 0, 0, 0, 1
             markup: True
         Widget:
