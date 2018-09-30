@@ -1,4 +1,4 @@
-#список задач
+# список задач
 from libs.uix.baseclass.disposalsdroid import GetResult
 from kivymd.button import MDIconButton, MDFlatButton, MDRaisedButton
 from kivy.app import App
@@ -11,6 +11,7 @@ from kivy.factory import Factory
 from kivy.clock import Clock, mainthread
 from kivy.uix.recycleview import RecycleView
 import time
+
 
 class DisposalItem(MDFlatButton):
 
@@ -36,15 +37,15 @@ class DisposalItem(MDFlatButton):
                           'IsDisallowed': self.rawdata[8],
                           'IsReaded': self.rawdata[7]
                           })
-        #номер
+        # номер
         self.number_label.text = '[color=ff3333]{0}[/color]'.format(self.data['Number'])
-        #тема
+        # тема
         theme = self.data['Theme']
         if len(theme) > 30:
             theme = theme[:27] + '...'
         theme = theme.replace('\n', ' ')
         text = self.data['ShortTask'].replace('\n', ' ')
-        #иконка и цвет выполнения
+        # иконка и цвет выполнения
         if self.data['IsComplete'] == '0':
             self.icon.icon_text = 'clock'
             self.theme_label.text = '{0}'.format(theme)
@@ -57,10 +58,9 @@ class DisposalItem(MDFlatButton):
         if self.data['IsReaded'] == '0':
             self.theme_label.text = '[b]{0}[/b]'.format(self.theme_label.text)
             self.text_label.text = '[b]{0}[/b]'.format(self.text_label.text)
-        #иконка и шрифт отклонения
+        # иконка и шрифт отклонения
         if self.data['IsDisallowed'] == '1':
             self.icon.icon_text = 'stop'
-
 
     rawdata = property(get_rawdata, set_rawdata)
 
@@ -79,39 +79,41 @@ class DisposalItem(MDFlatButton):
 
         self.app.screen.ids.disposal.set_params(self.data)
 
-    #ищем следующий элемент
+    # ищем следующий элемент
     def show_next(self):
         k = 0
         for w in self.parent.walk():
             if k == 1 and isinstance(w, DisposalItem):
-                w.on_press()
+                w.on_release()
                 break
             if w == self:
                 k = 1
 
-    #ищем предыдущий элемент
+    # ищем предыдущий элемент
     def show_prior(self):
         prior = None
         for w in self.parent.walk():
             if w == self and prior != None:
-                prior.on_press()
+                prior.on_release()
             if isinstance(w, DisposalItem):
                 prior = w
 
-    def on_press(self):
-        #считываем отправителя, получателя и добавляем к data
+    def on_release(self):
+        # считываем отправителя, получателя и добавляем к data
         self.set_disposal_params()
         self.app.manager.current = 'disposal'
         self.app.screen.ids.action_bar.title = self.app.translation._('Задача')
 
-        #добавляем кнопки следующая, предыдущая, назад и прочитано
+        # добавляем кнопки следующая, предыдущая, назад и прочитано
         self.app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: self.app.back_screen(27)]]
         self.app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()],
                                                              ['skip-previous', lambda x: self.show_prior()],
                                                              ['skip-next', lambda x: self.show_next()]]
 
+
 def get_number(i):
     return i[0]
+
 
 class DisposalList(RecycleView):
 
@@ -136,7 +138,7 @@ class DisposalList(RecycleView):
         self.stop_spinner()
         toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
-    #загрузка списка
+    # загрузка списка
     def load_data(self):
 
         Clock.schedule_once(self.start_spinner, 0)
@@ -154,10 +156,10 @@ class DisposalList(RecycleView):
 
         res = sorted(res, key=get_number)
 
-        #формируем список
+        # формируем список
         self.make_list(res)
 
-    #обновление списка задач
+    # обновление списка задач
     def refresh_list(self):
 
         try:
@@ -165,7 +167,7 @@ class DisposalList(RecycleView):
             mythread = threading.Thread(target=self.load_data)
             mythread.start()
         except:
-            #сообщение об ошибке
+            # сообщение об ошибке
             content = MDLabel(
                 font_style='Body1',
                 text=self.app.translation._('Нет подключения, проверьте настройки!'),
