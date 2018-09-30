@@ -131,7 +131,7 @@ class DisposalList(RecycleView):
         self.data = []
 
         for i in res:
-            self.data.append({'rawdata': i,'height': 70})
+            self.data.append({'rawdata': i,'height': dp(70)})
 
         self.stop_spinner()
         toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
