@@ -73,9 +73,14 @@ class Disposal(Screen):
         try:
             self.ids.notes.data = []
             Notes = GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
-            for item in Notes:
-                self.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
-                self.notes.data.append({'text':'{0}'.format(item[2])})
+            if Notes != []:
+                for item in Notes:
+                    self.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
+                    self.notes.data.append({'text':'{0}'.format(item[2])})
+                #self.notes.size_hint_y = 1
+            else:
+                pass
+                #self.notes.size_hint_y = 0
         finally:
             self.ids.spinner.active = False
 
