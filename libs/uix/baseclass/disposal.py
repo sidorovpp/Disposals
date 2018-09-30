@@ -16,10 +16,10 @@ from kivymd.dialog import MDDialog
 from kivymd.textfields import MDTextField
 from kivy.metrics import dp
 from libs.uix.baseclass.disposalsdroid import GetResult
-from kivy.app import App
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
-from kivy.uix.recycleboxlayout import RecycleBoxLayout
+import threading
+from kivy.clock import Clock, mainthread
 
 class AddCommentButton(MDFloatingActionButton):
 
@@ -68,21 +68,28 @@ class TaskLabel(Label):
 
 class Disposal(Screen):
 
+    def start_spinner(self, *args):
+        self.spinner.active = True
+
+    @mainthread
+    def stop_spinner(self, *args):
+        self.spinner.active = False
+
     def load_comments(self):
-        self.ids.spinner.active = True
-        try:
-            self.ids.notes.data = []
-            Notes = GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
-            if Notes != []:
-                for item in Notes:
-                    self.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
-                    self.notes.data.append({'text':'{0}'.format(item[2])})
-                #self.notes.size_hint_y = 1
-            else:
-                pass
-                #self.notes.size_hint_y = 0
-        finally:
-            self.ids.spinner.active = False
+        Clock.schedule_once(self.start_spinner, 0)
+        self.ids.notes.data = []
+        Notes = GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
+        if Notes != []:
+            for item in Notes:
+                self.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
+                self.notes.data.append({'text':'{0}'.format(item[2])})
+            #self.task.size_hint_y = 1
+            #self.notes.size_hint_y = 1
+        else:
+            pass
+            #self.task.size_hint_y = 1
+            #self.notes.size_hint_y = 0
+        self.stop_spinner()
 
     def set_params(self, params):
         self.ids.number.text = params['Number']
@@ -99,6 +106,8 @@ class Disposal(Screen):
             k = s.find('\n')
         self.ids.task.data.append({'text':s})
 
-        self.load_comments()
+        mythread = threading.Thread(target=self.load_comments)
+        mythread.start()
+
 
 

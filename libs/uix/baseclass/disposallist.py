@@ -7,7 +7,6 @@ from kivymd.dialog import MDDialog
 from kivy.metrics import dp
 from libs.applibs.toast import toast
 import threading
-from kivy.factory import Factory
 from kivy.clock import Clock, mainthread
 from kivy.uix.recycleview import RecycleView
 import time
@@ -56,7 +55,8 @@ class DisposalItem(MDFlatButton):
 
     def set_readed(self):
         try:
-            GetResult('SetTaskRead', {'id': int(self.data['Number'])}, [])
+            number = self.app.screen.ids.disposal.number.text
+            GetResult('SetTaskRead', {'id': int(number)}, [])
         except:
             pass
 
@@ -163,7 +163,6 @@ class DisposalList(RecycleView):
     def refresh_list(self):
 
         try:
-            self.load_data()
             mythread = threading.Thread(target=self.load_data)
             mythread.start()
         except:
