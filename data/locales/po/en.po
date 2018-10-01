@@ -117,10 +117,10 @@ msgstr "Disposals loaded:"
 msgid "Непрочитанные"
 msgstr "Unread disposals"
 
-msgid "Задачи от меня в работе"
+msgid "Задачи от меня"
 msgstr "From me"
 
-msgid "Задачи на меня в работе"
+msgid "Задачи на меня"
 msgstr "To me"
 
 msgid "Все в работе"

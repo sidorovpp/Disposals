@@ -62,8 +62,8 @@ class Disposals(App):
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
         self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
-                             'FromMe': self.translation._('Задачи от меня в работе'),
-                             'ToMe': self.translation._('Задачи на меня в работе'),
+                             'FromMe': self.translation._('Задачи от меня'),
+                             'ToMe': self.translation._('Задачи на меня'),
                              'MyNotComplete': self.translation._('Все в работе')}
 
     def build(self):
