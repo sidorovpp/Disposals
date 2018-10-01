@@ -106,6 +106,8 @@ def get_number(i):
 
 class DisposalList(RecycleView):
 
+    StaffID = None
+
     def __init__(self, *args, **kwargs):
         super(DisposalList, self).__init__(*args, **kwargs)
         self.app = App.get_running_app()
@@ -138,48 +140,64 @@ class DisposalList(RecycleView):
         self.stop_spinner()
         #toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
+    @mainthread
+    def show_connect_error(self):
+        content = MDLabel(
+            font_style='Body1',
+            text=self.app.translation._('Нет подключения, проверьте настройки!'),
+            size_hint_y=None,
+            valign='top')
+        content.bind(texture_size=content.setter('size'))
+        self.dialog = MDDialog(title=self.app.translation._('Внимание'),
+                               content=content,
+                               size_hint=(.8, None),
+                               height=dp(200))
+
+        self.dialog.add_action_button("ОК",
+                                      action=lambda *x: self.dialog.dismiss())
+        self.dialog.open()
+
     # загрузка списка
     def load_data(self):
 
         Clock.schedule_once(self.start_spinner, 0)
-        if self.app.current_filter == 'NotReaded':
-            res = GetResult('getDisposalList', {'readed': 0},
-                            ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                             'Disabled'])
-        else:
-            res = GetResult('getDisposalList', {'isExecute': 0},
-                           ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                            'Disabled'])
-            # res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
-            #                  ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-            #                   'Disabled'])
+        try:
+            if self.StaffID == None:
+                self.StaffID = GetResult('getStaffID', {}, [])
 
-        res = sorted(res, key=get_number)
+            if self.app.current_filter == 'NotReaded':
+                res = GetResult('getDisposalList', {'readed': 0},
+                                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                                 'Disabled'])
+            elif self.app.current_filter == 'FromMe':
+                res = GetResult('getDisposalList', {'isExecute': 0, 'Sender_id': self.StaffID},
+                                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                                 'Disabled'])
+            elif self.app.current_filter == 'ToMe':
+                res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': self.StaffID},
+                                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                                 'Disabled'])
+            else:
+                res = GetResult('getDisposalList', {'isExecute': 0},
+                               ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                                'Disabled'])
+                # res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
+                #                  ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
+                #                   'Disabled'])
 
-        # формируем список
-        self.make_list(res)
+
+            res = sorted(res, key=get_number)
+
+            # формируем список
+            self.make_list(res)
+        except:
+            # сообщение об ошибке
+            self.show_connect_error()
 
     # обновление списка задач
     def refresh_list(self):
 
-        try:
-            mythread = threading.Thread(target=self.load_data)
-            mythread.start()
-        except:
-            # сообщение об ошибке
-            content = MDLabel(
-                font_style='Body1',
-                text=self.app.translation._('Нет подключения, проверьте настройки!'),
-                size_hint_y=None,
-                valign='top')
-            content.bind(texture_size=content.setter('size'))
-            self.dialog = MDDialog(title="Внимание",
-                                   content=content,
-                                   size_hint=(.8, None),
-                                   height=dp(200))
-
-            self.dialog.add_action_button("ОК",
-                                          action=lambda *x: self.dialog.dismiss())
-            self.dialog.open()
+        mythread = threading.Thread(target=self.load_data)
+        mythread.start()
 
 

@@ -100,15 +100,19 @@ def GetResult(name, params={}, columns=['Name'], auth=True):
     else:
         res = OpenJsonUrl(url, params)
 
-    for x in res['result'][0]['Data']:
-        if columns == []:
-            collist = [x['Title'] for x in res['result'][0]['Columns']]
-        else:
-            collist = columns
-        item = []
-        for y in collist:
-            item.append(x[res['result'][0]['Columns'].index({'Title': y})])
-        c.append(item)
+    #если не массив - то возвращаю значение
+    if not type(res['result'][0]) is dict:
+        return res['result'][0]
+    else:
+        for x in res['result'][0]['Data']:
+            if columns == []:
+                collist = [x['Title'] for x in res['result'][0]['Columns']]
+            else:
+                collist = columns
+            item = []
+            for y in collist:
+                item.append(x[res['result'][0]['Columns'].index({'Title': y})])
+            c.append(item)
 
     return c
 

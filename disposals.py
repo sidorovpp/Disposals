@@ -40,7 +40,7 @@ class Disposals(App):
     nav_drawer = ObjectProperty()
     theme_cls = ThemeManager()
     theme_cls.primary_palette = 'Blue'
-    lang = StringProperty('en')
+    lang = StringProperty('ru')
 
     def __init__(self, **kvargs):
         super(Disposals, self).__init__(**kvargs)
@@ -61,7 +61,10 @@ class Disposals(App):
         self.translation = Translation(
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
-        self.filter_items = {'NotReaded': 'Непрочитанные', 'MyNotComplete': 'Мои невыполенные'}
+        self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
+                             'FromMe': self.translation._('Задачи от меня в работе'),
+                             'ToMe': self.translation._('Задачи на меня в работе'),
+                             'MyNotComplete': self.translation._('Все в работе')}
 
     def build(self):
 
@@ -99,7 +102,7 @@ class Disposals(App):
     def build_config(self, config):
 
         config.adddefaultsection('General')
-        config.setdefault('General', 'language', 'en')
+        config.setdefault('General', 'language', 'ru')
         config.setdefault('General', 'ip', '77.233.5.22')
         config.setdefault('General', 'user', 'user')
         config.setdefault('General', 'password', 'password')
@@ -285,6 +288,7 @@ class Disposals(App):
                     self.lang = locale
                     self.config.set('General', 'language', self.lang)
                     self.config.write()
+                    self.window_language.dismiss()
                     self.set_value_from_config()
 
         dict_info_locales = {}

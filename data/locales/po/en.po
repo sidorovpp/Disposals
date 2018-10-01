@@ -114,6 +114,21 @@ msgstr "Connection error, check settings!"
 msgid "Загружено задач:"
 msgstr "Disposals loaded:"
 
+msgid "Непрочитанные"
+msgstr "Unread disposals"
+
+msgid "Задачи от меня в работе"
+msgstr "From me"
+
+msgid "Задачи на меня в работе"
+msgstr "To me"
+
+msgid "Все в работе"
+msgstr "All disposals"
+
+msgid "Внимание"
+msgstr "Warning"
+
 #: libs/utils/showplugins.py:34 libs/utils/showplugins.py:53
 msgid "Да"
 msgstr "Yes"
