@@ -102,6 +102,12 @@ msgstr "Password"
 msgid "Введите IP"
 msgstr "IP address"
 
+msgid "Фильтр"
+msgstr "Filter"
+
+msgid "Тест"
+msgstr "Test"
+
 msgid "Нет подключения, проверьте настройки!"
 msgstr "Connection error, check settings!"
 
