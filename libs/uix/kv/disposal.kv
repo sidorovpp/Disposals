@@ -95,8 +95,9 @@
         icon: 'comment'
         opposite_colors: True
         elevation_normal: 8
-        pos_hint: {'center_x': 0.9, 'center_y': 0.1}
-
+        #pos_hint: {'right':1}
+        x: Window.width - (self.width + dp(15))
+        y: dp(15)
 
 <AddCommentButton>
 

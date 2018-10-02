@@ -18,8 +18,13 @@ from kivy.metrics import dp
 from libs.uix.baseclass.disposalsdroid import GetResult
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
-import threading
+from kivy.utils import get_hex_from_color
+from kivy.app import App
 from kivy.clock import Clock, mainthread
+import threading
+import re
+import webbrowser
+
 
 class AddCommentButton(MDFloatingActionButton):
 
@@ -56,7 +61,8 @@ class Notes(RecycleView):
         self.data = []
 
 class NoteLabel(Label):
-    pass
+    def on_ref_press(self, url):
+        webbrowser.open(url)
 
 class Task(RecycleView):
     def __init__(self, **kwargs):
@@ -64,9 +70,14 @@ class Task(RecycleView):
         self.data = []
 
 class TaskLabel(Label):
-    pass
+    def on_ref_press(self, url):
+        webbrowser.open(url)
 
 class Disposal(Screen):
+
+    def __init__(self, **kwargs):
+        super(Disposal, self).__init__(**kwargs)
+        self.app = App.get_running_app()
 
     def start_spinner(self, *args):
         self.spinner.active = True
@@ -82,7 +93,11 @@ class Disposal(Screen):
         if Notes != []:
             for item in Notes:
                 self.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
-                self.notes.data.append({'text':'{0}'.format(item[2])})
+                #заполняем гиперлинки
+                note_text = item[2]
+                r = re.compile(r"(https://[^ \r]+)")
+                note_text = r.sub(r'[ref=\1][color={link_color}]\1[/color][/ref]', note_text).format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+                self.notes.data.append({'text':'{0}'.format(note_text)})
             #self.task.size_hint_y = 1
             #self.notes.size_hint_y = 1
         else:
@@ -96,8 +111,12 @@ class Disposal(Screen):
         self.ids.theme.text = params['Theme']
         self.ids.sender.text = self.manager.app.translation._('Отправитель:') + ' ' +params['Sender']
         self.ids.receiver.text = self.manager.app.translation._('Получатель:') + ' ' + params['Receiver']
-        #бьём текст задачи на куски по Enter
+        #заполняем гиперлинки
         s = params['Task']
+        r = re.compile(r"(https://[^ \r]+)")
+        s = r.sub(r'[ref=\1][color={link_color}]\1[/color][/ref]', s).format(
+            link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+        #бьём текст задачи на куски по Enter
         self.ids.task.data = []
         k = s.find('\n')
         while k > 0:

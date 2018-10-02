@@ -9,6 +9,7 @@ from libs.applibs.toast import toast
 import threading
 from kivy.clock import Clock, mainthread
 from kivy.uix.recycleview import RecycleView
+from datetime import datetime
 import time
 
 
@@ -25,6 +26,12 @@ class DisposalItem(MDFlatButton):
         self.app = App.get_running_app()
 
     def set_data(self, val):
+        def get_date(str):
+            if len(str) > 10:
+                return datetime.strptime(str, '%d.%m.%Y %H:%M:%S')
+            else:
+                return datetime.strptime(str, '%d.%m.%Y')
+
         self._data = val
         # номер
         self.number_label.text = '[color=#003380]{0}[/color]'.format(self.data['Number'])
@@ -36,8 +43,11 @@ class DisposalItem(MDFlatButton):
         self.text_label.text = '{0}'.format(text)
         # иконка и цвет выполнения
         if self.data['IsComplete'] == '0':
+            if (self.data['PlanDateTo'] != '') and (datetime.now() > get_date(self.data['PlanDateTo'])):
+                self.icon.text_color = [1, 0, 0, 1]
+            else:
+                self.icon.text_color = [0, 0, 1, 1]
             self.icon.icon_text = 'clock'
-            self.icon.text_color = [1, 0, 0, 1]
         else:
             self.icon.icon_text = 'calendar-check'
             self.icon.text_color = [0, 1, 0, 1]
@@ -132,7 +142,8 @@ class DisposalList(RecycleView):
                         'Sender_id': i[3],
                         'IsComplete': i[6],
                         'IsDisallowed': i[8],
-                        'IsReaded': i[7]
+                        'IsReaded': i[7],
+                        'PlanDateTo': i[9]
                         })
 
             self.data.append({'data': item,'height': dp(70)})
@@ -165,22 +176,15 @@ class DisposalList(RecycleView):
             if self.StaffID == None:
                 self.StaffID = GetResult('getStaffID', {}, [])
 
+            Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo']
             if self.app.current_filter == 'NotReaded':
-                res = GetResult('getDisposalList', {'readed': 0},
-                                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                                 'Disabled'])
+                res = GetResult('getDisposalList', {'readed': 0}, Columns)
             elif self.app.current_filter == 'FromMe':
-                res = GetResult('getDisposalList', {'isExecute': 0, 'Sender_id': self.StaffID},
-                                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                                 'Disabled'])
+                res = GetResult('getDisposalList', {'isExecute': 0, 'Sender_id': self.StaffID}, Columns)
             elif self.app.current_filter == 'ToMe':
-                res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': self.StaffID},
-                                ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                                 'Disabled'])
+                res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': self.StaffID}, Columns)
             else:
-                res = GetResult('getDisposalList', {'isExecute': 0},
-                               ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
-                                'Disabled'])
+                res = GetResult('getDisposalList', {'isExecute': 0}, Columns)
                 # res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
                 #                  ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                 #                   'Disabled'])
