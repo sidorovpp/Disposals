@@ -153,6 +153,7 @@ class DisposalList(RecycleView):
 
     @mainthread
     def show_connect_error(self):
+        self.stop_spinner()
         content = MDLabel(
             font_style='Body1',
             text=self.app.translation._('Нет подключения, проверьте настройки!'),

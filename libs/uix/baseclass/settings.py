@@ -1,20 +1,21 @@
 from kivy.uix.screenmanager import Screen
-from kivy.app import App
 
 class SettingsForm(Screen):
 
     def GetSettings(self):
         try:
-            self.ids.ip.text = self.manager.app.config.get('General', 'IP')
-            self.ids.user.text = self.manager.app.config.get('General', 'user')
-            self.ids.password.text = self.manager.app.config.get('General', 'password')
+            self.ip.text = self.manager.app.config.get('General', 'IP')
+            self.user.text = self.manager.app.config.get('General', 'user')
+            self.password.text = self.manager.app.config.get('General', 'password')
+            self.sms.text = self.manager.app.config.get('General', 'sms')
         except:
             pass
 
     def SetSetting(self):
-        self.manager.app.config.set('General', 'IP', self.ids.ip.text)
-        self.manager.app.config.set('General', 'user', self.ids.user.text)
-        self.manager.app.config.set('General', 'password', self.ids.password.text)
+        self.manager.app.config.set('General', 'IP', self.ip.text)
+        self.manager.app.config.set('General', 'user', self.user.text)
+        self.manager.app.config.set('General', 'password', self.password.text)
+        self.manager.app.config.set('General', 'sms', self.sms.text)
         self.manager.app.config.write()
         self.manager.app.set_value_from_config()
 

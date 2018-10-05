@@ -29,7 +29,7 @@ from libs.applibs.dialogs import card
 import os.path
 from shutil import copyfile
 from kivy.utils import platform
-import libs.uix.baseclass.disposalsdroid as DisposalsDroid
+import libs.uix.baseclass.disposalsdroid as disposalsdroid
 from libs.uix.baseclass.disposallist import DisposalList
 
 
@@ -113,9 +113,10 @@ class Disposals(App):
         self.config.read(join(self.directory, 'disposals.ini'))
         self.lang = self.config.get('General', 'language')
         self.current_filter = self.config.get('General', 'filter')
-        DisposalsDroid.server = self.config.get('General', 'ip')
-        DisposalsDroid.username = self.config.get('General', 'user')
-        DisposalsDroid.password = self.config.get('General', 'password')
+        disposalsdroid.server = self.config.get('General', 'ip')
+        disposalsdroid.username = self.config.get('General', 'user')
+        disposalsdroid.password = self.config.get('General', 'password')
+        disposalsdroid.sms = self.config.get('General', 'sms')
 
         #скидываем копию конфигураций в пользовательскую папку
         try:

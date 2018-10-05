@@ -7,6 +7,10 @@
 
 <SettingsForm>:
     name: 'settings_form'
+    id: ip
+    user: user
+    password: password
+    sms: sms
 
     BoxLayout:
         orientation: 'vertical'
@@ -53,4 +57,17 @@
             hint_text: app.translation._('Введите пароль')
             password: True
 
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('СМС код (вместо пароля)')
+
+        MDTextField:
+            id: sms
+            hint_text: app.translation._('Введите смс код')
+            password: True
         Widget:

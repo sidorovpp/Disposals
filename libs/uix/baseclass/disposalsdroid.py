@@ -6,6 +6,8 @@ import json
 username = ''
 password = ''
 server = ''
+sms = ''
+current_pragma = ''
 
 def ping(host):
     """
@@ -61,44 +63,57 @@ class HTTPPasswordMgrWithPriorAuth(urllib.request.HTTPPasswordMgrWithDefaultReal
                     return self.authenticated[uri]
 
 
-def OpenJsonUrl(url, params={}, username=None, password=None):
+def OpenJsonUrl(url, params={}, username=None, password=None, headers = {}):
     data = json.dumps(params)
     req = urllib.request.Request(url, data.encode('utf-8'))
-    if username != None:
 
-        # password_mgr = HTTPPasswordMgrWithPriorAuth()
-        # top_level_url = url
-        # password_mgr.add_password(None, top_level_url, username, password, is_authenticated = True)
-        # handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
-        # handler = HTTPBasicPriorAuthHandler(password_mgr)
-        # opener = urllib.request.build_opener(handler)
+    # если переданы заголовки - копируем
+    if len(headers) != 0:
+        for i in headers.keys():
+            req.add_header(i, headers[i])
+
+    if username != None:
 
         s = 'Basic ' + (base64.encodebytes(('%s:%s' % (username, password)).encode())[:-1]).decode()
         req.add_header("Authorization", s)
         req.add_header("Content-type", "application/x-www-form-urlencoded")
-        # req.add_header("Content-length", "13")
         req.add_header("User-agent", "Python-urllib/3.5")
 
-        # with opener.open(req) as response:
-        # print(req.header_items())
-        with urllib.request.urlopen(req) as response:
-            str_response = response.read().decode('utf8')
-            obj = json.loads(str_response)
-    else:
-        with urllib.request.urlopen(req) as response:
-            str_response = response.read().decode('utf8')
-            obj = json.loads(str_response)
+    #запрашиваем данные
+    with urllib.request.urlopen(req) as response:
+        str_response = response.read().decode('utf8')
+        obj = json.loads(str_response)
+
+        #считываем заголовки в ответе
+        info = response.info()
+        for i in info.keys():
+            headers[i] = info[i]
 
     return obj
 
 
-def GetResult(name, params={}, columns=['Name'], auth=True):
-    c = []
-    url = 'http://' + server + '/rest/datasnap/rest/TDisposalMethods/"' + name + '"'
-    if auth:
-        res = OpenJsonUrl(url, params, username, password)
+#инициализируем коненкт, если СМС доступ - проверяем правильность, получаем прагму
+def InitConnect():
+    headers = {}
+    if password != '':
+        GetResult('getStaffID', {}, [], headers = headers)
+        current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
     else:
-        res = OpenJsonUrl(url, params)
+        res = GetResult('getUser', {'name': username, 'code': sms}, ['id'], prefix = 'TSysMethods', headers=headers)
+        if len(res) == 0:
+            current_pragma = ''
+        else:
+            current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
+
+def GetResult(name, params={}, columns=['Name'],
+              auth=True, username=username, password=password,
+              prefix ='TDisposalMethods', headers = {}):
+    c = []
+    url = 'http://' + server + '/rest/datasnap/rest/' + prefix + '/"' + name + '"'
+    if auth:
+        res = OpenJsonUrl(url, params, username, password, headers = headers)
+    else:
+        res = OpenJsonUrl(url, params, headers = headers)
 
     #если не массив - то возвращаю значение
     if not type(res['result'][0]) is dict:
