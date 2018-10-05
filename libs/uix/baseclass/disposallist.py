@@ -1,5 +1,5 @@
 # список задач
-from libs.uix.baseclass.disposalsdroid import GetResult
+from libs.uix.baseclass.disposalsdroid import connect_manager
 from kivymd.button import MDIconButton, MDFlatButton, MDRaisedButton
 from kivy.app import App
 from kivymd.label import MDLabel
@@ -66,13 +66,13 @@ class DisposalItem(MDFlatButton):
     def set_readed(self):
         try:
             number = self.app.screen.ids.disposal.number.text
-            GetResult('SetTaskRead', {'id': int(number)}, [])
+            connect_manager.GetResult('SetTaskRead', {'id': int(number)}, [])
         except:
             pass
 
     def set_disposal_params(self, item_data):
-        Receiver = GetResult('getStaff', {'id': int(item_data['Receiver_id'])}, ['userName'])[0][0]
-        Sender = GetResult('getStaff', {'id': int(item_data['Sender_id'])}, ['userName'])[0][0]
+        Receiver = connect_manager.GetResult('getStaff', {'id': int(item_data['Receiver_id'])}, ['userName'])[0][0]
+        Sender = connect_manager.GetResult('getStaff', {'id': int(item_data['Sender_id'])}, ['userName'])[0][0]
 
         item_data['Receiver'] = Receiver
         item_data['Sender'] = Sender
@@ -175,17 +175,17 @@ class DisposalList(RecycleView):
         Clock.schedule_once(self.start_spinner, 0)
         try:
             if self.StaffID == None:
-                self.StaffID = GetResult('getStaffID', {}, [])
+                self.StaffID = connect_manager.GetResult('getStaffID', {}, [])
 
             Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo']
             if self.app.current_filter == 'NotReaded':
-                res = GetResult('getDisposalList', {'readed': 0}, Columns)
+                res = connect_manager.GetResult('getDisposalList', {'readed': 0}, Columns)
             elif self.app.current_filter == 'FromMe':
-                res = GetResult('getDisposalList', {'isExecute': 0, 'Sender_id': self.StaffID}, Columns)
+                res = connect_manager.GetResult('getDisposalList', {'isExecute': 0, 'Sender_id': self.StaffID}, Columns)
             elif self.app.current_filter == 'ToMe':
-                res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': self.StaffID}, Columns)
+                res = connect_manager.GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': self.StaffID}, Columns)
             else:
-                res = GetResult('getDisposalList', {'isExecute': 0}, Columns)
+                res = connect_manager.GetResult('getDisposalList', {'isExecute': 0}, Columns)
                 # res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
                 #                  ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                 #                   'Disabled'])
@@ -195,7 +195,8 @@ class DisposalList(RecycleView):
 
             # формируем список
             self.make_list(res)
-        except:
+        except Exception as error:
+            print(error)
             # сообщение об ошибке
             self.show_connect_error()
 

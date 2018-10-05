@@ -15,7 +15,7 @@ from kivymd.button import MDFloatingActionButton
 from kivymd.dialog import MDDialog
 from kivymd.textfields import MDTextField
 from kivy.metrics import dp
-from libs.uix.baseclass.disposalsdroid import GetResult
+from libs.uix.baseclass.disposalsdroid import connect_manager
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
 from kivy.utils import get_hex_from_color
@@ -31,7 +31,7 @@ class AddCommentButton(MDFloatingActionButton):
     def commit(self):
         if self.dialog.content.text.strip() != "":
             try:
-                GetResult('SendComment', {'disposal_id': int(self.parent.ids.number.text), 'comment': self.dialog.content.text.strip()}, [])
+                connect_manager.GetResult('SendComment', {'disposal_id': int(self.parent.ids.number.text), 'comment': self.dialog.content.text.strip()}, [])
             except:
                 pass
 
@@ -89,7 +89,7 @@ class Disposal(Screen):
     def load_comments(self):
         Clock.schedule_once(self.start_spinner, 0)
         self.ids.notes.data = []
-        Notes = GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
+        Notes = connect_manager.GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
         if Notes != []:
             for item in Notes:
                 self.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})

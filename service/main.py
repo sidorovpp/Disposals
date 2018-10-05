@@ -1,5 +1,5 @@
 from time import sleep
-from libs.uix.baseclass.disposalsdroid import GetResult
+from libs.uix.baseclass.disposalsdroid import connect_manager
 from os.path import dirname
 from os.path import join
 from os.path import pardir
@@ -9,7 +9,7 @@ import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 
 #проверка непрочитанных задач и уведомление
 def check_disposals():
-    res = GetResult('getDisposalList', {'readed': 0}, ['Number'])
+    res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
     if len(res) > 0:
         from plyer import notification
         from plyer import vibrator

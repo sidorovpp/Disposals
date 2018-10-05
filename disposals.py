@@ -29,7 +29,7 @@ from libs.applibs.dialogs import card
 import os.path
 from shutil import copyfile
 from kivy.utils import platform
-import libs.uix.baseclass.disposalsdroid as disposalsdroid
+from libs.uix.baseclass.disposalsdroid import connect_manager
 from libs.uix.baseclass.disposallist import DisposalList
 
 
@@ -50,6 +50,7 @@ class Disposals(App):
         self.list_previous_screens = ['base']
         self.window = Window
         self.config = ConfigParser()
+        self.sysconfig = ConfigParser()
         self.manager = None
         self.window_language = None
         self.window_filter = None
@@ -107,16 +108,26 @@ class Disposals(App):
         config.setdefault('General', 'user', 'user')
         config.setdefault('General', 'password', 'password')
         config.setdefault('General', 'filter', 'NotReaded')
+        config.setdefault('General', 'sms', '')
 
     def set_value_from_config(self):
 
+        #пользовательские настройки
         self.config.read(join(self.directory, 'disposals.ini'))
         self.lang = self.config.get('General', 'language')
         self.current_filter = self.config.get('General', 'filter')
-        disposalsdroid.server = self.config.get('General', 'ip')
-        disposalsdroid.username = self.config.get('General', 'user')
-        disposalsdroid.password = self.config.get('General', 'password')
-        disposalsdroid.sms = self.config.get('General', 'sms')
+        connect_manager.server = self.config.get('General', 'ip')
+        connect_manager.username = self.config.get('General', 'user')
+        connect_manager.password = self.config.get('General', 'password')
+        connect_manager.sms = self.config.get('General', 'sms')
+
+        #системные настройки
+        self.sysconfig.read(join(self.directory, 'server.ini'))
+        connect_manager.sysusername = self.sysconfig.get('Access', 'user')
+        connect_manager.syspassword = self.sysconfig.get('Access', 'password')
+
+        #инициализируем соединение
+        connect_manager.InitConnect()
 
         #скидываем копию конфигураций в пользовательскую папку
         try:

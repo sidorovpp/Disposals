@@ -1,13 +1,19 @@
 import urllib.request
 import urllib.parse
+from urllib.error import HTTPError
 import base64
 import json
 
-username = ''
-password = ''
-server = ''
-sms = ''
-current_pragma = ''
+# if sys.platform.startswith('linux'):
+#    server = '77.233.5.22'
+# else:
+#    if ping('test3'):
+#        server = '192.168.0.13:8085'
+#    else:
+#        server = '77.233.5.22'
+
+
+# server = '192.168.0.12'
 
 def ping(host):
     """
@@ -21,17 +27,6 @@ def ping(host):
     # Ping subprocess.STARTF_USESHOWWINDOW - скрывает окно
     return subprocess.call("ping " + ping_str + " " + host, shell=True) == 0
 
-
-#if sys.platform.startswith('linux'):
-#    server = '77.233.5.22'
-#else:
-#    if ping('test3'):
-#        server = '192.168.0.13:8085'
-#    else:
-#        server = '77.233.5.22'
-
-
-# server = '192.168.0.12'
 
 class HTTPPasswordMgrWithPriorAuth(urllib.request.HTTPPasswordMgrWithDefaultRealm):
     def __init__(self, *args, **kwargs):
@@ -63,7 +58,7 @@ class HTTPPasswordMgrWithPriorAuth(urllib.request.HTTPPasswordMgrWithDefaultReal
                     return self.authenticated[uri]
 
 
-def OpenJsonUrl(url, params={}, username=None, password=None, headers = {}):
+def OpenJsonUrl(url, params={}, username=None, password=None, headers={}, res_headers={}):
     data = json.dumps(params)
     req = urllib.request.Request(url, data.encode('utf-8'))
 
@@ -73,65 +68,98 @@ def OpenJsonUrl(url, params={}, username=None, password=None, headers = {}):
             req.add_header(i, headers[i])
 
     if username != None:
-
         s = 'Basic ' + (base64.encodebytes(('%s:%s' % (username, password)).encode())[:-1]).decode()
         req.add_header("Authorization", s)
         req.add_header("Content-type", "application/x-www-form-urlencoded")
         req.add_header("User-agent", "Python-urllib/3.5")
 
-    #запрашиваем данные
+    # запрашиваем данные
     with urllib.request.urlopen(req) as response:
         str_response = response.read().decode('utf8')
         obj = json.loads(str_response)
 
-        #считываем заголовки в ответе
+        # считываем заголовки в ответе
         info = response.info()
+        res_headers.clear()
         for i in info.keys():
-            headers[i] = info[i]
+            res_headers[i] = info[i]
 
     return obj
 
 
-#инициализируем коненкт, если СМС доступ - проверяем правильность, получаем прагму
-def InitConnect():
-    headers = {}
-    if password != '':
-        GetResult('getStaffID', {}, [], headers = headers)
-        current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
-    else:
-        res = GetResult('getUser', {'name': username, 'code': sms}, ['id'], prefix = 'TSysMethods', headers=headers)
-        if len(res) == 0:
-            current_pragma = ''
+class ConnectManager():
+    # доступ пользователя
+    username = ''
+    password = ''
+    server = ''
+    sms = ''
+    current_pragma = ''
+
+    # системный доступ
+    sysusername = ''
+    syspassword = ''
+
+    #инициализируем коненкт, если СМС доступ - проверяем правильность, получаем прагму
+    def InitConnect(self):
+        headers = {}
+        #стандартная аутентификация
+        if self.sms == '':
+            url = 'http://' + self.server + '/rest/datasnap/rest/TDisposalMethods/"getStaffID"'
+            res = OpenJsonUrl(url, {}, username=self.username, password=self.password, res_headers=headers)
+            self.current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
+        #через СМС
         else:
-            current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
-
-def GetResult(name, params={}, columns=['Name'],
-              auth=True, username=username, password=password,
-              prefix ='TDisposalMethods', headers = {}):
-    c = []
-    url = 'http://' + server + '/rest/datasnap/rest/' + prefix + '/"' + name + '"'
-    if auth:
-        res = OpenJsonUrl(url, params, username, password, headers = headers)
-    else:
-        res = OpenJsonUrl(url, params, headers = headers)
-
-    #если не массив - то возвращаю значение
-    if not type(res['result'][0]) is dict:
-        return res['result'][0]
-    else:
-        for x in res['result'][0]['Data']:
-            if columns == []:
-                collist = [x['Title'] for x in res['result'][0]['Columns']]
+            url = 'http://' + self.server + '/rest/datasnap/rest/TSysMethods/"getUser"'
+            res = OpenJsonUrl(url, {'name': self.username, 'code': self.sms}, username=self.sysusername + '$' + self.username, password=self.syspassword, res_headers=headers)
+            if len(res['result'][0]['Data']) == 0:
+                self.current_pragma = ''
             else:
-                collist = columns
-            item = []
-            for y in collist:
-                item.append(x[res['result'][0]['Columns'].index({'Title': y})])
-            c.append(item)
+                self.current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
 
-    return c
+    def GetResult(self, name, params={}, columns=['Name'], auth=True, prefix='TDisposalMethods'):
+        c = []
 
+        url = 'http://' + self.server + '/rest/datasnap/rest/' + prefix + '/"' + name + '"'
 
+        if auth:
+            #если не pragma пусто - инициализируем
+            if self.current_pragma == '':
+                self.InitConnect()
+
+            if self.current_pragma == '':
+                raise NameError('Connect initialization error.')
+
+            headers = {}
+            headers['Pragma'] = self.current_pragma
+
+            try:
+                res = OpenJsonUrl(url, params, headers=headers)
+                # при ошибке 403 пробуем переинициализировать коннет и запросить ещё раз
+            except HTTPError as error:
+                if error.code == 403:
+                    self.InitConnect()
+                    headers['Pragma'] = self.current_pragma
+                    res = OpenJsonUrl(url, params, headers=headers)
+        else:
+            res = OpenJsonUrl(url, params)
+
+        #если не массив - то возвращаю значение
+        if not type(res['result'][0]) is dict:
+            return res['result'][0]
+        else:
+            for x in res['result'][0]['Data']:
+                if columns == []:
+                    collist = [x['Title'] for x in res['result'][0]['Columns']]
+                else:
+                    collist = columns
+                item = []
+                for y in collist:
+                    item.append(x[res['result'][0]['Columns'].index({'Title': y})])
+                c.append(item)
+
+        return c
+
+connect_manager = ConnectManager()
 
 
 
