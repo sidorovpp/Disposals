@@ -98,12 +98,12 @@ class Disposal(Screen):
                 r = re.compile(r"(https://[^ \r]+)")
                 note_text = r.sub(r'[ref=\1][color={link_color}]\1[/color][/ref]', note_text).format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
                 self.notes.data.append({'text':'{0}'.format(note_text)})
-            #self.task.size_hint_y = 1
-            #self.notes.size_hint_y = 1
+            self.task.size_hint_y = 0.5
+            self.notes.size_hint_y = 0.5
         else:
-            pass
-            #self.task.size_hint_y = 1
-            #self.notes.size_hint_y = 0
+            #pass
+            self.task.size_hint_y = 0.9
+            self.notes.size_hint_y = 0.1
         self.stop_spinner()
 
     def set_params(self, params):
