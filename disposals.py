@@ -127,8 +127,10 @@ class Disposals(App):
         connect_manager.syspassword = self.sysconfig.get('Access', 'password')
 
         #инициализируем соединение
-        connect_manager.InitConnect()
-
+        try:
+            connect_manager.InitConnect()
+        except:
+            pass
         #скидываем копию конфигураций в пользовательскую папку
         try:
             copyfile(join(self.directory, 'disposals.ini'),
