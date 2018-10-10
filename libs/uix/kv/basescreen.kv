@@ -14,6 +14,8 @@
 <BaseScreen>:
     name: 'base'
     spinner: spinner
+    list_layout: list_layout
+    number_search: number_search
 
     MDSpinner:
         id: spinner
@@ -22,17 +24,24 @@
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         active: False
 
-    DisposalList:
-        id: disposal_list
-        viewclass: 'DisposalItem'
-        do_scroll_x: False
-        scroll_timeout: 100
+    BoxLayout:
+        id: list_layout
+        orientation: 'vertical'
+        MDTextField:
+            id: number_search
+            hint_text: app.translation._('Номер или текст...')
 
-        RecycleBoxLayout:
-            orientation: 'vertical'
-            size_hint_y: None
-            height: self.minimum_height
-            default_size_hint: 1, None
+        DisposalList:
+            id: disposal_list
+            viewclass: 'DisposalItem'
+            do_scroll_x: False
+            scroll_timeout: 100
+
+            RecycleBoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                default_size_hint: 1, None
 
 <DisposalList@RecycleView>
 

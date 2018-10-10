@@ -10,6 +10,7 @@ import threading
 from kivy.clock import Clock, mainthread
 from kivy.uix.recycleview import RecycleView
 from datetime import datetime
+from itertools import groupby
 import time
 
 
@@ -178,7 +179,21 @@ class DisposalList(RecycleView):
                 self.StaffID = connect_manager.GetResult('getStaffID', {}, [])
 
             Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo']
-            if self.app.current_filter == 'NotReaded':
+            search = self.app.screen.ids.base.number_search.text.strip()
+            if search != '' and len(search) > 2:
+                search = search.replace('%', '!%')
+                if search.isnumeric():
+                    #ищем по номеру
+                    res = connect_manager.GetResult('getDisposalList', {'Number': '%%' + search + '%%'}, Columns)
+                else:
+                    #ищем по теме или тексту
+                    res = connect_manager.GetResult('getDisposalList', {'Task': '%%' + search + '%%'}, Columns)
+                    res += connect_manager.GetResult('getDisposalList', {'Theme': '%%' + search + '%%'}, Columns)
+                    #убираем дубли
+                    unique_list = []
+                    [unique_list.append(obj) for obj in res if obj not in unique_list]
+                    res = unique_list
+            elif self.app.current_filter == 'NotReaded':
                 res = connect_manager.GetResult('getDisposalList', {'readed': 0}, Columns)
             elif self.app.current_filter == 'FromMe':
                 res = connect_manager.GetResult('getDisposalList', {'isExecute': 0, 'Sender_id': self.StaffID}, Columns)
