@@ -5,7 +5,6 @@ from os.path import join
 from os.path import pardir
 from os.path import realpath
 from kivy.config import ConfigParser
-import libs.uix.baseclass.disposalsdroid as DisposalsDroid
 
 #проверка непрочитанных задач и уведомление
 def check_disposals():
@@ -31,9 +30,21 @@ if __name__ == '__main__':
     try:
         config = ConfigParser()
         config.read(join(dirname(realpath(__file__)), pardir,  'disposals.ini'))
-        DisposalsDroid.server = config.get('General', 'ip')
-        DisposalsDroid.username = config.get('General', 'user')
-        DisposalsDroid.password = config.get('General', 'password')
+        connect_manager.server = config.get('General', 'ip')
+        connect_manager.username = config.get('General', 'user')
+        connect_manager.password = config.get('General', 'password')
+        connect_manager.sms = config.get('General', 'sms')
+
+        #системные настройки
+        config.read(join(dirname(realpath(__file__)), pardir,  'server.ini'))
+        connect_manager.sysusername = config.get('Access', 'user')
+        connect_manager.syspassword = config.get('Access', 'password')
+
+        #инициализируем соединение
+        try:
+            connect_manager.InitConnect()
+        except:
+            pass
 
         while True:
             sleep(60)
