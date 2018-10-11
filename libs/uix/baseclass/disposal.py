@@ -85,12 +85,13 @@ class TaskLabel(Label):
         self.app = App.get_running_app()
 
     def open_file(self, filename):
-        webbrowser.open_new('file://' + filename)
-        #with subprocess.Popen(["start", "/WAIT", filename], shell=True) as doc:
-        #    doc.poll()
-        #subprocess.call([filename], shell=True)
-            #opener = "start"# if sys.platform == "darwin" else "xdg-open"
-            #subprocess.call([opener, filename])
+        #webbrowser.open_new('file://' + filename)
+        if sys.platform.startswith('darwin'):
+            subprocess.call(('open', filename))
+        elif os.name == 'nt':  # For Windows
+            os.startfile(filename)
+        elif os.name == 'posix':  # For Linux, Mac, etc.
+            subprocess.call(('xdg-open', filename))
 
     def show_file(self, id, filename):
         Clock.schedule_once(self.app.screen.ids.disposal.start_spinner, 0)
