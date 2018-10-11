@@ -21,7 +21,8 @@ from kivy.uix.label import Label
 from kivy.utils import get_hex_from_color
 from kivy.app import App
 from kivy.clock import Clock, mainthread
-from os.path import basename,  join
+from os.path import join
+import ntpath
 import os
 import sys
 import threading
@@ -174,8 +175,8 @@ class Disposal(Screen):
         Files = connect_manager.GetResult('getFileList', {'object_id':1127, 'line_id': int(self.ids.number.text)}, ['id', 'FileName'], prefix='TSysMethods')
         for item in Files:
             self.task.data.append({'text': r'[ref={url}][color={link_color}]{text}[/color][/ref]'.format(
-                url=item[0] + ':' + basename(item[1]),
-                text=basename(item[1]),
+                url=item[0] + ':' + ntpath.basename(item[1]),
+                text=ntpath.basename(item[1]),
                 link_color=get_hex_from_color(self.app.theme_cls.primary_color)
                 )})
 
