@@ -85,10 +85,10 @@ class TaskLabel(Label):
         self.app = App.get_running_app()
 
     def open_file(self, filename):
-        with subprocess.Popen(["start", "/WAIT", filename], shell=True) as doc:
-            doc.poll()
-
-    #subprocess.call([filename], shell=True)
+        webbrowser.open_new('file://' + filename)
+        #with subprocess.Popen(["start", "/WAIT", filename], shell=True) as doc:
+        #    doc.poll()
+        #subprocess.call([filename], shell=True)
             #opener = "start"# if sys.platform == "darwin" else "xdg-open"
             #subprocess.call([opener, filename])
 
@@ -113,9 +113,9 @@ class TaskLabel(Label):
     def on_ref_press(self, url):
         path = url[:url.find(':')]
         if path.isnumeric():
-            mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
-            mythread.start()
-            #self.show_file(int(path), url[url.find(':') + 1:])
+            #mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
+            #mythread.start()
+            self.show_file(int(path), url[url.find(':') + 1:])
         else:
             webbrowser.open(url)
 
