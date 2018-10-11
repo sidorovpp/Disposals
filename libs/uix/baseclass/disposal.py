@@ -22,6 +22,7 @@ from kivy.utils import get_hex_from_color
 from kivy.app import App
 from kivy.clock import Clock, mainthread
 from os.path import join
+from kivy.utils import platform
 import ntpath
 import os
 import sys
@@ -86,7 +87,25 @@ class TaskLabel(Label):
 
     def open_file(self, filename):
         #webbrowser.open_new('file://' + filename)
-        if sys.platform.startswith('darwin'):
+        if platform == 'android':
+            import jnius
+            import mimetypes
+            import urlparse
+
+            PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
+            Intent = jnius.autoclass('android.content.Intent')
+            Uri = jnius.autoclass('android.net.Uri')
+
+            mimetype = mimetypes.guess_type(filename)[0]
+            image_uri = urlparse.urljoin('file://', filename)
+
+            intent = Intent()
+            intent.setAction(Intent.ACTION_VIEW)
+            intent.setDataAndType(Uri.parse(image_uri), mimetype)
+            currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
+            currentActivity.startActivity(intent)
+
+        elif sys.platform.startswith('darwin'):
             subprocess.call(('open', filename))
         elif os.name == 'nt':  # For Windows
             os.startfile(filename)
