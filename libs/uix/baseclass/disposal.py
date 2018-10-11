@@ -98,7 +98,7 @@ class TaskLabel(Label):
         res = connect_manager.GetResult('getFile', {'id': id}, [], prefix='TSysMethods')
 
         #сохраняем в пользовательскую папку
-        filename = join(self.app.user_data_dir, 'temp.'+ os.path.splitext(filename)[1])
+        filename = join(self.app.user_data_dir, 'temp'+ os.path.splitext(filename)[1])
         tfp = open(filename, 'wb')
         with tfp:
             tfp.write(bytes(res))
@@ -106,7 +106,8 @@ class TaskLabel(Label):
         self.app.screen.ids.disposal.stop_spinner()
 
         #запускаем файл
-        self.open_file(filename)
+        webbrowser.open(filename)
+        #self.open_file(filename)
 
     def on_ref_press(self, url):
         path = url[:url.find(':')]
