@@ -88,8 +88,9 @@ class TaskLabel(Label):
         if sys.platform == "win32":
             os.startfile(filename)
         else:
-            opener = "open" if sys.platform == "darwin" else "xdg-open"
-            subprocess.call([opener, filename])
+            subprocess.Popen(["start", "", "file.pdf"], shell=True)
+            #opener = "start"# if sys.platform == "darwin" else "xdg-open"
+            #subprocess.call([opener, filename])
 
     def show_file(self, id, filename):
         Clock.schedule_once(self.app.screen.ids.disposal.start_spinner, 0)
@@ -106,8 +107,8 @@ class TaskLabel(Label):
         self.app.screen.ids.disposal.stop_spinner()
 
         #запускаем файл
-        webbrowser.open(filename)
-        #self.open_file(filename)
+        #webbrowser.open(filename)
+        self.open_file(filename)
 
     def on_ref_press(self, url):
         path = url[:url.find(':')]
