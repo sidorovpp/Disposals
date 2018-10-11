@@ -99,14 +99,15 @@ class TaskLabel(Label):
 
         #сохраняем в пользовательскую папку
         filename = join(self.app.user_data_dir, filename)
-        tfp = open(filename, 'wb')
-        with tfp:
-            tfp.write(bytes(res))
+        self.text = filename
+        #tfp = open(filename, 'wb')
+        #with tfp:
+        #    tfp.write(bytes(res))
 
         self.app.screen.ids.disposal.stop_spinner()
 
         #запускаем файл
-        self.open_file(filename)
+        #self.open_file(filename)
 
     def on_ref_press(self, url):
         path = url[:url.find(':')]
