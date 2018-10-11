@@ -85,7 +85,7 @@ class TaskLabel(Label):
         self.app = App.get_running_app()
 
     def open_file(self, filename):
-        subprocess.Popen([filename], shell=True)
+        subprocess.call([filename], shell=True)
             #opener = "start"# if sys.platform == "darwin" else "xdg-open"
             #subprocess.call([opener, filename])
 
