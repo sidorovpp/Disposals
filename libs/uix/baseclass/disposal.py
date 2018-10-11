@@ -88,22 +88,24 @@ class TaskLabel(Label):
     def open_file(self, filename):
         #webbrowser.open_new('file://' + filename)
         if platform == 'android':
-            import jnius
-            import mimetypes
+            try:
+                import jnius
+                import mimetypes
 
-            PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
-            Intent = jnius.autoclass('android.content.Intent')
-            Uri = jnius.autoclass('android.net.Uri')
+                PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
+                Intent = jnius.autoclass('android.content.Intent')
+                Uri = jnius.autoclass('android.net.Uri')
 
-            mimetype = mimetypes.guess_type(filename)[0]
-            image_uri = 'file://' + filename
+                mimetype = mimetypes.guess_type(filename)[0]
+                image_uri = 'file://' + filename
 
-            intent = Intent()
-            intent.setAction(Intent.ACTION_VIEW)
-            intent.setDataAndType(Uri.parse(image_uri), mimetype)
-            currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
-            currentActivity.startActivity(intent)
-
+                intent = Intent()
+                intent.setAction(Intent.ACTION_VIEW)
+                intent.setDataAndType(Uri.parse(image_uri), mimetype)
+                currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
+                currentActivity.startActivity(intent)
+            except:
+                pass
         elif sys.platform.startswith('darwin'):
             subprocess.call(('open', filename))
         elif os.name == 'nt':  # For Windows
@@ -118,7 +120,9 @@ class TaskLabel(Label):
         res = connect_manager.GetResult('getFile', {'id': id}, [], prefix='TSysMethods')
 
         #сохраняем в пользовательскую папку
-        filename = join(self.app.user_data_dir, 'temp'+ os.path.splitext(filename)[1])
+        ext = os.path.splitext(filename)[1]
+        ext = ext.replace('docx', 'doc')
+        filename = join(self.app.user_data_dir, 'temp'+ ext)
         tfp = open(filename, 'wb')
         with tfp:
             tfp.write(bytes(res))
@@ -132,9 +136,9 @@ class TaskLabel(Label):
     def on_ref_press(self, url):
         path = url[:url.find(':')]
         if path.isnumeric():
-            #mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
-            #mythread.start()
-            self.show_file(int(path), url[url.find(':') + 1:])
+            mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
+            mythread.start()
+            #self.show_file(int(path), url[url.find(':') + 1:])
         else:
             webbrowser.open(url)
 
