@@ -111,8 +111,9 @@ class TaskLabel(Label):
     def on_ref_press(self, url):
         path = url[:url.find(':')]
         if path.isnumeric():
-            mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
-            mythread.start()
+            #mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
+            #mythread.start()
+            self.show_file(int(path), url[url.find(':') + 1:])
         else:
             webbrowser.open(url)
 
