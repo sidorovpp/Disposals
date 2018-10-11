@@ -90,14 +90,13 @@ class TaskLabel(Label):
         if platform == 'android':
             import jnius
             import mimetypes
-            import urlparse
 
             PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
             Intent = jnius.autoclass('android.content.Intent')
             Uri = jnius.autoclass('android.net.Uri')
 
             mimetype = mimetypes.guess_type(filename)[0]
-            image_uri = urlparse.urljoin('file://', filename)
+            image_uri = 'file://' + filename
 
             intent = Intent()
             intent.setAction(Intent.ACTION_VIEW)
