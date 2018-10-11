@@ -21,11 +21,14 @@ from kivy.uix.label import Label
 from kivy.utils import get_hex_from_color
 from kivy.app import App
 from kivy.clock import Clock, mainthread
+from os.path import basename,  join
+from os import startfile
 import threading
 import re
 import webbrowser
 
 
+#кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
 
     def commit(self):
@@ -54,25 +57,56 @@ class AddCommentButton(MDFloatingActionButton):
                                       action=lambda *x: self.dialog.dismiss())
         self.dialog.open()
 
-
+#комментарии
 class Notes(RecycleView):
     def __init__(self, **kwargs):
         super(Notes, self).__init__(**kwargs)
         self.data = []
 
+#комментарий - label
 class NoteLabel(Label):
     def on_ref_press(self, url):
         webbrowser.open(url)
 
+#текст задачи
 class Task(RecycleView):
     def __init__(self, **kwargs):
         super(Task, self).__init__(**kwargs)
         self.data = []
 
+#текст задачи - label
 class TaskLabel(Label):
-    def on_ref_press(self, url):
-        webbrowser.open(url)
 
+    def __init__(self, **kwargs):
+        super(TaskLabel, self).__init__(**kwargs)
+        self.app = App.get_running_app()
+
+    def show_file(self, id, filename):
+        Clock.schedule_once(self.app.screen.ids.disposal.start_spinner, 0)
+
+        #загружаем файл
+        res = connect_manager.GetResult('getFile', {'id': id}, [], prefix='TSysMethods')
+
+        #сохраняем в пользовательскую папку
+        filename = join(self.app.user_data_dir, filename)
+        tfp = open(filename, 'wb')
+        with tfp:
+            tfp.write(bytes(res))
+
+        self.app.screen.ids.disposal.stop_spinner()
+
+        #запускаем файл
+        startfile(filename)
+
+    def on_ref_press(self, url):
+        path = url[:url.find(':')]
+        if path.isnumeric():
+            mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
+            mythread.start()
+        else:
+            webbrowser.open(url)
+
+#форма задачи
 class Disposal(Screen):
 
     def __init__(self, **kwargs):
@@ -111,11 +145,13 @@ class Disposal(Screen):
         self.ids.theme.text = params['Theme']
         self.ids.sender.text = self.manager.app.translation._('Отправитель:') + ' ' +params['Sender']
         self.ids.receiver.text = self.manager.app.translation._('Получатель:') + ' ' + params['Receiver']
+
         #заполняем гиперлинки
         s = params['Task']
         r = re.compile(r"(https://[^ \r]+)")
         s = r.sub(r'[ref=\1][color={link_color}]\1[/color][/ref]', s).format(
             link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+
         #бьём текст задачи на куски по Enter
         self.ids.task.data = []
         k = s.find('\n')
@@ -123,8 +159,18 @@ class Disposal(Screen):
             self.ids.task.data.append({'text':s[:k].replace('\r', '')})
             s = s[k+1:]
             k = s.find('\n')
-        self.ids.task.data.append({'text':s})
+        self.task.data.append({'text':s})
 
+        #добавляем файлы
+        Files = connect_manager.GetResult('getFileList', {'object_id':1127, 'line_id': int(self.ids.number.text)}, ['id', 'FileName'], prefix='TSysMethods')
+        for item in Files:
+            self.task.data.append({'text': r'[ref={url}][color={link_color}]{text}[/color][/ref]'.format(
+                url=item[0] + ':' + basename(item[1]),
+                text=basename(item[1]),
+                link_color=get_hex_from_color(self.app.theme_cls.primary_color)
+                )})
+
+        #запускаем поток загрузки комментариев
         mythread = threading.Thread(target=self.load_comments)
         mythread.start()
 
