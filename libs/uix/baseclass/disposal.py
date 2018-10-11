@@ -90,7 +90,7 @@ class TaskLabel(Label):
             subprocess.call(('open', filename))
         elif os.name == 'nt':  # For Windows
             os.startfile(filename)
-        elif os.name == 'posix':  # For Linux, Mac, etc.
+        else:  # For Linux, Mac, etc.
             subprocess.call(('xdg-open', filename))
 
     def show_file(self, id, filename):
