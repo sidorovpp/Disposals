@@ -98,7 +98,7 @@ class TaskLabel(Label):
         res = connect_manager.GetResult('getFile', {'id': id}, [], prefix='TSysMethods')
 
         #сохраняем в пользовательскую папку
-        filename = join(self.app.user_data_dir, filename)
+        filename = join(self.app.user_data_dir, 'temp.'+ os.path.splitext(filename)[1])
         tfp = open(filename, 'wb')
         with tfp:
             tfp.write(bytes(res))
@@ -111,9 +111,9 @@ class TaskLabel(Label):
     def on_ref_press(self, url):
         path = url[:url.find(':')]
         if path.isnumeric():
-            #mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
-            #mythread.start()
-            self.show_file(int(path), url[url.find(':') + 1:])
+            mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
+            mythread.start()
+            #self.show_file(int(path), url[url.find(':') + 1:])
         else:
             webbrowser.open(url)
 
