@@ -22,10 +22,12 @@ from kivy.utils import get_hex_from_color
 from kivy.app import App
 from kivy.clock import Clock, mainthread
 from os.path import basename,  join
-from os import startfile
+import os
+import sys
 import threading
 import re
 import webbrowser
+import subprocess
 
 
 #кнопка добавления комментария
@@ -81,6 +83,13 @@ class TaskLabel(Label):
         super(TaskLabel, self).__init__(**kwargs)
         self.app = App.get_running_app()
 
+    def open_file(self, filename):
+        if sys.platform == "win32":
+            os.startfile(filename)
+        else:
+            opener = "open" if sys.platform == "darwin" else "xdg-open"
+            subprocess.call([opener, filename])
+
     def show_file(self, id, filename):
         Clock.schedule_once(self.app.screen.ids.disposal.start_spinner, 0)
 
@@ -96,7 +105,7 @@ class TaskLabel(Label):
         self.app.screen.ids.disposal.stop_spinner()
 
         #запускаем файл
-        startfile(filename)
+        self.open_file(filename)
 
     def on_ref_press(self, url):
         path = url[:url.find(':')]
