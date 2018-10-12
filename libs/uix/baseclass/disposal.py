@@ -35,10 +35,15 @@ import subprocess
 #кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
 
+    def __init__(self, **kwargs):
+        super(AddCommentButton, self).__init__(**kwargs)
+        self.app = App.get_running_app()
+
     def commit(self):
         if self.dialog.content.text.strip() != "":
             try:
-                connect_manager.GetResult('SendComment', {'disposal_id': int(self.parent.ids.number.text), 'comment': self.dialog.content.text.strip()}, [])
+                connect_manager.GetResult('SendComment', {'disposal_id': int(self.parent.number.text), 'comment': self.dialog.content.text.strip()}, [])
+                connect_manager.GetResult('SetTaskRead', {'id': int(self.parent.number.text)}, [])
             except:
                 pass
 
@@ -48,16 +53,16 @@ class AddCommentButton(MDFloatingActionButton):
     def on_press(self):
         content = MDTextField()
         content.multiline = True
-        content.hint_text = "Введите комментарий"
+        content.hint_text = self.app.translation._('Введите комментарий')
         content.focus = True
-        self.dialog = MDDialog(title="Новый комментарий",
+        self.dialog = MDDialog(title=self.app.translation._('Новый комментарий'),
                                content=content,
                                size_hint=(.8, None),
                                height=dp(400))
 
-        self.dialog.add_action_button("Сохранить",
+        self.dialog.add_action_button(self.app.translation._('Сохранить'),
                                       action=lambda *x: self.commit())
-        self.dialog.add_action_button("Отмена",
+        self.dialog.add_action_button(self.app.translation._('Отмена'),
                                       action=lambda *x: self.dialog.dismiss())
         self.dialog.open()
 

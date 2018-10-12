@@ -1,17 +1,15 @@
 # список задач
 from libs.uix.baseclass.disposalsdroid import connect_manager
-from kivymd.button import MDIconButton, MDFlatButton, MDRaisedButton
+from kivymd.button import MDFlatButton
 from kivy.app import App
 from kivymd.label import MDLabel
 from kivymd.dialog import MDDialog
 from kivy.metrics import dp
-from libs.applibs.toast import toast
 import threading
 from kivy.clock import Clock, mainthread
 from kivy.uix.recycleview import RecycleView
 from datetime import datetime
-from itertools import groupby
-import time
+from libs.uix.baseclass.utils import confirm_dialog
 
 
 class DisposalItem(MDFlatButton):
@@ -71,6 +69,19 @@ class DisposalItem(MDFlatButton):
         except:
             pass
 
+    def execute(self):
+        def _execute(dialog):
+            try:
+                number = self.app.screen.ids.disposal.number.text
+                connect_manager.GetResult('ExecuteDisposal', {'disposal_id': int(number)}, [])
+                dialog.dismiss()
+            except:
+                pass
+
+        confirm_dialog(self.app.translation._('Вопрос'),
+                       self.app.translation._('Выполнить задачу?'),
+                       _execute)
+
     def set_disposal_params(self, item_data):
         Receiver = connect_manager.GetResult('getStaff', {'id': int(item_data['Receiver_id'])}, ['userName'])[0][0]
         Sender = connect_manager.GetResult('getStaff', {'id': int(item_data['Sender_id'])}, ['userName'])[0][0]
@@ -107,6 +118,7 @@ class DisposalItem(MDFlatButton):
         # добавляем кнопки следующая, предыдущая, назад и прочитано
         self.app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: self.app.back_screen(27)]]
         self.app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()],
+                                                             ['checkbox-marked-circle', lambda x: self.execute()],
                                                              ['skip-previous', lambda x: self.show_prior()],
                                                              ['skip-next', lambda x: self.show_next()]]
 
