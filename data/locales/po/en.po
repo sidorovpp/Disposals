@@ -129,6 +129,27 @@ msgstr "All disposals"
 msgid "Внимание"
 msgstr "Warning"
 
+msgid "ОК"
+msgstr "OK"
+
+msgid "Вопрос"
+msgstr "Question"
+
+msgid "Выполнить задачу?"
+msgstr "Execute disposal?"
+
+msgid "Введите комментарий?"
+msgstr "Enter comment"
+
+msgid "Новый комментарий"
+msgstr "New comment"
+
+msgid "Сохранить"
+msgstr "Save"
+
+msgid "Отмена"
+msgstr "Cancel"
+
 #: libs/utils/showplugins.py:34 libs/utils/showplugins.py:53
 msgid "Да"
 msgstr "Yes"
