@@ -127,6 +127,7 @@ class TaskLabel(Label):
         #сохраняем в пользовательскую папку
         ext = os.path.splitext(filename)[1]
         ext = ext.replace('docx', 'doc')
+        ext = ext.replace('xlsx', 'xls')
         filename = join(self.app.user_data_dir, 'temp'+ ext)
         tfp = open(filename, 'wb')
         with tfp:
