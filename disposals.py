@@ -62,10 +62,6 @@ class Disposals(App):
         self.translation = Translation(
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
-        self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
-                             'FromMe': self.translation._('Задачи от меня'),
-                             'ToMe': self.translation._('Задачи на меня'),
-                             'MyNotComplete': self.translation._('Все в работе')}
 
     def build(self):
 
@@ -277,6 +273,11 @@ class Disposals(App):
                     self.window_filter.dismiss()
                     self.set_value_from_config()
                     self.refresh_list()
+
+        self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
+                             'FromMe': self.translation._('Задачи от меня'),
+                             'ToMe': self.translation._('Задачи на меня'),
+                             'MyNotComplete': self.translation._('Все в работе')}
 
         dict_info_filters = {}
         for filter in self.filter_items:
