@@ -16,6 +16,10 @@ from kivy.properties import ObjectProperty
 
 class BaseScreen(Screen):
 
+    def press(self, keyboard, keycode, text, modifiers):
+        if keycode == 'enter':
+            self.refresh_list()
+
     def refresh_list(self):
         #self.ids.disposal_list.clear_widgets()
         self.ids.disposal_list.refresh_list()

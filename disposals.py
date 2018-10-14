@@ -194,7 +194,8 @@ class Disposals(App):
             self.back_screen(event=keyboard)
         elif keyboard in (282, 319):
             pass
-
+        elif keyboard == 13 and self.manager.current == 'base' :
+            self.refresh_list()
         return True
 
     def back_screen(self, event=None):
