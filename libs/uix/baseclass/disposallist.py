@@ -164,6 +164,11 @@ class DisposalList(RecycleView):
         self.stop_spinner()
         #toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
+    def on_scroll_stop(self, touch, check_children=True):
+        super(DisposalList, self).on_scroll_stop(touch, check_children=True)
+        if self.scroll_y == 1:
+            self.refresh_list()
+
     @mainthread
     def show_connect_error(self):
         self.stop_spinner()
