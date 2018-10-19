@@ -16,6 +16,7 @@
     spinner: spinner
     list_layout: list_layout
     number_search: number_search
+    disposal_list: disposal_list
 
     MDSpinner:
         id: spinner
@@ -30,7 +31,6 @@
         MDTextField:
             id: number_search
             hint_text: app.translation._('Номер или текст...')
-
         DisposalList:
             id: disposal_list
             viewclass: 'DisposalItem'
@@ -38,6 +38,7 @@
             scroll_timeout: 100
 
             RecycleBoxLayout:
+                id: disposal_layout
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
@@ -66,12 +67,14 @@
         padding: [dp(40),0,0,0]
         orientation: 'vertical'
         MDSeparator:
-        Label:
+        NumberLabel:
             id: number_label
             halign: 'left'
-            text_size: self.width, None
+            text_size:self.width, dp(20)
             size_hint: 1, None
             height: dp(20)
+            shorten: True
+            shorten_from: 'right'
             color: 0, 0, 0, 1
             markup: True
         Label:

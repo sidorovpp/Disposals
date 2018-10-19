@@ -252,7 +252,7 @@ class Disposals(App):
         if self.nav_drawer.state == 'open':
             self.nav_drawer._toggle()
         #self.screen.ids.base.ids.disposal_list.clear_widgets()
-        self.screen.ids.base.ids.disposal_list.refresh_list()
+        self.screen.ids.base.disposal_list.refresh_list()
 
 
     def show_settings(self, *args):
@@ -285,14 +285,14 @@ class Disposals(App):
             dict_info_filters[self.filter_items[filter]] = \
                 ['filter', filter == self.current_filter]
 
-        if not self.window_filter:
-            self.window_filter = card(
-                Lists(
-                    dict_items=dict_info_filters,
-                    events_callback=select_filter, flag='one_select_check'
-                ),
-                size=(.85, .55)
+        self.window_filter = card(
+            Lists(
+                dict_items=dict_info_filters,
+                events_callback=select_filter, flag='one_select_check'
+            ),
+            size=(.85, .55)
             )
+
         self.window_filter.open()
 
     def select_locale(self, *args):

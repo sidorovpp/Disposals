@@ -10,6 +10,17 @@ from kivy.clock import Clock, mainthread
 from kivy.uix.recycleview import RecycleView
 from datetime import datetime
 from libs.uix.baseclass.utils import confirm_dialog
+from kivy.utils import get_hex_from_color
+from ast import literal_eval
+
+
+class NumberLabel(MDLabel):
+    def on_ref_press(self, url):
+        app = App.get_running_app()
+        app.screen.ids.base.disposal_list.refresh_list(literal_eval('{' + url + '}'))
+        button = self.parent.parent
+        button.fade_bg.stop_property(button, '_current_button_color')
+        return super(MDLabel, self).on_ref_press(url)
 
 
 class DisposalItem(MDFlatButton):
@@ -24,16 +35,31 @@ class DisposalItem(MDFlatButton):
 
         self.app = App.get_running_app()
 
+
     def set_data(self, val):
+        #конвертация даты
         def get_date(str):
             if len(str) > 10:
                 return datetime.strptime(str, '%d.%m.%Y %H:%M:%S')
             else:
                 return datetime.strptime(str, '%d.%m.%Y')
+        #Фамилия И.О.
+        def get_staff_short(s):
+            k = s.find(' ')
+            k1 = s.find(' ', k + 1)
+            return s[:k + 1] + s[k + 1] + '.' + s[k1 + 1] + '.'
 
         self._data = val
         # номер
-        self.number_label.text = '[color=#003380]{0}[/color]'.format(self.data['Number'])
+        self.number_label.text = r'[color=#003380]#{number}[/color] ([ref="sender_id":{sender_id}][color={link_color}]{sender}[/color][/ref]' \
+                                 r'=> [ref="receiver_id":{receiver_id}][color={link_color}]{receiver}[/color][/ref])'.format(
+                number=self.data['Number'],
+                sender=get_staff_short(self.data['Sender']),
+                receiver=get_staff_short(self.data['Receiver']),
+                sender_id=self.data['Sender_id'],
+                receiver_id=self.data['Receiver_id'],
+                link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+
         # тема
         theme = self.data['Theme']
         theme = theme.replace('\n', ' ')
@@ -50,8 +76,6 @@ class DisposalItem(MDFlatButton):
         else:
             self.icon.icon_text = 'calendar-check'
             self.icon.text_color = [0, 1, 0, 1]
-            #self.theme_label.text = '[color=#009933]{0}[/color]'.format(theme)
-            #self.text_label.text = '[color=#009933]{0}[/color]'.format(text)
 
         if self.data['IsReaded'] == '0':
             self.theme_label.text = '[b]{0}[/b]'.format(self.theme_label.text)
@@ -83,12 +107,6 @@ class DisposalItem(MDFlatButton):
                        _execute)
 
     def set_disposal_params(self, item_data):
-        Receiver = connect_manager.GetResult('getStaff', {'id': int(item_data['Receiver_id'])}, ['userName'])[0][0]
-        Sender = connect_manager.GetResult('getStaff', {'id': int(item_data['Sender_id'])}, ['userName'])[0][0]
-
-        item_data['Receiver'] = Receiver
-        item_data['Sender'] = Sender
-
         self.app.screen.ids.disposal.set_params(item_data)
 
     # ищем следующий элемент
@@ -130,6 +148,7 @@ def get_number(i):
 class DisposalList(RecycleView):
 
     StaffID = None
+    Receivers = []
 
     def __init__(self, *args, **kwargs):
         super(DisposalList, self).__init__(*args, **kwargs)
@@ -156,7 +175,9 @@ class DisposalList(RecycleView):
                         'IsComplete': i[6],
                         'IsDisallowed': i[8],
                         'IsReaded': i[7],
-                        'PlanDateTo': i[9]
+                        'PlanDateTo': i[9],
+                        'Sender': i[10],
+                        'Receiver': i[11]
                         })
 
             self.data.append({'data': item,'height': dp(70)})
@@ -188,7 +209,13 @@ class DisposalList(RecycleView):
         self.dialog.open()
 
     # загрузка списка
-    def load_data(self):
+    def load_data(self, params={}):
+
+        def get_staff(staff_list, id ):
+            for i in staff_list:
+                if i[0] == id:
+                    return i[1]
+            return ''
 
         Clock.schedule_once(self.start_spinner, 0)
         try:
@@ -197,7 +224,7 @@ class DisposalList(RecycleView):
 
             Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo']
             search = self.app.screen.ids.base.number_search.text.strip()
-            if search != '' and len(search) > 2:
+            if search != '' and len(search) > 2 and len(params) == 0:
                 search = search.replace('%', '!%')
                 if search.isnumeric():
                     #ищем по номеру
@@ -211,19 +238,36 @@ class DisposalList(RecycleView):
                     [unique_list.append(obj) for obj in res if obj not in unique_list]
                     res = unique_list
             elif self.app.current_filter == 'NotReaded':
-                res = connect_manager.GetResult('getDisposalList', {'readed': 0}, Columns)
+                params.update({'readed': 0})
+                res = connect_manager.GetResult('getDisposalList', params, Columns)
             elif self.app.current_filter == 'FromMe':
-                res = connect_manager.GetResult('getDisposalList', {'isExecute': 0, 'Sender_id': self.StaffID}, Columns)
+                params.update({'isExecute': 0, 'Sender_id': self.StaffID})
+                res = connect_manager.GetResult('getDisposalList', params, Columns)
             elif self.app.current_filter == 'ToMe':
-                res = connect_manager.GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': self.StaffID}, Columns)
+                params.update({'isExecute': 0, 'Receiver_id': self.StaffID})
+                res = connect_manager.GetResult('getDisposalList', params, Columns)
             else:
-                res = connect_manager.GetResult('getDisposalList', {'isExecute': 0}, Columns)
+                params.update({'isExecute': 0})
+                res = connect_manager.GetResult('getDisposalList', params, Columns)
                 # res = GetResult('getDisposalList', {'isExecute': 0, 'Receiver_id': 43},
                 #                  ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                 #                   'Disabled'])
 
 
             res = sorted(res, key=get_number)
+
+            #загружаем отправителей и получателей
+            ids = set()
+            for i in res:
+                ids.add(i[3])
+                ids.add(i[4])
+
+            staff = connect_manager.GetResult('getStaff', {'id': list(ids)}, ['_id', 'userName'])
+
+            #прописываем отправителей и получателей
+            for i in res:
+                i.append(get_staff(staff, i[3]))
+                i.append(get_staff(staff, i[4]))
 
             # формируем список
             self.make_list(res)
@@ -233,9 +277,8 @@ class DisposalList(RecycleView):
             self.show_connect_error()
 
     # обновление списка задач
-    def refresh_list(self):
-
-        mythread = threading.Thread(target=self.load_data)
+    def refresh_list(self, params={}):
+        mythread = threading.Thread(target=self.load_data,  kwargs = {'params':params})
         mythread.start()
 
 
