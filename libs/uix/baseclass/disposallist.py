@@ -188,7 +188,7 @@ class DisposalList(RecycleView):
     def on_scroll_stop(self, touch, check_children=True):
         super(DisposalList, self).on_scroll_stop(touch, check_children=True)
         if self.scroll_y > 1:
-            self.refresh_list()
+            self.refresh_list(params={})
 
     @mainthread
     def show_connect_error(self):
@@ -209,7 +209,7 @@ class DisposalList(RecycleView):
         self.dialog.open()
 
     # загрузка списка
-    def load_data(self, params={}):
+    def load_data(self, params):
 
         def get_staff(staff_list, id ):
             for i in staff_list:
@@ -256,18 +256,19 @@ class DisposalList(RecycleView):
 
             res = sorted(res, key=get_number)
 
-            #загружаем отправителей и получателей
-            ids = set()
-            for i in res:
-                ids.add(i[3])
-                ids.add(i[4])
+            if len(res) > 0:
+                #загружаем отправителей и получателей
+                ids = set()
+                for i in res:
+                    ids.add(i[3])
+                    ids.add(i[4])
 
-            staff = connect_manager.GetResult('getStaff', {'id': list(ids)}, ['_id', 'userName'])
+                staff = connect_manager.GetResult('getStaff', {'id': list(ids)}, ['_id', 'userName'])
 
-            #прописываем отправителей и получателей
-            for i in res:
-                i.append(get_staff(staff, i[3]))
-                i.append(get_staff(staff, i[4]))
+                #прописываем отправителей и получателей
+                for i in res:
+                    i.append(get_staff(staff, i[3]))
+                    i.append(get_staff(staff, i[4]))
 
             # формируем список
             self.make_list(res)
@@ -277,7 +278,7 @@ class DisposalList(RecycleView):
             self.show_connect_error()
 
     # обновление списка задач
-    def refresh_list(self, params={}):
+    def refresh_list(self, params):
         mythread = threading.Thread(target=self.load_data,  kwargs = {'params':params})
         mythread.start()
 

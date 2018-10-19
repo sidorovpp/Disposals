@@ -252,7 +252,7 @@ class Disposals(App):
         if self.nav_drawer.state == 'open':
             self.nav_drawer._toggle()
         #self.screen.ids.base.ids.disposal_list.clear_widgets()
-        self.screen.ids.base.disposal_list.refresh_list()
+        self.screen.ids.base.disposal_list.refresh_list(params = {})
 
 
     def show_settings(self, *args):
