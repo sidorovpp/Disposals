@@ -12,7 +12,7 @@ from datetime import datetime
 from libs.uix.baseclass.utils import confirm_dialog
 from kivy.utils import get_hex_from_color
 from ast import literal_eval
-
+from libs.applibs.toast import toast
 
 class NumberLabel(MDLabel):
     def on_ref_press(self, url):
@@ -51,8 +51,8 @@ class DisposalItem(MDFlatButton):
 
         self._data = val
         # номер
-        self.number_label.text = r'[color=#003380]#{number}[/color] ([ref="sender_id":{sender_id}][color={link_color}]{sender}[/color][/ref]' \
-                                 r'=> [ref="receiver_id":{receiver_id}][color={link_color}]{receiver}[/color][/ref])'.format(
+        self.number_label.text = r'[color=#003380]#{number}[/color] ([ref="sender_id":{sender_id}][color={link_color}][u]{sender}[/u][/color][/ref]' \
+                                 r'=> [ref="receiver_id":{receiver_id}][color={link_color}][u]{receiver}[/u][/color][/ref])'.format(
                 number=self.data['Number'],
                 sender=get_staff_short(self.data['Sender']),
                 receiver=get_staff_short(self.data['Receiver']),
@@ -183,7 +183,7 @@ class DisposalList(RecycleView):
             self.data.append({'data': item,'height': dp(70)})
 
         self.stop_spinner()
-        #toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
+        toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
     def on_scroll_stop(self, touch, check_children=True):
         super(DisposalList, self).on_scroll_stop(touch, check_children=True)
@@ -224,15 +224,19 @@ class DisposalList(RecycleView):
 
             Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo']
             search = self.app.screen.ids.base.number_search.text.strip()
-            if search != '' and len(search) > 2 and len(params) == 0:
+            if search != '' and len(search) > 2:
                 search = search.replace('%', '!%')
                 if search.isnumeric():
                     #ищем по номеру
-                    res = connect_manager.GetResult('getDisposalList', {'Number': '%%' + search + '%%'}, Columns)
+                    params.update({'Number': '%%' + search + '%%'})
+                    res = connect_manager.GetResult('getDisposalList', params, Columns)
                 else:
                     #ищем по теме или тексту
-                    res = connect_manager.GetResult('getDisposalList', {'Task': '%%' + search + '%%'}, Columns)
-                    res += connect_manager.GetResult('getDisposalList', {'Theme': '%%' + search + '%%'}, Columns)
+                    params2 = params.copy()
+                    params.update({'Task': '%%' + search + '%%'})
+                    params2.update({'Theme': '%%' + search + '%%'})
+                    res = connect_manager.GetResult('getDisposalList', params, Columns)
+                    res += connect_manager.GetResult('getDisposalList', params2, Columns)
                     #убираем дубли
                     unique_list = []
                     [unique_list.append(obj) for obj in res if obj not in unique_list]

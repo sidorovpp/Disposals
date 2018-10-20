@@ -172,7 +172,7 @@ class Disposal(Screen):
                 #заполняем гиперлинки
                 note_text = item[2]
                 r = re.compile(r"(https://[^ \r]+)")
-                note_text = r.sub(r'[ref=\1][color={link_color}]\1[/color][/ref]', note_text).format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+                note_text = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', note_text).format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
                 self.notes.data.append({'text':'{0}'.format(note_text)})
             self.task.size_hint_y = 0.5
             self.notes.size_hint_y = 0.5
@@ -191,7 +191,7 @@ class Disposal(Screen):
         #заполняем гиперлинки
         s = params['Task']
         r = re.compile(r"(https://[^ \r]+)")
-        s = r.sub(r'[ref=\1][color={link_color}]\1[/color][/ref]', s).format(
+        s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s).format(
             link_color=get_hex_from_color(self.app.theme_cls.primary_color))
 
         #бьём текст задачи на куски по Enter
@@ -206,7 +206,7 @@ class Disposal(Screen):
         #добавляем файлы
         Files = connect_manager.GetResult('getFileList', {'object_id':1127, 'line_id': int(self.ids.number.text)}, ['id', 'FileName'], prefix='TSysMethods')
         for item in Files:
-            self.task.data.append({'text': r'[ref={url}][color={link_color}]{text}[/color][/ref]'.format(
+            self.task.data.append({'text': r'[ref={url}][color={link_color}][u]{text}[/u][/color][/ref]'.format(
                 url=item[0] + ':' + ntpath.basename(item[1]),
                 text=ntpath.basename(item[1]),
                 link_color=get_hex_from_color(self.app.theme_cls.primary_color)
