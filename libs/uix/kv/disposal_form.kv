@@ -1,0 +1,97 @@
+#:import MDSeparator kivymd.card.MDSeparator
+#:import MDTextField kivymd.textfields.MDTextField
+#:import MDSlider kivymd.slider.MDSlider
+
+<DisposalForm>:
+    name: 'disposal_form'
+    receiver: receiver
+    theme: theme
+    task: task
+
+    BoxLayout:
+        id: disposal_layout
+        orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
+
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('Получатель')
+
+        BoxLayout:
+            orientation: 'horizontal'
+            MDTextField:
+                id: receiver
+                required: True
+                hint_text: app.translation._('Введите текст для поиска')
+            MDIconButton:
+                icon: 'magnify'
+                on_release: root.search_staff()
+
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('Тема')
+
+        MDTextField:
+            id: theme
+            required: True
+            hint_text: app.translation._('Введите тему')
+
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('Задача')
+
+        MDTextField:
+            id: task
+            hint_text: app.translation._('Введите задачу')
+            required: True
+            multiline: True
+
+        Label:
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '14sp'
+            text: app.translation._('Важность')
+
+        MDSlider:
+            id: urgency
+            min: 1
+            max: 5
+            value: 3
+
+        Widget:
+
+        BoxLayout:
+            orientation: 'horizontal'
+            Widget:
+            MDFlatButton:
+                text: app.translation._('Сохранить')
+                on_release: root.save()
+
+            MDFlatButton:
+                text: app.translation._('Отмена')
+                on_release: root.cancel()
+

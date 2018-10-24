@@ -44,6 +44,15 @@
                 height: self.minimum_height
                 default_size_hint: 1, None
 
+    AddDisposalButton:
+        id: menu_button
+        icon: 'plus'
+        opposite_colors: True
+        elevation_normal: 8
+        #pos_hint: {'right':1}
+        x: Window.width - (self.width + dp(15))
+        y: dp(15)
+
 <DisposalList@RecycleView>
 
 <DisposalItem>

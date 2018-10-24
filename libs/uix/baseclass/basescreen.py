@@ -11,8 +11,14 @@
 # LICENSE: MIT
 
 from kivy.uix.screenmanager import Screen
-from kivy.uix.popup import Popup
-from kivy.properties import ObjectProperty
+from kivymd.button import MDFloatingActionButton
+from kivy.app import App
+
+#кнопка добавления задачи
+class AddDisposalButton(MDFloatingActionButton):
+    def on_press(self):
+        app = App.get_running_app()
+        app.manager.current = 'disposal_form'
 
 class BaseScreen(Screen):
 

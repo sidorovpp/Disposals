@@ -47,7 +47,7 @@ if __name__ == '__main__':
             pass
 
         while True:
-            sleep(600)
+            sleep(60)
             check_disposals()
 
 

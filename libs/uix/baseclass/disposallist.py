@@ -13,12 +13,15 @@ from libs.uix.baseclass.utils import confirm_dialog
 from kivy.utils import get_hex_from_color
 from ast import literal_eval
 from libs.applibs.toast import toast
+from kivy.utils import platform
 
 class NumberLabel(MDLabel):
     def on_ref_press(self, url):
         app = App.get_running_app()
         app.screen.ids.base.disposal_list.refresh_list(literal_eval('{' + url + '}'))
         button = self.parent.parent
+
+        #отключаем прорисовку нажатия кнопки при клике на ссылку
         button.fade_bg.stop_property(button, '_current_button_color')
         return super(MDLabel, self).on_ref_press(url)
 
@@ -183,7 +186,8 @@ class DisposalList(RecycleView):
             self.data.append({'data': item,'height': dp(70)})
 
         self.stop_spinner()
-        toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
+        if platform == 'android':
+            toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
 
     def on_scroll_stop(self, touch, check_children=True):
         super(DisposalList, self).on_scroll_stop(touch, check_children=True)
@@ -257,8 +261,7 @@ class DisposalList(RecycleView):
                 #                  ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed',
                 #                   'Disabled'])
 
-
-            res = sorted(res, key=get_number)
+            res = sorted(res, key=get_number, reverse=True)
 
             if len(res) > 0:
                 #загружаем отправителей и получателей
