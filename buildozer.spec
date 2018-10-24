@@ -52,7 +52,7 @@ presplash.filename = %(source.dir)s/data/wait.png
 icon.filename = %(source.dir)s/data/icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
-orientation = portrait
+orientation = all
 
 # (list) List of service to declare
 services = Disposals:./service/main.py
