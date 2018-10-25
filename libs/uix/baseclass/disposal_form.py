@@ -87,5 +87,11 @@ class DisposalForm(Screen):
     def cancel(self, *args):
         self.manager.current = 'base'
 
-
+    def on_enter(self, *args):
+        self.theme.text = ''
+        self.task.text = ''
+        if self.ReceiverStaffID != None:
+            self.theme.focus = True
+        else:
+            self.receiver.focus = True
 
