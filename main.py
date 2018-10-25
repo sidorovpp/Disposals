@@ -39,7 +39,7 @@ try:
     from kivy import platform
     if platform == 'android':
         from plyer import orientation
-        orientation.set_sensor(mode='any')
+        orientation.set_sensor(mode='portrait')
 
     from kivymd.theming import ThemeManager
 
