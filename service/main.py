@@ -20,8 +20,6 @@ def check_disposals():
         kwargs['app_name'] = 'disposals'
         kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
         kwargs['ticker'] = ticker
-        #вибрация
-        vibrator.vibrate(0.5)
         #показываем уведомление
         notification.notify(**kwargs)
 
@@ -47,7 +45,7 @@ if __name__ == '__main__':
             pass
 
         while True:
-            sleep(60)
+            sleep(180)
             check_disposals()
 
 
