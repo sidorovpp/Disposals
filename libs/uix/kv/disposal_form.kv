@@ -7,6 +7,7 @@
     receiver: receiver
     theme: theme
     task: task
+    urgency: urgency
 
     BoxLayout:
         id: disposal_layout
@@ -33,7 +34,9 @@
             MDTextField:
                 id: receiver
                 required: True
-                hint_text: app.translation._('Введите текст для поиска')
+                hint_text: app.translation._('Введите часть ФИО для поиска')
+                on_text: root.receiver_change(self.text)
+                theme_foreground_color : 'Custom'
             MDIconButton:
                 icon: 'magnify'
                 on_release: root.search_staff()
@@ -80,7 +83,7 @@
             id: urgency
             min: 1
             max: 5
-            value: 3
+            value: 2
 
         Widget:
 

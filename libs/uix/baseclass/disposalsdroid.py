@@ -94,6 +94,7 @@ class ConnectManager():
     server = ''
     sms = ''
     current_pragma = ''
+    StaffID = None
 
     # системный доступ
     sysusername = ''
@@ -140,6 +141,8 @@ class ConnectManager():
                     self.InitConnect()
                     headers['Pragma'] = self.current_pragma
                     res = OpenJsonUrl(url, params, headers=headers)
+                else:
+                    raise error
         else:
             res = OpenJsonUrl(url, params)
 

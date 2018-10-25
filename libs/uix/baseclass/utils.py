@@ -4,7 +4,7 @@ from kivy.metrics import dp
 from kivy.app import App
 
 
-def confirm_dialog(title, text, ok_proc):
+def show_dialog(title, text, ok_proc, inform = False):
     app = App.get_running_app()
     content = Label()
     content.text = text
@@ -18,9 +18,13 @@ def confirm_dialog(title, text, ok_proc):
                       height=dp(200),
                       auto_dismiss=False)
 
-    dialog.add_action_button(app.translation._('ОК'),
+    if inform:
+        dialog.add_action_button(app.translation._('ОК'),
+                                  action=lambda *x: dialog.dismiss())
+    else:
+        dialog.add_action_button(app.translation._('ОК'),
                                   action=lambda *x: ok_proc(dialog))
-    dialog.add_action_button(app.translation._('Отмена'),
+        dialog.add_action_button(app.translation._('Отмена'),
                                   action=lambda *x: dialog.dismiss())
     dialog.open()
 

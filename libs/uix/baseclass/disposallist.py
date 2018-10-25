@@ -9,7 +9,7 @@ import threading
 from kivy.clock import Clock, mainthread
 from kivy.uix.recycleview import RecycleView
 from datetime import datetime
-from libs.uix.baseclass.utils import confirm_dialog
+from libs.uix.baseclass.utils import show_dialog
 from kivy.utils import get_hex_from_color
 from ast import literal_eval
 from libs.applibs.toast import toast
@@ -105,7 +105,7 @@ class DisposalItem(MDFlatButton):
             except:
                 pass
 
-        confirm_dialog(self.app.translation._('Вопрос'),
+        show_dialog(self.app.translation._('Вопрос'),
                        self.app.translation._('Выполнить задачу?'),
                        _execute)
 
@@ -150,7 +150,6 @@ def get_number(i):
 
 class DisposalList(RecycleView):
 
-    StaffID = None
     Receivers = []
 
     def __init__(self, *args, **kwargs):
@@ -223,8 +222,9 @@ class DisposalList(RecycleView):
 
         Clock.schedule_once(self.start_spinner, 0)
         try:
-            if self.StaffID == None:
-                self.StaffID = connect_manager.GetResult('getStaffID', {}, [])
+            #если не заполнен текущий пользователь - получаем
+            if connect_manager.StaffID == None:
+                connect_manager.StaffID = connect_manager.GetResult('getStaffID', {}, [])
 
             Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo']
             search = self.app.screen.ids.base.number_search.text.strip()
@@ -249,10 +249,10 @@ class DisposalList(RecycleView):
                 params.update({'readed': 0})
                 res = connect_manager.GetResult('getDisposalList', params, Columns)
             elif self.app.current_filter == 'FromMe':
-                params.update({'isExecute': 0, 'Sender_id': self.StaffID})
+                params.update({'isExecute': 0, 'Sender_id': connect_manager.StaffID})
                 res = connect_manager.GetResult('getDisposalList', params, Columns)
             elif self.app.current_filter == 'ToMe':
-                params.update({'isExecute': 0, 'Receiver_id': self.StaffID})
+                params.update({'isExecute': 0, 'Receiver_id': connect_manager.StaffID})
                 res = connect_manager.GetResult('getDisposalList', params, Columns)
             else:
                 params.update({'isExecute': 0})

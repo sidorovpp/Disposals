@@ -1,7 +1,3 @@
-# Copyright (C) 2017 Ivanov Yuri aka HeaTTheatR
-# This file is distributed under the same license as the Kivy package.
-# Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>, 2017
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
@@ -153,6 +149,29 @@ msgstr "Cancel"
 msgid "Номер или текст..."
 msgstr "Number or text..."
 
+msgid "Ошибка"
+msgstr "Error"
+
+msgid "Получатель"
+msgstr "Receiver"
+
+msgid "Введите часть ФИО для поиска"
+msgstr "Enter part of the name for search"
+
+msgid "Тема"
+msgstr "Theme"
+
+msgid "Введите тему"
+msgstr "Enter theme"
+
+msgid "Введите задачу"
+msgstr "Enter disposal"
+
+msgid "Важность"
+msgstr "Urgency"
+
+msgid "Новая задача"
+msgstr "New disposal"
 
 #: libs/utils/showplugins.py:34 libs/utils/showplugins.py:53
 msgid "Да"

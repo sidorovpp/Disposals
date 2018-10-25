@@ -19,6 +19,10 @@ class AddDisposalButton(MDFloatingActionButton):
     def on_press(self):
         app = App.get_running_app()
         app.manager.current = 'disposal_form'
+        app.screen.ids.action_bar.title = \
+            app.translation._('Новая задача')
+        app.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x: app.back_screen(27)]]
 
 class BaseScreen(Screen):
 
