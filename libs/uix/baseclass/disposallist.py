@@ -140,8 +140,8 @@ class DisposalItem(MDFlatButton):
         self.app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: self.app.back_screen(27)]]
         self.app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()],
                                                              ['checkbox-marked-circle', lambda x: self.execute()],
-                                                             ['skip-previous', lambda x: self.show_prior()],
-                                                             ['skip-next', lambda x: self.show_next()]]
+                                                             ['skip-previous', lambda x: self.show_next()],
+                                                             ['skip-next', lambda x: self.show_prior()]]
 
 
 def get_number(i):

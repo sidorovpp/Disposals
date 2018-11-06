@@ -171,6 +171,9 @@ class Disposal(Screen):
                 self.notes.data.append({'text':'[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
                 #заполняем гиперлинки
                 note_text = item[2]
+                #для функцции format
+                note_text = note_text.replace('{', '{{')
+                note_text = note_text.replace('}', '}}')
                 r = re.compile(r"(https://[^ \r]+)")
                 note_text = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', note_text).format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
                 self.notes.data.append({'text':'{0}'.format(note_text)})
@@ -190,9 +193,12 @@ class Disposal(Screen):
 
         #заполняем гиперлинки
         s = params['Task']
+        #для функции format
+        s = s.replace('{', '{{')
+        s = s.replace('}', '}}')
         r = re.compile(r"(https://[^ \r]+)")
-        s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s).format(
-            link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+        s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s)
+        s = s.format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
 
         #бьём текст задачи на куски по Enter
         self.ids.task.data = []
