@@ -117,7 +117,7 @@ class DisposalItem(MDFlatButton):
         number = self.app.screen.ids.disposal.number.text
 
         for i in self.parent.parent.data:
-            if i['data']['Number'] > number:
+            if i['data']['Number'] < number:
                 self.set_disposal_params(i['data'])
                 break
 
@@ -126,7 +126,7 @@ class DisposalItem(MDFlatButton):
         number = self.app.screen.ids.disposal.number.text
 
         for i in self.parent.parent.data[::-1]:
-            if i['data']['Number'] < number:
+            if i['data']['Number'] > number:
                 self.set_disposal_params(i['data'])
                 break
 
@@ -140,8 +140,8 @@ class DisposalItem(MDFlatButton):
         self.app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: self.app.back_screen(27)]]
         self.app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()],
                                                              ['checkbox-marked-circle', lambda x: self.execute()],
-                                                             ['skip-previous', lambda x: self.show_next()],
-                                                             ['skip-next', lambda x: self.show_prior()]]
+                                                             ['skip-previous', lambda x: self.show_prior()],
+                                                             ['skip-next', lambda x: self.show_next()]]
 
 
 def get_number(i):
