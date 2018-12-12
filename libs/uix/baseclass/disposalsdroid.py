@@ -117,7 +117,15 @@ class ConnectManager():
             else:
                 self.current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
 
+    def GetIndexByName(self, collist, caption, name):
+        i = -1
+        for i in range(0, len(collist)):
+            if collist[i][caption].lower() == name.lower():
+                return i
+        return i
+
     def GetResult(self, name, params={}, columns=['Name'], auth=True, prefix='TDisposalMethods'):
+
         c = []
 
         url = 'http://' + self.server + '/rest/datasnap/rest/' + prefix + '/"' + name + '"'
@@ -157,7 +165,11 @@ class ConnectManager():
                     collist = columns
                 item = []
                 for y in collist:
-                    item.append(x[res['result'][0]['Columns'].index({'Title': y})])
+                    i = self.GetIndexByName(res['result'][0]['Columns'], 'Title', y)
+                    if i != -1:
+                        item.append(x[i])
+                    else:
+                        item.append('empty')
                 c.append(item)
 
         return c
