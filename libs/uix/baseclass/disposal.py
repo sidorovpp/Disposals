@@ -30,7 +30,8 @@ import threading
 import re
 import webbrowser
 import subprocess
-
+from kivy.core.clipboard import Clipboard
+from libs.applibs.toast import toast
 
 #кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
@@ -76,6 +77,13 @@ class Notes(RecycleView):
 class NoteLabel(Label):
     def on_ref_press(self, url):
         webbrowser.open(url)
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            Clipboard.copy(self.text)
+            if platform == 'android':
+                toast(self.app.translation._('Скопировано в буфер'))
+            return True
 
 #текст задачи
 class Task(RecycleView):
