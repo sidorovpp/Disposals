@@ -76,6 +76,10 @@ class Notes(RecycleView):
 
 #комментарий - label
 class NoteLabel(ButtonBehavior, Label):
+    def __init__(self, **kwargs):
+        super(NoteLabel, self).__init__(**kwargs)
+        self.app = App.get_running_app()
+
     def on_ref_press(self, url):
         webbrowser.open(url)
 
