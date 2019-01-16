@@ -204,6 +204,11 @@ class Disposal(Screen):
         self.ids.sender.text = self.manager.app.translation._('Отправитель:') + ' ' +params['Sender']
         self.ids.receiver.text = self.manager.app.translation._('Получатель:') + ' ' + params['Receiver']
 
+        if params['IsComplete'] == '0':
+            self.ids.theme.color = [1, 1, 1, 1]
+        else:
+            self.ids.theme.color = [0, 1, 0, 1]
+
         #заполняем гиперлинки
         s = params['Task']
         #для функции format
