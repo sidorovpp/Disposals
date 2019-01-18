@@ -177,7 +177,7 @@ class Disposal(Screen):
 
     def load_comments(self):
         Clock.schedule_once(self.start_spinner, 0)
-        self.ids.notes.data = []
+        self.notes.data = []
         Notes = connect_manager.GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)}, ['DateCreate', 'UserName', 'Unnamed3'])
         if Notes != []:
             for item in Notes:
@@ -236,12 +236,9 @@ class Disposal(Screen):
                 link_color=get_hex_from_color(self.app.theme_cls.primary_color)
                 )})
 
-        #убрал поток
-        self.load_comments()
-
         #запускаем поток загрузки комментариев
-        #mythread = threading.Thread(target=self.load_comments)
-        #mythread.start()
+        mythread = threading.Thread(target=self.load_comments)
+        mythread.start()
 
 
 
