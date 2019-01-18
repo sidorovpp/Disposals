@@ -236,9 +236,12 @@ class Disposal(Screen):
                 link_color=get_hex_from_color(self.app.theme_cls.primary_color)
                 )})
 
+        #убрал поток
+        self.load_comments()
+
         #запускаем поток загрузки комментариев
-        mythread = threading.Thread(target=self.load_comments)
-        mythread.start()
+        #mythread = threading.Thread(target=self.load_comments)
+        #mythread.start()
 
 
 
