@@ -74,11 +74,14 @@ class DisposalItem(MDFlatButton):
             if (self.data['PlanDateTo'] != '') and (datetime.now() > get_date(self.data['PlanDateTo'])):
                 self.icon.text_color = [1, 0, 0, 1]
             else:
-                self.icon.text_color = [0, 0, 1, 1]
+                self.icon.text_color = [0, 0, 0, 1]
             self.icon.icon_text = 'clock'
         else:
             self.icon.icon_text = 'calendar-check'
-            self.icon.text_color = [0, 1, 0, 1]
+            if self.data['IsConfirmed'] != '':
+                self.icon.text_color = [0, 0, 1, 1]
+            else:
+                self.icon.text_color = [0, 1, 0, 1]
 
         if self.data['IsReaded'] == '0':
             self.theme_label.text = '[b]{0}[/b]'.format(self.theme_label.text)
@@ -178,8 +181,9 @@ class DisposalList(RecycleView):
                         'IsDisallowed': i[8],
                         'IsReaded': i[7],
                         'PlanDateTo': i[9],
-                        'Sender': i[10],
-                        'Receiver': i[11]
+                        'Sender': i[11],
+                        'Receiver': i[12],
+                        'IsConfirmed': i[10]
                         })
 
             self.data.append({'data': item,'height': dp(70)})
@@ -226,7 +230,7 @@ class DisposalList(RecycleView):
             if connect_manager.StaffID == None:
                 connect_manager.StaffID = connect_manager.GetResult('getStaffID', {}, [])
 
-            Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo']
+            Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo', 'IsConfirmed']
             search = self.app.screen.ids.base.number_search.text.strip()
             if search != '' and len(search) > 2:
                 search = search.replace('%', '!%')

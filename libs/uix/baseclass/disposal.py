@@ -33,6 +33,7 @@ import subprocess
 from kivy.core.clipboard import Clipboard
 from libs.applibs.toast import toast
 from kivy.uix.behaviors import ButtonBehavior
+from datetime import datetime
 
 #кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
@@ -199,15 +200,28 @@ class Disposal(Screen):
         self.stop_spinner()
 
     def set_params(self, params):
+        #конвертация даты
+        def get_date(str):
+            if len(str) > 10:
+                return datetime.strptime(str, '%d.%m.%Y %H:%M:%S')
+            else:
+                return datetime.strptime(str, '%d.%m.%Y')
+
         self.ids.number.text = params['Number']
         self.ids.theme.text = params['Theme']
         self.ids.sender.text = self.manager.app.translation._('Отправитель:') + ' ' +params['Sender']
         self.ids.receiver.text = self.manager.app.translation._('Получатель:') + ' ' + params['Receiver']
 
         if params['IsComplete'] == '0':
-            self.ids.theme.color = [1, 1, 1, 1]
+            if (params['PlanDateTo'] != '') and (datetime.now() > get_date(params['PlanDateTo'])):
+                self.ids.theme.color = [1, 0, 0, 1]
+            else:
+                self.ids.theme.color = [0, 0, 0, 1]
         else:
-            self.ids.theme.color = [0, 1, 0, 1]
+            if params['IsConfirmed'] == '':
+                self.ids.theme.color = [0, 1, 0, 1]
+            else:
+                self.ids.theme.color = [0, 0, 1, 1]
 
         #заполняем гиперлинки
         s = params['Task']
@@ -236,6 +250,7 @@ class Disposal(Screen):
                 link_color=get_hex_from_color(self.app.theme_cls.primary_color)
                 )})
 
+        #убрал загрузку потоком, иногда отваливалось при прорисовке
         self.load_comments()
         #запускаем поток загрузки комментариев
         #mythread = threading.Thread(target=self.load_comments)
