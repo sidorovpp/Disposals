@@ -175,6 +175,10 @@ class Disposals(App):
             mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
             service.start(mActivity, '')
 
+            #перезапуск автоматически
+            PythonService = autoclass('org.kivy.android.PythonService')
+            PythonService.mService.setAutoRestartService(True)
+
 
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
