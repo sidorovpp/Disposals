@@ -137,36 +137,10 @@ class Disposals(App):
 
     def test(self, *args):
         if platform == 'android':
-            import jnius
-            Context = jnius.autoclass('android.content.Context')
-            Intent = jnius.autoclass('android.content.Intent')
-            PendingIntent = jnius.autoclass('android.app.PendingIntent')
-            AndroidString = jnius.autoclass('java.lang.String')
-            NotificationBuilder = jnius.autoclass('android.app.Notification$Builder')
-            Notification = jnius.autoclass('android.app.Notification')
-            service_name = 'S1'
-            package_name = 'com.something'
-            service = jnius.autoclass('org.kivy.android.PythonService').mService
-            PythonActivity = jnius.autoclass('org.kivy.android' + '.PythonActivity')
-            app_context = service.getApplication().getApplicationContext()
-            notification_builder = NotificationBuilder(app_context)
-            title = AndroidString("EzTunes".encode('utf-8'))
-            message = AndroidString("Ready to play music.".encode('utf-8'))
-            notification_intent = Intent(app_context, PythonActivity)
-            notification_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                         Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
-            notification_intent.setAction(Intent.ACTION_MAIN)
-            notification_intent.addCategory(Intent.CATEGORY_LAUNCHER)
-            intent = PendingIntent.getActivity(service, 0, notification_intent, 0)
-            notification_builder.setContentTitle(title)
-            notification_builder.setContentText(message)
-            notification_builder.setContentIntent(intent)
-            Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
-            icon = getattr(Drawable, 'icon')
-            notification_builder.setSmallIcon(icon)
-            notification_builder.setAutoCancel(True)
-            new_notification = notification_builder.getNotification()
-            service.startForeground(1, new_notification)
+            from jnius import autoclass
+            #перезапуск автоматически
+            PythonService = autoclass('org.kivy.android.PythonService')
+            PythonService.mService.setAutoRestartService(True)
 
     def start_service(self):
         if platform == 'android':
@@ -175,9 +149,6 @@ class Disposals(App):
             mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
             service.start(mActivity, '')
 
-            #перезапуск автоматически
-            PythonService = autoclass('org.kivy.android.PythonService')
-            PythonService.mService.setAutoRestartService(True)
 
 
     def load_all_kv_files(self, directory_kv_files):
