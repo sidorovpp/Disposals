@@ -151,10 +151,19 @@ class Disposals(App):
         #     service.start(mActivity, '')
 
         if platform == 'android':
-            import android
-            android.start_service(title='Disposals',
-                                  description='Disposals service',
-                                  arg='')
+            from jnius import autoclass
+            from android import AndroidService
+            try:
+                service = autoclass(
+                    'ru.mrcpp.disposals.ServiceDisposals')
+                mActivity = autoclass(
+                    'org.kivy.android.PythonActivity').mActivity
+                argument = ''
+                service.start(mActivity, argument)
+            except:
+                service = AndroidService(
+                    'Disposals', 'Disposals Service')
+                service.start('Hello From Service')
 
 
 
