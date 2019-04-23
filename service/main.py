@@ -5,9 +5,12 @@ from os.path import join
 from os.path import pardir
 from os.path import realpath
 from kivy.config import ConfigParser
+from kivy.utils import platform
+from datetime import datetime
 
 #проверка непрочитанных задач и уведомление
 def check_disposals():
+    write_debug_log('check')
     res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
     if len(res) > 0:
         from plyer import notification
@@ -18,14 +21,22 @@ def check_disposals():
         ticker = 'Уведомление'
         kwargs = {'title': title, 'message': message}
         kwargs['app_name'] = 'disposals'
-        kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
+        if platform == 'android':
+            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
+        else:
+            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
         kwargs['ticker'] = ticker
         #показываем уведомление
         notification.notify(**kwargs)
 
+def write_debug_log(text):
+    with open(join(dirname(realpath(__file__)), pardir, 'debug.log'), 'a+') as f:
+        f.write(datetime.strftime(datetime.now(), "%Y.%m.%d %H:%M:%S : "))
+        f.write(text + '\n')
 
 if __name__ == '__main__':
     try:
+        write_debug_log('start')
         config = ConfigParser()
         config.read(join(dirname(realpath(__file__)), pardir,  'disposals.ini'))
         connect_manager.server = config.get('General', 'ip')
@@ -38,6 +49,7 @@ if __name__ == '__main__':
         connect_manager.sysusername = config.get('Access', 'user')
         connect_manager.syspassword = config.get('Access', 'password')
 
+        write_debug_log('connect')
         #инициализируем соединение
         try:
             connect_manager.InitConnect()
@@ -45,11 +57,17 @@ if __name__ == '__main__':
             pass
 
         while True:
-            sleep(180)
+            write_debug_log('cycle')
+            sleep(30)
             check_disposals()
 
 
     except Exception as E:
+        if platform == 'android':
         #пишу в папку на карту ошибку (андроид)
-        with open('/sdcard/disposals/service_error.log', 'w+') as f:
-            f.write(str(E))
+            with open('/sdcard/disposals/service_error.log', 'w+') as f:
+                f.write(str(E))
+        else:
+            with open(join(dirname(realpath(__file__)), pardir,  'service_error.log'), 'w+') as f:
+                f.write(str(E))
+
