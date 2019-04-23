@@ -26,11 +26,19 @@ def check_disposals():
         else:
             kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
         kwargs['ticker'] = ticker
+        #вибрируем
+        if platform == 'android':
+            vibrator.vibrate(100)
         #показываем уведомление
         notification.notify(**kwargs)
 
 def write_debug_log(text):
-    with open(join(dirname(realpath(__file__)), pardir, 'debug.log'), 'a+') as f:
+    if platform == 'android':
+        # пишу в папку на карту ошибку (андроид)
+        f = '/sdcard/disposals/debug.log'
+    else:
+        f = join(dirname(realpath(__file__)), pardir, 'debug.log')
+    with open(f, 'a+') as f:
         f.write(datetime.strftime(datetime.now(), "%Y.%m.%d %H:%M:%S : "))
         f.write(text + '\n')
 
@@ -64,10 +72,10 @@ if __name__ == '__main__':
 
     except Exception as E:
         if platform == 'android':
-        #пишу в папку на карту ошибку (андроид)
-            with open('/sdcard/disposals/service_error.log', 'w+') as f:
-                f.write(str(E))
+            # пишу в папку на карту ошибку (андроид)
+            f = '/sdcard/disposals/service_error.log'
         else:
-            with open(join(dirname(realpath(__file__)), pardir,  'service_error.log'), 'w+') as f:
+            f = join(dirname(realpath(__file__)), pardir,  'service_error.log')
+        with open(f, 'w+') as f:
                 f.write(str(E))
 
