@@ -29,6 +29,8 @@ def check_disposals():
         #вибрируем
         if platform == 'android':
             vibrator.vibrate(1)
+            sleep(1)
+            vibrator.stop()
 
         #показываем уведомление
         notification.notify(**kwargs)
