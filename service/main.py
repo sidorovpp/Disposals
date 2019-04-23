@@ -28,7 +28,8 @@ def check_disposals():
         kwargs['ticker'] = ticker
         #вибрируем
         if platform == 'android':
-            vibrator.vibrate(100)
+            vibrator.vibrate(1)
+
         #показываем уведомление
         notification.notify(**kwargs)
 
