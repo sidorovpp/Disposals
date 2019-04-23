@@ -55,7 +55,7 @@ icon.filename = %(source.dir)s/data/icon.png
 orientation = all
 
 # (list) List of service to declare
-services = Disposals:./service/main.py
+services = Disposals:./service/main.py:sticky
 
 #
 # OSX Specific
@@ -97,7 +97,7 @@ android.permissions = INTERNET, VIBRATE
 #android.sdk = 20
 
 # (str) Android NDK version to use
-#android.ndk = 10.3.2
+android.ndk = 10.3.2
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
