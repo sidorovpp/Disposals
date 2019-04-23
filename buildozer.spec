@@ -55,7 +55,7 @@ icon.filename = %(source.dir)s/data/icon.png
 orientation = all
 
 # (list) List of service to declare
-services = Disposals:./service/main.py
+services = Disposals:./service/main.py:sticky
 
 #
 # OSX Specific

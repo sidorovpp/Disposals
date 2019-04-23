@@ -49,7 +49,7 @@ if __name__ == '__main__':
         connect_manager.sysusername = config.get('Access', 'user')
         connect_manager.syspassword = config.get('Access', 'password')
 
-        write_debug_log('connect')
+        #write_debug_log('connect')
         #инициализируем соединение
         try:
             connect_manager.InitConnect()
@@ -57,8 +57,8 @@ if __name__ == '__main__':
             pass
 
         while True:
-            write_debug_log('cycle')
-            sleep(30)
+            #write_debug_log('cycle')
+            sleep(60)
             check_disposals()
 
 
