@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
         while True:
             #write_debug_log('cycle')
-            sleep(60)
+            sleep(30)
             check_disposals()
 
 
