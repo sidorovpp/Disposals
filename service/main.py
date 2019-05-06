@@ -10,10 +10,10 @@ from common.utils import write_debug_log
 
 
 #проверка непрочитанных задач и уведомление
-def check_disposals():
+def check_disposals(count):
     write_debug_log('check')
     res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
-    if len(res) > 0:
+    if (len(res) > 0) and (len(res) != count):
         from plyer import notification
         from plyer import vibrator
 
@@ -35,6 +35,8 @@ def check_disposals():
 
         #показываем уведомление
         notification.notify(**kwargs)
+
+    return len(res)
 
 if __name__ == '__main__':
     try:
@@ -58,10 +60,11 @@ if __name__ == '__main__':
         except:
             pass
 
+        count = 0
         while True:
             #write_debug_log('cycle')
             sleep(30)
-            check_disposals()
+            count = check_disposals(count)
 
 
     except Exception as E:
