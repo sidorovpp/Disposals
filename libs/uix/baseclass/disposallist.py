@@ -42,10 +42,21 @@ class DisposalItem(MDFlatButton):
     def set_data(self, val):
         #конвертация даты
         def get_date(str):
-            if len(str) > 10:
-                return datetime.strptime(str, '%d.%m.%Y %H:%M:%S')
+            #ищу разделитель между цифрами, менялся с . на -
+            if str.find('-') >= 0:
+                d = '-'
             else:
-                return datetime.strptime(str, '%d.%m.%Y')
+                d = '.'
+            #что сначала - год?
+            if str.find(d) == 4:
+                fmt = '%Y' + d + '%m' + d + '%d %H:%M:%S'
+            else:
+                fmt = '%d' + d +'%m' + d +'%Y %H:%M:%S'
+            if len(str) > 10:
+                return datetime.strptime(str, fmt)
+            else:
+                return datetime.strptime(str, fmt[:8])
+
         #Фамилия И.О.
         def get_staff_short(s):
             k = s.find(' ')
