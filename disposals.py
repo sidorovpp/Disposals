@@ -160,8 +160,8 @@ class Disposals(App):
                     'org.kivy.android.PythonActivity').mActivity
                 argument = ''
                 service.start(mActivity, argument)
-                PythonService = autoclass('org.kivy.android.PythonService')
-                PythonService.mService.setAutoRestartService(True)
+                #PythonService = autoclass('org.kivy.android.PythonService')
+                service.setAutoRestartService(True)
             except:
                 #пишу ошибку старта сервиса
                 import traceback
