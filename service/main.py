@@ -69,10 +69,15 @@ def show_notification(title, message):
     new_notification = notification_builder.getNotification()
     service.startForeground(1, new_notification)
 
-def start_foreground():
+def set_autorestart():
     from jnius import autoclass
     PythonService = autoclass('org.kivy.android.PythonService')
     PythonService.mService.setAutoRestartService(True)
+
+def stop_foreground():
+    from jnius import autoclass
+    Service = autoclass('org.renpy.android.PythonService').mService
+    Service.stopForeground(True)
 
 
 if __name__ == '__main__':
@@ -92,7 +97,7 @@ if __name__ == '__main__':
 
         #write_debug_log('connect')
         #инициализируем соединение
-        #start_foreground()
+        #set_autorestart()
         try:
             connect_manager.InitConnect()
         except:
