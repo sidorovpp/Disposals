@@ -103,17 +103,11 @@ if __name__ == '__main__':
         except:
             pass
 
-        count = 0
-        i = 0
-        j = 30
-        max = 300
+        count = check_disposals(0)
         while True:
             #write_debug_log('cycle')
-            sleep(j)
-            i = i + j
-            if i > max:
-                count = check_disposals(count)
-                i = 0
+            sleep(300)
+            count = check_disposals(count)
 
 
     except Exception as E:
