@@ -23,55 +23,56 @@ def check_disposals(count):
         kwargs = {'title': title, 'message': message}
         kwargs['app_name'] = 'disposals'
         if platform == 'android':
-            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
-        else:
-            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
-        kwargs['ticker'] = ticker
-        #вибрируем
-        if platform == 'android':
+            show_notification(title, message)
+            # вибрируем
             vibrator.vibrate(1)
             sleep(1)
             vibrator.cancel()
+            #kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
+        else:
+            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
+            kwargs['ticker'] = ticker
 
-        #показываем уведомление
-        notification.notify(**kwargs)
+            #показываем уведомление
+            notification.notify(**kwargs)
 
     return len(res)
+
+def show_notification(title, message):
+    import jnius
+    Context = jnius.autoclass('android.content.Context')
+    Intent = jnius.autoclass('android.content.Intent')
+    PendingIntent = jnius.autoclass('android.app.PendingIntent')
+    AndroidString = jnius.autoclass('java.lang.String')
+    NotificationBuilder = jnius.autoclass('android.app.Notification$Builder')
+    service = jnius.autoclass('org.kivy.android.PythonService').mService
+    PythonActivity = jnius.autoclass('org.kivy.android' + '.PythonActivity')
+    notification_service = service.getSystemService(
+        Context.NOTIFICATION_SERVICE)
+    app_context = service.getApplication().getApplicationContext()
+    notification_builder = NotificationBuilder(app_context)
+    title = AndroidString(title.encode('utf-8'))
+    message = AndroidString(message.encode('utf-8'))
+    notification_intent = Intent(app_context, PythonActivity)
+    notification_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                 Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
+    notification_intent.setAction(Intent.ACTION_MAIN)
+    notification_intent.addCategory(Intent.CATEGORY_LAUNCHER)
+    intent = PendingIntent.getActivity(service, 0, notification_intent, 0)
+    notification_builder.setContentTitle(title)
+    notification_builder.setContentText(message)
+    notification_builder.setContentIntent(intent)
+    Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
+    icon = getattr(Drawable, 'icon')
+    notification_builder.setSmallIcon(icon)
+    notification_builder.setAutoCancel(True)
+    new_notification = notification_builder.getNotification()
+    service.startForeground(1, new_notification)
 
 def start_foreground():
     from jnius import autoclass
     PythonService = autoclass('org.kivy.android.PythonService')
     PythonService.mService.setAutoRestartService(True)
-
-    # import jnius
-    # Context = jnius.autoclass('android.content.Context')
-    # Intent = jnius.autoclass('android.content.Intent')
-    # PendingIntent = jnius.autoclass('android.app.PendingIntent')
-    # AndroidString = jnius.autoclass('java.lang.String')
-    # NotificationBuilder = jnius.autoclass('android.app.Notification$Builder')
-    # service = jnius.autoclass('org.kivy.android.PythonService').mService
-    # PythonActivity = jnius.autoclass('org.kivy.android' + '.PythonActivity')
-    # notification_service = service.getSystemService(
-    #     Context.NOTIFICATION_SERVICE)
-    # app_context = service.getApplication().getApplicationContext()
-    # notification_builder = NotificationBuilder(app_context)
-    # title = AndroidString("Disposals".encode('utf-8'))
-    # message = AndroidString("New Disposals.".encode('utf-8'))
-    # notification_intent = Intent(app_context, PythonActivity)
-    # notification_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-    #                              Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
-    # notification_intent.setAction(Intent.ACTION_MAIN)
-    # notification_intent.addCategory(Intent.CATEGORY_LAUNCHER)
-    # intent = PendingIntent.getActivity(service, 0, notification_intent, 0)
-    # notification_builder.setContentTitle(title)
-    # notification_builder.setContentText(message)
-    # notification_builder.setContentIntent(intent)
-    # Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
-    # icon = getattr(Drawable, 'icon')
-    # notification_builder.setSmallIcon(icon)
-    # notification_builder.setAutoCancel(True)
-    # new_notification = notification_builder.getNotification()
-    # service.startForeground(1, new_notification)
 
 
 if __name__ == '__main__':
