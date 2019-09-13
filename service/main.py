@@ -7,34 +7,34 @@ from os.path import realpath
 from kivy.config import ConfigParser
 from kivy.utils import platform
 from common.utils import write_debug_log
+from plyer import notification
+from plyer import vibrator
 
 
 #проверка непрочитанных задач и уведомление
 def check_disposals(count):
     write_debug_log('check')
     res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
-    if (len(res) > 0) and (len(res) != count):
-        from plyer import notification
-        from plyer import vibrator
 
-        title = 'Есть непрочитанные задачи'
-        message = 'Непрочитанных задач:' + str(len(res))
-        ticker = 'Уведомление'
-        kwargs = {'title': title, 'message': message}
-        kwargs['app_name'] = 'disposals'
-        if platform == 'android':
-            show_notification(title, message)
+    title = 'Есть непрочитанные задачи'
+    message = 'Непрочитанных задач:' + str(len(res))
+    ticker = 'Уведомление'
+    kwargs = {'title': title, 'message': message}
+    kwargs['app_name'] = 'disposals'
+
+    if (len(res) > 0) and (len(res) != count) and platform != 'android':
+        kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
+        kwargs['ticker'] = ticker
+
+        #показываем уведомление
+        notification.notify(**kwargs)
+    else:
+        show_notification(title, message)
+        if (len(res) > 0) and (len(res) != count):
             # вибрируем
             vibrator.vibrate(1)
             sleep(1)
             vibrator.cancel()
-            #kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.png')
-        else:
-            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
-            kwargs['ticker'] = ticker
-
-            #показываем уведомление
-            notification.notify(**kwargs)
 
     return len(res)
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
         #write_debug_log('connect')
         #инициализируем соединение
-        start_foreground()
+        #start_foreground()
         try:
             connect_manager.InitConnect()
         except:
