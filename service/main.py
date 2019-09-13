@@ -101,7 +101,7 @@ if __name__ == '__main__':
         count = 0
         while True:
             #write_debug_log('cycle')
-            sleep(30)
+            sleep(300)
             count = check_disposals(count)
 
 
