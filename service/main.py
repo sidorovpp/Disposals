@@ -9,6 +9,7 @@ from kivy.utils import platform
 from common.utils import write_debug_log
 from plyer import notification
 from plyer import vibrator
+import jnius
 
 
 #проверка непрочитанных задач и уведомление
@@ -39,7 +40,8 @@ def check_disposals(count):
     return len(res)
 
 def show_notification(title, message):
-    import jnius
+    stop_foreground()
+
     Context = jnius.autoclass('android.content.Context')
     Intent = jnius.autoclass('android.content.Intent')
     PendingIntent = jnius.autoclass('android.app.PendingIntent')
@@ -106,7 +108,7 @@ if __name__ == '__main__':
         count = check_disposals(0)
         while True:
             #write_debug_log('cycle')
-            sleep(300)
+            sleep(100)
             count = check_disposals(count)
 
 
