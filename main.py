@@ -22,31 +22,31 @@ NICK_NAME_AND_NAME_REPOSITORY = 'REPO_PROJECT'
 directory = os.path.split(os.path.abspath(sys.argv[0]))[0]
 #sys.path.insert(0, os.path.join(directory, 'libs/applibs'))
 
+#try:
+import webbrowser
 try:
-    import webbrowser
-    try:
-        import six.moves.urllib
-    except ImportError:
-        pass
+    import six.moves.urllib
+except ImportError:
+    pass
 
-    import kivy
-    kivy.require('1.9.2')
+import kivy
+kivy.require('1.9.2')
 
-    from kivy.config import Config
-    Config.set('kivy', 'keyboard_mode', 'system')
-    Config.set('kivy', 'log_enable', 0)
+from kivy.config import Config
+Config.set('kivy', 'keyboard_mode', 'system')
+Config.set('kivy', 'log_enable', 0)
 
-    from kivy import platform
-    if platform == 'android':
-        from plyer import orientation
-        orientation.set_sensor(mode='portrait')
+from kivy import platform
+if platform == 'android':
+    from plyer import orientation
+    orientation.set_sensor(mode='portrait')
 
-    from kivymd.theming import ThemeManager
+from kivymd.theming import ThemeManager
 
-    from libs.applibs.bugreporter import BugReporter
-except Exception:
-    traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
-    sys.exit(1)
+from libs.applibs.bugreporter import BugReporter
+#except Exception:
+#    traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
+#    sys.exit(1)
 
 
 __version__ = '0.1'

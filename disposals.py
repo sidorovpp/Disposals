@@ -145,8 +145,8 @@ class Disposals(App):
     def start_service(self):
 
         # if platform == 'android':
-        #     from jnius import autoclass
         #     service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
+        #     from jnius import autoclass
         #     mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
         #     service.start(mActivity, '')
 
@@ -160,6 +160,8 @@ class Disposals(App):
                     'org.kivy.android.PythonActivity').mActivity
                 argument = ''
                 service.start(mActivity, argument)
+                PythonService = autoclass('org.kivy.android.PythonService')
+                PythonService.mService.setAutoRestartService(True)
             except:
                 service = AndroidService(
                     'Disposals', 'Disposals Service')
