@@ -347,4 +347,5 @@ class Disposals(App):
 
     def on_resume(self):
         # стартуем сервис уведомлений
-        self.start_service()
+        #self.start_service()
+        self.refresh_list()
