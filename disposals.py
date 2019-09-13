@@ -171,9 +171,9 @@ class Disposals(App):
                          join(self.user_data_dir, 'error.log')
                          )
 
-                service = AndroidService(
-                    'Disposals', 'Disposals Service')
-                service.start('Hello From Service')
+                #service = AndroidService(
+                #   'Disposals', 'Disposals Service')
+                #service.start('Hello From Service')
 
 
 
