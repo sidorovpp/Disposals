@@ -163,6 +163,14 @@ class Disposals(App):
                 PythonService = autoclass('org.kivy.android.PythonService')
                 PythonService.mService.setAutoRestartService(True)
             except:
+                #пишу ошибку старта сервиса
+                import traceback
+                text_error = traceback.format_exc()
+                traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
+                copyfile(join(self.directory, 'error.log'),
+                         join(self.user_data_dir, 'error.log')
+                         )
+
                 service = AndroidService(
                     'Disposals', 'Disposals Service')
                 service.start('Hello From Service')
