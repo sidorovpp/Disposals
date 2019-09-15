@@ -9,7 +9,7 @@ from kivy.utils import platform
 from common.utils import write_debug_log
 from plyer import notification
 from plyer import vibrator
-import jnius
+from kivy.core.audio import SoundLoader
 
 
 #проверка непрочитанных задач и уведомление
@@ -36,10 +36,16 @@ def check_disposals(count):
             vibrator.vibrate(1)
             sleep(1)
             vibrator.cancel()
+            #звук
+            sound = SoundLoader.load('new.wav')
+            if sound:
+                sound.play()
 
     return len(res)
 
 def show_notification(title, message):
+    import jnius
+
     stop_foreground()
 
     Context = jnius.autoclass('android.content.Context')
