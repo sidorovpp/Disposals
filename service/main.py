@@ -59,7 +59,9 @@ def play_sound():
         mPlayer = MediaPlayer()
         mPlayer.setDataSource(join(dirname(realpath(__file__)), 'new.wav'))
         mPlayer.prepare()
+        duration = mPlayer.getDuration()
         mPlayer.start()
+        sleep(int(duration + 1))
         mPlayer.release()
 
 def show_notification(title, message):
