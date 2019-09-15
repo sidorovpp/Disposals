@@ -44,10 +44,23 @@ def check_disposals(count):
     return len(res)
 
 def play_sound():
-    from kivy.core.audio.audio_gstplayer import SoundGstplayer
-    SoundLoader.register(SoundGstplayer)
-    current_song = SoundLoader.load('new.wav')
-    current_song.play()
+    if platform != 'android':
+        from kivy.core.audio.audio_gstplayer import SoundGstplayer
+        SoundLoader.register(SoundGstplayer)
+        current_song = SoundLoader.load('new.wav')
+        current_song.play()
+    else:
+        from jnius import autoclass
+
+        # get the MediaPlayer java class
+        MediaPlayer = autoclass('android.media.MediaPlayer')
+
+        # create our player
+        mPlayer = MediaPlayer()
+        mPlayer.setDataSource('new.wav')
+        mPlayer.prepare()
+        mPlayer.start()
+        mPlayer.release()
 
 def show_notification(title, message):
     import jnius
