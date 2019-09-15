@@ -30,9 +30,7 @@ def check_disposals(count):
         #показываем уведомление
         notification.notify(**kwargs)
         # звук
-        sound = SoundLoader.load(join(dirname(realpath(__file__)), 'new.wav'))
-        if sound:
-            sound.play()
+        play_sound()
     else:
         show_notification(title, message)
         if (len(res) > 0) and (len(res) != count):
@@ -41,11 +39,15 @@ def check_disposals(count):
             sleep(1)
             vibrator.cancel()
             #звук
-            sound = SoundLoader.load(join(dirname(realpath(__file__)), 'new.wav'))
-            if sound:
-                sound.play()
+            play_sound()
 
     return len(res)
+
+def play_sound():
+    from kivy.core.audio.audio_gstplayer import SoundGstplayer
+    SoundLoader.register(SoundGstplayer)
+    current_song = SoundLoader.load('new.wav')
+    current_song.play()
 
 def show_notification(title, message):
     import jnius
