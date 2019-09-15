@@ -29,6 +29,10 @@ def check_disposals(count):
 
         #показываем уведомление
         notification.notify(**kwargs)
+        # звук
+        sound = SoundLoader.load('new.wav')
+        if sound:
+            sound.play()
     else:
         show_notification(title, message)
         if (len(res) > 0) and (len(res) != count):
