@@ -30,7 +30,7 @@ def check_disposals(count):
         #показываем уведомление
         notification.notify(**kwargs)
         # звук
-        sound = SoundLoader.load('new.wav')
+        sound = SoundLoader.load(join(dirname(realpath(__file__)), 'new.wav'))
         if sound:
             sound.play()
     else:
@@ -41,7 +41,7 @@ def check_disposals(count):
             sleep(1)
             vibrator.cancel()
             #звук
-            sound = SoundLoader.load('new.wav')
+            sound = SoundLoader.load(join(dirname(realpath(__file__)), 'new.wav'))
             if sound:
                 sound.play()
 
