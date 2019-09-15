@@ -57,7 +57,7 @@ def play_sound():
 
         # create our player
         mPlayer = MediaPlayer()
-        mPlayer.setDataSource('new.wav')
+        mPlayer.setDataSource(join(dirname(realpath(__file__)), 'new.wav'))
         mPlayer.prepare()
         mPlayer.start()
         mPlayer.release()
