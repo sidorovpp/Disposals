@@ -45,17 +45,20 @@ def check_disposals(count):
 
 def play_sound():
     if platform != 'android':
-        from kivy.core.audio.audio_gstplayer import SoundGstplayer
-        SoundLoader.register(SoundGstplayer)
-        current_song = SoundLoader.load('new.wav')
-        current_song.play()
+        #не везде работает (win 7 не сработало)
+        try:
+            sound = SoundLoader.load('new.wav')
+            if sound:
+                sound.play()
+        except:
+            pass
     else:
         from jnius import autoclass
 
-        # get the MediaPlayer java class
+        # MediaPlayer
         MediaPlayer = autoclass('android.media.MediaPlayer')
 
-        # create our player
+        # проигрываем звук
         mPlayer = MediaPlayer()
         mPlayer.setDataSource(join(dirname(realpath(__file__)), 'new.wav'))
         mPlayer.prepare()
