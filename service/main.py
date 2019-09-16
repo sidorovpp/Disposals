@@ -36,9 +36,10 @@ def check_disposals(count):
         if (len(res) > 0) and (len(res) != count):
             from jnius import autoclass
             AudioManager = autoclass('android.media.AudioManager')
-            PythonActivity = autoclass('org.kivy.android.PythonActivity')
+            #PythonActivity = autoclass('org.kivy.android.PythonActivity')
             Context = autoclass('android.content.Context')
-            audioManager = PythonActivity.mActivity.getSystemService(Context.AUDIO_SERVICE)
+            service = autoclass('org.kivy.android.PythonService').mService
+            audioManager = service.getSystemService(Context.AUDIO_SERVICE)
             if audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL:
                 #звук
                 play_sound()
