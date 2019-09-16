@@ -36,7 +36,9 @@ def check_disposals(count):
         if (len(res) > 0) and (len(res) != count):
             from jnius import autoclass
             AudioManager = autoclass('android.media.AudioManager')
-            audioManager = autoclass('android.content.Context.AUDIO_SERVICE')
+            PythonActivity = autoclass('org.kivy.android.PythonActivity')
+            Context = autoclass('android.content.Context.AUDIO_SERVICE')
+            audioManager = PythonActivity.mActivity.getSystemService(Context.AUDIO_SERVICE)
             if audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL:
                 #звук
                 play_sound()
@@ -83,7 +85,7 @@ def show_notification(title, message):
     AndroidString = jnius.autoclass('java.lang.String')
     NotificationBuilder = jnius.autoclass('android.app.Notification$Builder')
     service = jnius.autoclass('org.kivy.android.PythonService').mService
-    PythonActivity = jnius.autoclass('org.kivy.android' + '.PythonActivity')
+    PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
     notification_service = service.getSystemService(
         Context.NOTIFICATION_SERVICE)
     app_context = service.getApplication().getApplicationContext()
