@@ -36,8 +36,7 @@ def check_disposals(count):
         if (len(res) > 0) and (len(res) != count):
             from jnius import autoclass
             AudioManager = autoclass('android.media.AudioManager')
-            Context = autoclass('android.content.Context')
-            audioManager = Context.AUDIO_SERVICE
+            audioManager = autoclass('android.content.Context.AUDIO_SERVICE')
             if audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL:
                 #звук
                 play_sound()
