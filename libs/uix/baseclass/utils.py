@@ -2,6 +2,7 @@ from kivymd.dialog import MDDialog
 from kivy.uix.label import Label
 from kivy.metrics import dp
 from kivy.app import App
+from datetime import datetime
 
 
 def show_dialog(title, text, ok_proc, inform = False):
@@ -27,4 +28,23 @@ def show_dialog(title, text, ok_proc, inform = False):
         dialog.add_action_button(app.translation._('Отмена'),
                                   action=lambda *x: dialog.dismiss())
     dialog.open()
+
+
+# конвертация даты
+def get_date(str):
+    # ищу разделитель между цифрами, менялся с . на -
+    if str.find('-') >= 0:
+        d = '-'
+    else:
+        d = '.'
+    # что сначала - год?
+    if str.find(d) == 4:
+        fmt = '%Y' + d + '%m' + d + '%d %H:%M:%S'
+    else:
+        fmt = '%d' + d + '%m' + d + '%Y %H:%M:%S'
+    if len(str) > 10:
+        return datetime.strptime(str, fmt)
+    else:
+        return datetime.strptime(str, fmt[:8])
+
 

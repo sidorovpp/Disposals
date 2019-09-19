@@ -34,6 +34,7 @@ from kivy.core.clipboard import Clipboard
 from libs.applibs.toast import toast
 from kivy.uix.behaviors import ButtonBehavior
 from datetime import datetime
+from libs.uix.baseclass.utils import get_date
 
 #кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
@@ -200,13 +201,6 @@ class Disposal(Screen):
         self.stop_spinner()
 
     def set_params(self, params):
-        #конвертация даты
-        def get_date(str):
-            if len(str) > 10:
-                return datetime.strptime(str, '%d.%m.%Y %H:%M:%S')
-            else:
-                return datetime.strptime(str, '%d.%m.%Y')
-
         self.ids.number.text = params['Number']
         self.ids.theme.text = params['Theme']
         self.ids.sender.text = self.manager.app.translation._('Отправитель:') + ' ' +params['Sender']

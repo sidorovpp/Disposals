@@ -14,6 +14,7 @@ from kivy.utils import get_hex_from_color
 from ast import literal_eval
 from libs.applibs.toast import toast
 from kivy.utils import platform
+from libs.uix.baseclass.utils import get_date
 
 class NumberLabel(MDLabel):
     def on_ref_press(self, url):
@@ -40,23 +41,6 @@ class DisposalItem(MDFlatButton):
 
 
     def set_data(self, val):
-        #конвертация даты
-        def get_date(str):
-            #ищу разделитель между цифрами, менялся с . на -
-            if str.find('-') >= 0:
-                d = '-'
-            else:
-                d = '.'
-            #что сначала - год?
-            if str.find(d) == 4:
-                fmt = '%Y' + d + '%m' + d + '%d %H:%M:%S'
-            else:
-                fmt = '%d' + d +'%m' + d +'%Y %H:%M:%S'
-            if len(str) > 10:
-                return datetime.strptime(str, fmt)
-            else:
-                return datetime.strptime(str, fmt[:8])
-
         #Фамилия И.О.
         def get_staff_short(s):
             k = s.find(' ')
