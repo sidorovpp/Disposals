@@ -23,31 +23,32 @@ def check_disposals(count):
     kwargs = {'title': title, 'message': message}
     kwargs['app_name'] = 'disposals'
 
-    if (len(res) > 0) and (len(res) != count) and platform != 'android':
-        kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
-        kwargs['ticker'] = ticker
+    if (len(res) > 0) and (len(res) != count):
+        if platform != 'android':
+            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
+            kwargs['ticker'] = ticker
 
-        #показываем уведомление
-        notification.notify(**kwargs)
-        # звук
-        play_sound()
-    else:
-        show_notification(title, message)
-        if (len(res) > 0) and (len(res) != count):
-            from jnius import autoclass
-            AudioManager = autoclass('android.media.AudioManager')
-            Context = autoclass('android.content.Context')
-            service = autoclass('org.kivy.android.PythonService').mService
-            audioManager = service.getSystemService(Context.AUDIO_SERVICE)
-            # проверяем режим телефона
-            if audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL:
-                #звук
-                play_sound()
-            elif audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE:
-                # вибрируем
-                vibrator.vibrate(1)
-                sleep(1)
-                vibrator.cancel()
+            #показываем уведомление
+            notification.notify(**kwargs)
+            # звук
+            play_sound()
+        else:
+            show_notification(title, message)
+            if (len(res) > 0) and (len(res) != count):
+                from jnius import autoclass
+                AudioManager = autoclass('android.media.AudioManager')
+                Context = autoclass('android.content.Context')
+                service = autoclass('org.kivy.android.PythonService').mService
+                audioManager = service.getSystemService(Context.AUDIO_SERVICE)
+                # проверяем режим телефона
+                if audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL:
+                    #звук
+                    play_sound()
+                elif audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE:
+                    # вибрируем
+                    vibrator.vibrate(1)
+                    sleep(1)
+                    vibrator.cancel()
 
     return len(res)
 
@@ -78,7 +79,7 @@ def play_sound():
 def show_notification(title, message):
     import jnius
 
-    stop_foreground()
+    #stop_foreground()
 
     Context = jnius.autoclass('android.content.Context')
     Intent = jnius.autoclass('android.content.Intent')
