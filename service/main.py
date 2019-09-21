@@ -105,7 +105,7 @@ def show_notification(title, message):
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
     write_debug_log('setStyle')
-    BigTextStyle.BigText()
+    BigTextStyle.bigText = message
     write_debug_log('setStyle1')
     #notification_builder.setStyle(BigTextStyle.bigText(message))
     write_debug_log('setStyle')
