@@ -87,6 +87,7 @@ def show_notification(title, message):
     AndroidString = jnius.autoclass('java.lang.String')
     NotificationBuilder = jnius.autoclass('android.app.Notification$Builder')
     BigTextStyle = jnius.autoclass('android.app.Notification$BigTextStyle')
+    write_debug_log('BigTextStyle')
     service = jnius.autoclass('org.kivy.android.PythonService').mService
     PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
     notification_service = service.getSystemService(
@@ -104,7 +105,8 @@ def show_notification(title, message):
     notification_builder.setContentTitle(title)
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
-    notification_builder.setStyle(BigTextStyle.bigText123(message))
+    notification_builder.setStyle(BigTextStyle.bigText(message))
+    write_debug_log('setStyle')
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     icon = getattr(Drawable, 'icon')
     notification_builder.setSmallIcon(icon)
@@ -125,7 +127,7 @@ def stop_foreground():
 
 if __name__ == '__main__':
     try:
-        write_debug_log('start')
+        #write_debug_log('start')
         config = ConfigParser()
         config.read(join(dirname(realpath(__file__)), pardir,  'disposals.ini'))
         connect_manager.server = config.get('General', 'ip')
