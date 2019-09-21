@@ -14,7 +14,7 @@ from kivy.core.audio import SoundLoader
 
 #проверка непрочитанных задач и уведомление
 def check_disposals(count):
-    write_debug_log('check')
+    #write_debug_log('check')
     res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
 
     title = 'Есть непрочитанные задачи'
@@ -86,6 +86,7 @@ def show_notification(title, message):
     PendingIntent = jnius.autoclass('android.app.PendingIntent')
     AndroidString = jnius.autoclass('java.lang.String')
     NotificationBuilder = jnius.autoclass('android.app.Notification$Builder')
+    write_debug_log('BigTextStyle1')
     BigTextStyle = jnius.autoclass('android.app.Notification$BigTextStyle')
     write_debug_log('BigTextStyle')
     service = jnius.autoclass('org.kivy.android.PythonService').mService
