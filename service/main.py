@@ -104,11 +104,8 @@ def show_notification(title, message):
     notification_builder.setContentTitle(title)
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
-    write_debug_log('setStyle')
     BigTextStyle.bigText = message
-    write_debug_log('setStyle1')
-    #notification_builder.setStyle(BigTextStyle.bigText(message))
-    write_debug_log('setStyle')
+    notification_builder.setStyle(BigTextStyle)
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     icon = getattr(Drawable, 'icon')
     notification_builder.setSmallIcon(icon)
