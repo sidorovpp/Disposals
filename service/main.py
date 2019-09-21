@@ -93,7 +93,11 @@ def show_notification(title, message):
         Context.NOTIFICATION_SERVICE)
     app_context = service.getApplication().getApplicationContext()
     notification_builder = NotificationBuilder(app_context)
+
+
+    write_debug_log('check1')
     bigTextStyle = BigTextStyle()
+    write_debug_log('check2')
     title = AndroidString(title.encode('utf-8'))
     message = AndroidString(message.encode('utf-8'))
     notification_intent = Intent(app_context, PythonActivity)
@@ -106,7 +110,9 @@ def show_notification(title, message):
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
     #BigTextStyle.bigText = message
+    write_debug_log('check3')
     notification_builder.setStyle(bigTextStyle.bigText(message))
+    write_debug_log('check4')
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     icon = getattr(Drawable, 'icon')
     notification_builder.setSmallIcon(icon)
