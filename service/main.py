@@ -93,7 +93,7 @@ def show_notification(title, message):
         Context.NOTIFICATION_SERVICE)
     app_context = service.getApplication().getApplicationContext()
     notification_builder = NotificationBuilder(app_context)
-    bigTextStyle = BigTextStyle()
+    bigTextStyle = BigTextStyle(app_context)
     title = AndroidString(title.encode('utf-8'))
     message = AndroidString(message.encode('utf-8'))
     notification_intent = Intent(app_context, PythonActivity)
