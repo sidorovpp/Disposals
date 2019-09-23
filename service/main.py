@@ -105,7 +105,9 @@ def show_notification(title, message):
     notification_builder.setContentTitle(title)
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
-    bigTextStyle.bigText(message)
+    write_debug_log('check1')
+    bigTextStyle.bigText = message
+    write_debug_log('check2')
     notification_builder.setStyle(bigTextStyle)
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     icon = getattr(Drawable, 'icon')
