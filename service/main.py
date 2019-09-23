@@ -105,7 +105,7 @@ def show_notification(title, message):
     notification_builder.setContentTitle(title)
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
-    write_debug_log('check1')
+    write_debug_log(bigTextStyle)
     bigTextStyle.bigText(message)
     write_debug_log('check2')
     write_debug_log(bigTextStyle.bigText(message))
