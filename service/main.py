@@ -92,26 +92,17 @@ def show_notification(title, message):
         Context.NOTIFICATION_SERVICE)
     app_context = service.getApplication().getApplicationContext()
 
-    #channel test
+    #создаём channel
     from plyer.platforms.android import SDK_INT
     if SDK_INT > 26:
-        write_debug_log('sdk')
         manager = jnius.autoclass('android.app.NotificationManager')
         channel = jnius.autoclass('android.app.NotificationChannel')
 
         app_channel = channel(service.getPackageName(), title, manager.IMPORTANCE_DEFAULT)
-        write_debug_log('sdk2')
         service.getSystemService(manager).createNotificationChannel(app_channel)
-        write_debug_log('sdk3')
         notification_builder = NotificationBuilder(app_context, service.getPackageName())
     else:
         notification_builder = NotificationBuilder(app_context)
-
-    #BigTextStyle = jnius.autoclass('android.app.NotificationCompat$BigTextStyle')
-    #bigTextStyle = BigTextStyle()
-    #bigTextStyle.bigText(message)
-    #bigTextStyle.setBigContentTitle(title)
-    #bigTextStyle.setSummaryText(message)
 
     title = AndroidString(title.encode('utf-8'))
     message = AndroidString(message.encode('utf-8'))
@@ -124,8 +115,6 @@ def show_notification(title, message):
     notification_builder.setContentTitle(title)
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
-
-    #notification_builder.setStyle(bigTextStyle)
 
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     icon = getattr(Drawable, 'icon')
