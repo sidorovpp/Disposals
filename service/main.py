@@ -103,7 +103,7 @@ def show_notification(title, message):
         write_debug_log('sdk2')
         service.getSystemService(manager).createNotificationChannel(app_channel)
         write_debug_log('sdk3')
-        notification_builder = NotificationBuilder(app_channel)
+        notification_builder = NotificationBuilder(app_context, app_channel)
     else:
         notification_builder = NotificationBuilder(app_context)
 
