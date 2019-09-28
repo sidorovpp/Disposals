@@ -85,19 +85,31 @@ def show_notification(title, message):
     Intent = jnius.autoclass('android.content.Intent')
     PendingIntent = jnius.autoclass('android.app.PendingIntent')
     AndroidString = jnius.autoclass('java.lang.String')
-    NotificationBuilder = jnius.autoclass('android.app.NotificationCompat$Builder')
+    NotificationBuilder = jnius.autoclass('android.app.Notification$Builder')
     service = jnius.autoclass('org.kivy.android.PythonService').mService
     PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
     notification_service = service.getSystemService(
         Context.NOTIFICATION_SERVICE)
     app_context = service.getApplication().getApplicationContext()
-    notification_builder = NotificationBuilder(app_context)
 
-    BigTextStyle = jnius.autoclass('android.app.NotificationCompat$BigTextStyle')
-    bigTextStyle = BigTextStyle()
-    bigTextStyle.bigText(message)
-    bigTextStyle.setBigContentTitle(title)
-    bigTextStyle.setSummaryText(message)
+    #channel test
+    from plyer.platforms.android import SDK_INT
+    if SDK_INT > 26:
+        write_debug_log('sdk')
+        manager = jnius.autoclass('android.app.NotificationManager')
+        channel = jnius.autoclass('android.app.NotificationChannel')
+
+        app_channel = channel('disposals', title, manager.IMPORTANCE_DEFAULT)
+        service.getSystemService(manager).createNotificationChannel(app_channel)
+        notification_builder = NotificationBuilder(app_channel)
+    else:
+        notification_builder = NotificationBuilder(app_context)
+
+    #BigTextStyle = jnius.autoclass('android.app.NotificationCompat$BigTextStyle')
+    #bigTextStyle = BigTextStyle()
+    #bigTextStyle.bigText(message)
+    #bigTextStyle.setBigContentTitle(title)
+    #bigTextStyle.setSummaryText(message)
 
     title = AndroidString(title.encode('utf-8'))
     message = AndroidString(message.encode('utf-8'))
@@ -111,7 +123,7 @@ def show_notification(title, message):
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
 
-    notification_builder.setStyle(bigTextStyle)
+    #notification_builder.setStyle(bigTextStyle)
 
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     icon = getattr(Drawable, 'icon')
