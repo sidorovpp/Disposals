@@ -99,8 +99,10 @@ def show_notification(title, message):
         manager = jnius.autoclass('android.app.NotificationManager')
         channel = jnius.autoclass('android.app.NotificationChannel')
 
-        app_channel = channel('disposals', title, manager.IMPORTANCE_DEFAULT)
+        app_channel = channel('ru.mrcpp.disposals.ServiceDisposals', title, manager.IMPORTANCE_DEFAULT)
+        write_debug_log('sdk2')
         service.getSystemService(manager).createNotificationChannel(app_channel)
+        write_debug_log('sdk3')
         notification_builder = NotificationBuilder(app_channel)
     else:
         notification_builder = NotificationBuilder(app_context)
