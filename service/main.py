@@ -86,14 +86,19 @@ def show_notification(title, message):
     PendingIntent = jnius.autoclass('android.app.PendingIntent')
     AndroidString = jnius.autoclass('java.lang.String')
     NotificationBuilder = jnius.autoclass('android.app.NotificationCompat$Builder')
-    #BigTextStyle = jnius.autoclass('android.app.Notification$BigTextStyle')
     service = jnius.autoclass('org.kivy.android.PythonService').mService
     PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
     notification_service = service.getSystemService(
         Context.NOTIFICATION_SERVICE)
     app_context = service.getApplication().getApplicationContext()
     notification_builder = NotificationBuilder(app_context)
-    #bigTextStyle = BigTextStyle(app_context)
+
+    BigTextStyle = jnius.autoclass('android.app.NotificationCompat$BigTextStyle')
+    bigTextStyle = BigTextStyle()
+    bigTextStyle.bigText(message)
+    bigTextStyle.setBigContentTitle(title)
+    bigTextStyle.setSummaryText(message)
+
     title = AndroidString(title.encode('utf-8'))
     message = AndroidString(message.encode('utf-8'))
     notification_intent = Intent(app_context, PythonActivity)
@@ -105,6 +110,9 @@ def show_notification(title, message):
     notification_builder.setContentTitle(title)
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
+
+    notification_builder.setStyle(bigTextStyle)
+
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     icon = getattr(Drawable, 'icon')
     notification_builder.setSmallIcon(icon)
