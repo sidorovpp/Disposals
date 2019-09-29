@@ -15,7 +15,11 @@ from kivy.core.audio import SoundLoader
 #проверка непрочитанных задач и уведомление
 def check_disposals(count, first):
     #write_debug_log('check')
-    res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
+    try:
+        res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
+    except:
+        write_debug_log('connect error')
+        return
 
     if len(res) > 0:
         title = 'Есть непрочитанные задачи'
@@ -168,7 +172,6 @@ if __name__ == '__main__':
             #write_debug_log('cycle')
             sleep(300)
             count = check_disposals(count, False)
-
 
     except Exception as E:
         if platform == 'android':
