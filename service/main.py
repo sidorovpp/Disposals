@@ -19,7 +19,7 @@ def check_disposals(count, first):
         res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
     except:
         write_debug_log('connect error')
-        return
+        return 0
 
     if len(res) > 0:
         title = 'Есть непрочитанные задачи'
