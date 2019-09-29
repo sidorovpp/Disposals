@@ -13,12 +13,17 @@ from kivy.core.audio import SoundLoader
 
 
 #проверка непрочитанных задач и уведомление
-def check_disposals(count):
+def check_disposals(count, first):
     #write_debug_log('check')
     res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
 
-    title = 'Есть непрочитанные задачи'
-    message = 'Непрочитанных задач:' + str(len(res))
+    if len(res) > 0:
+        title = 'Есть непрочитанные задачи'
+        message = 'Непрочитанных задач:' + str(len(res))
+    else:
+        title = 'Нет непрочитанных задач'
+        message = 'Все задачи прочитаны'
+
     ticker = 'Уведомление'
     kwargs = {'title': title, 'message': message}
     kwargs['app_name'] = 'disposals'
@@ -33,7 +38,7 @@ def check_disposals(count):
             # звук
             play_sound()
     else:
-        if (len(res) != count):
+        if (len(res) != count) or first:
             show_notification(title, message)
             if (len(res) > 0):
                 from jnius import autoclass
@@ -158,11 +163,11 @@ if __name__ == '__main__':
         except:
             pass
 
-        count = check_disposals(0)
+        count = check_disposals(0, True)
         while True:
             #write_debug_log('cycle')
             sleep(300)
-            count = check_disposals(count)
+            count = check_disposals(count, False)
 
 
     except Exception as E:
