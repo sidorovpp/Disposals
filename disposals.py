@@ -30,6 +30,8 @@ import os.path
 from shutil import copyfile
 from kivy.utils import platform
 from libs.uix.baseclass.disposalsdroid import connect_manager
+from libs.applibs.toast import toast
+from kivy.clock import Clock
 from libs.uix.baseclass.disposallist import DisposalList
 
 
@@ -324,23 +326,24 @@ class Disposals(App):
         self.window_language.open()
 
     def dialog_exit(self):
-        #Прячу приложение, при выходе выдаёт ошибку (пока не разобрался)
-        if platform == 'android':
-            from jnius import autoclass
-            activity = autoclass('org.kivy.android.PythonActivity').mActivity
-            activity.moveTaskToBack(True)
-    #    def check_interval_press(interval):
-    #        self.exit_interval += interval
-    #        if self.exit_interval > 5:
-    #            self.exit_interval = False
-    #            Clock.unschedule(check_interval_press)
-    #
-    #   if self.exit_interval:
-    #        self.stop()
-    #
-    #    Clock.schedule_interval(check_interval_press, 1)
-    #
-    #    toast(self.translation._('Нажмите еще раз для выхода'))
+        def check_interval_press(interval):
+            self.exit_interval += interval
+            if self.exit_interval > 5:
+                self.exit_interval = False
+                Clock.unschedule(check_interval_press)
+
+        if self.exit_interval:
+            self.terminate()
+
+        Clock.schedule_interval(check_interval_press, 1)
+        toast(self.translation._('Нажмите еще раз для выхода'))
+
+
+        # Прячу приложение, при выходе выдаёт ошибку (пока не разобрался)
+        #    if platform == 'android':
+        #        from jnius import autoclass
+        #        activity = autoclass('org.kivy.android.PythonActivity').mActivity
+        #        activity.moveTaskToBack(True)
 
     def on_lang(self, instance, lang):
         self.translation.switch_lang(lang)
