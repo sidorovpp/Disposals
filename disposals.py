@@ -335,7 +335,7 @@ class Disposals(App):
         if self.exit_interval:
             self.terminate()
 
-        Clock.schedule_interval(check_interval_press, 1)
+        Clock.schedule_interval(check_interval_press, 0.5)
         toast(self.translation._('Нажмите еще раз для выхода'))
 
 
