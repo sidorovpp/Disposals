@@ -236,7 +236,7 @@ class DisposalList(RecycleView):
                 else:
                     #ищем по теме или тексту
                     params2 = params.copy()
-                    params.update({'zadanie': '%%' + search + '%%'})
+                    params.update({'task': '%%' + search + '%%'})
                     params2.update({'Theme': '%%' + search + '%%'})
                     res = connect_manager.GetResult('getDisposalList', params, Columns)
                     res += connect_manager.GetResult('getDisposalList', params2, Columns)
