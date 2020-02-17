@@ -143,14 +143,16 @@ class ConnectManager():
 
             try:
                 #пока добавляю username=self.username, password=self.password -сломалась прагма
-                res = OpenJsonUrl(url, params, headers=headers, username=self.username, password=self.password)
+                #убрал, заработало
+                res = OpenJsonUrl(url, params, headers=headers)
                 # при ошибке 403 пробуем переинициализировать коннет и запросить ещё раз
             except HTTPError as error:
                 if error.code == 403:
                     self.InitConnect()
                     headers['Pragma'] = self.current_pragma
                     # пока добавляю username=self.username, password=self.password -сломалась прагма
-                    res = OpenJsonUrl(url, params, headers=headers, username=self.username, password=self.password)
+                    # убрал, заработало
+                    res = OpenJsonUrl(url, params, headers=headers)
                 else:
                     raise error
         else:
