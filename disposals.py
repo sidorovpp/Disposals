@@ -34,6 +34,14 @@ from libs.applibs.toast import toast
 from kivy.clock import Clock
 from libs.uix.baseclass.disposallist import DisposalList
 
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
+
+class LoadDialog(FloatLayout):
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
 
 class Disposals(App):
 
@@ -137,12 +145,28 @@ class Disposals(App):
         except:
             pass
 
+    def load(self, path, filename):
+        popup = Popup(title='Test popup',
+                      content=Label(text=os.path.join(path, filename[0])),
+                      size_hint=(None, None), size=(400, 400))
+        popup.open()
+
+        self.dismiss_popup()
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
     def test(self, *args):
-        if platform == 'android':
-            from jnius import autoclass
-            #перезапуск автоматически
-            PythonService = autoclass('org.kivy.android.PythonService')
-            PythonService.mService.setAutoRestartService(True)
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+        #if platform == 'android':
+        #    from jnius import autoclass
+        #    #перезапуск автоматически
+        #    PythonService = autoclass('org.kivy.android.PythonService')
+        #    PythonService.mService.setAutoRestartService(True)
 
     def start_service(self):
 
