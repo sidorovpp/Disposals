@@ -206,6 +206,7 @@ class Disposals(App):
             perms = ["android.permission.READ_EXTERNAL_STORAGE",
                      "android.permission.WRITE_EXTERNAL_STORAGE"]
 
+            haveperms = True
             #haveperms = self.acquire_permissions(perms)
         else:
             haveperms = True
