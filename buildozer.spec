@@ -85,7 +85,7 @@ fullscreen = 0
 android.presplash_color = #003380
 
 # (list) Permissions
-android.permissions = INTERNET, VIBRATE
+android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
 
 # (int) Android API to use
 #android.api = 19

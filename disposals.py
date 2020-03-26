@@ -161,7 +161,9 @@ class Disposals(App):
 
     def test(self, *args):
         from plyer import filechooser
-
+        if platform == 'android':
+            from android.permissions import request_permissions, Permission
+            request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
         filechooser.open_file(on_selection=self.handle_selection)
 
