@@ -34,11 +34,6 @@ from libs.applibs.toast import toast
 from kivy.clock import Clock
 from libs.uix.baseclass.disposallist import DisposalList
 
-#для теста, убрать
-from kivy.properties import ListProperty
-from kivy.uix.popup import Popup
-from kivy.uix.label import Label
-
 
 class Disposals(App):
 
@@ -48,7 +43,6 @@ class Disposals(App):
     theme_cls = ThemeManager()
     theme_cls.primary_palette = 'Blue'
     lang = StringProperty('ru')
-    selection = ListProperty([])
 
     def __init__(self, **kvargs):
         super(Disposals, self).__init__(**kvargs)
@@ -143,36 +137,12 @@ class Disposals(App):
         except:
             pass
 
-    def handle_selection(self, selection):
-        '''
-        Callback function for handling the selection response from Activity.
-        '''
-        self.selection = selection
-
-    def on_selection(self, *a, **k):
-        '''
-        Update TextInput.text after FileChoose.selection is changed
-        via FileChoose.handle_selection.
-        '''
-        popup = Popup(title='Test popup',
-                      content=Label(text=str(self.selection)),
-                      size_hint=(None, None), size=(400, 400))
-        popup.open()
-
     def test(self, *args):
-        from plyer import filechooser
-        #if platform == 'android':
-        #    from android.permissions import request_permissions, Permission
-        #    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
-
-        filechooser.open_file(on_selection=self.handle_selection)
-
-
-        #if platform == 'android':
-        #    from jnius import autoclass
-        #    #перезапуск автоматически
-        #    PythonService = autoclass('org.kivy.android.PythonService')
-        #    PythonService.mService.setAutoRestartService(True)
+        if platform == 'android':
+            from jnius import autoclass
+            #перезапуск автоматически
+            PythonService = autoclass('org.kivy.android.PythonService')
+            PythonService.mService.setAutoRestartService(True)
 
     def start_service(self):
 
