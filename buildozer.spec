@@ -13,7 +13,7 @@ package.domain = ru.mrcpp
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ini,po,mo,rst,txt,wav
+source.include_exts = py,png,jpg,kv,atlas,ini,po,mo,rst,txt,wav,arr
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
