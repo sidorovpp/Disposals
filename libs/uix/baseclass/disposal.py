@@ -99,11 +99,18 @@ class Task(RecycleView):
         self.data = []
 
 #текст задачи - label
-class TaskLabel(Label):
+class TaskLabel(ButtonBehavior, Label):
 
     def __init__(self, **kwargs):
         super(TaskLabel, self).__init__(**kwargs)
         self.app = App.get_running_app()
+
+    def on_release(self):
+        #if self.collide_point(*touch.pos):
+        Clipboard.copy(self.text)
+        if platform == 'android':
+            toast(self.app.translation._('Скопировано в буфер'))
+        return True
 
     def open_file(self, filename):
         #webbrowser.open_new('file://' + filename)
@@ -155,13 +162,20 @@ class TaskLabel(Label):
         self.open_file(filename)
 
     def on_ref_press(self, url):
-        path = url[:url.find(':')]
-        if path.isnumeric():
-            mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
-            mythread.start()
-            #self.show_file(int(path), url[url.find(':') + 1:])
+        if url[:13] == 'http://aisup/':
+            if url[13:25] == 'DS_Disposals':
+                self.app.screen.ids.base.number_search.text = url[26:]
+                self.app.screen.ids.base.disposal_list.refresh_list({})
+                self.app.manager.current = 'base'
+                self.app.screen.ids.base.number_search.text = ''
         else:
-            webbrowser.open(url)
+            path = url[:url.find(':')]
+            if path.isnumeric():
+                mythread = threading.Thread(target=self.show_file, kwargs = {'id':int(path),'filename':url[url.find(':') + 1:]})
+                mythread.start()
+                #self.show_file(int(path), url[url.find(':') + 1:])
+            else:
+                webbrowser.open(url)
 
 #форма задачи
 class Disposal(Screen):
@@ -223,6 +237,8 @@ class Disposal(Screen):
         s = s.replace('{', '{{')
         s = s.replace('}', '}}')
         r = re.compile(r"(https://[^ \r]+)")
+        s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s)
+        r = re.compile(r"(http://[^ \r]+)")
         s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s)
         s = s.format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
 
