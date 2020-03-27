@@ -88,13 +88,13 @@ android.presplash_color = #003380
 android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
 
 # (int) Android API to use
-android.api = 21
+# android.api = 21
 
 # (int) Minimum API required
-android.minapi = 9
+# android.minapi = 9
 
 # (int) Android SDK version to use
-android.sdk = 20
+# android.sdk = 20
 
 # (str) Android NDK version to use
 android.ndk = 10.3.2
@@ -140,7 +140,7 @@ android.ndk_path = /media/new/crystax-ndk-10.3.2
 
 # (list) Android AAR archives to add (currently works only with sdl2_gradle
 # bootstrap)
-android.add_aars = support-v4-21.0.3.aar
+#android.add_aars = support-v4-21.0.3.aar
 
 # (list) Gradle dependencies to add (currently works only with sdl2_gradle
 # bootstrap)
