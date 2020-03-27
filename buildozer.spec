@@ -88,7 +88,7 @@ android.presplash_color = #003380
 android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
 
 # (int) Android API to use
-android.api = 27
+android.api = 24
 
 # (int) Minimum API required
 android.minapi = 9
