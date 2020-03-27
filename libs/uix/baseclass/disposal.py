@@ -168,6 +168,10 @@ class TaskLabel(ButtonBehavior, Label):
                 self.app.screen.ids.base.disposal_list.refresh_list({})
                 self.app.manager.current = 'base'
                 self.app.screen.ids.base.number_search.text = ''
+            else:
+                if platform == 'android':
+                    toast(self.app.translation._('Не поддерживается!'))
+
         else:
             path = url[:url.find(':')]
             if path.isnumeric():

@@ -70,3 +70,6 @@ msgstr ""
 #: libs/utils/showplugins.py:128
 msgid "Нет установленных плагинов!"
 msgstr ""
+
+msgid "Не поддерживается!"
+msgstr ""

@@ -183,4 +183,7 @@ msgstr "There is no information about the plugin!"
 
 #: libs/utils/showplugins.py:128
 msgid "Нет установленных плагинов!"
-msgstr "No installed plugins!"
+msgstr "No installed plugins!" 
+
+msgid "Не поддерживается!"
+msgstr "Not supported"
