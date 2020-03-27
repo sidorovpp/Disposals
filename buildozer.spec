@@ -140,7 +140,7 @@ android.ndk_path = /media/new/crystax-ndk-10.3.2
 
 # (list) Android AAR archives to add (currently works only with sdl2_gradle
 # bootstrap)
-android.add_aars = support-compat-27.0.0.aar
+android.add_aars = support-v4-24.0.0.aar
 
 # (list) Gradle dependencies to add (currently works only with sdl2_gradle
 # bootstrap)
