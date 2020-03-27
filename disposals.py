@@ -157,11 +157,6 @@ class Disposals(App):
         self._popup.dismiss()
 
     def test(self, *args):
-        from jnius import autoclass
-
-        PythonActivity = autoclass("org.kivy.android.PythonActivity").mActivity
-        Context = autoclass('android.content.Context')
-        ContextCompat = autoclass('android.support.v4.content.ContextCompat')
         #if platform == 'android':
             #import jnius
             #Compat = jnius.autoclass('android.support.v4.content.ContextCompat')
