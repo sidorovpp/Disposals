@@ -236,10 +236,13 @@ class DisposalList(RecycleView):
                 else:
                     #ищем по теме или тексту
                     params2 = params.copy()
+                    params3 = params.copy()
                     params.update({'task': '%%' + search + '%%'})
                     params2.update({'Theme': '%%' + search + '%%'})
+                    params3.update({'note_text': '%%' + search + '%%'})
                     res = connect_manager.GetResult('getDisposalList', params, Columns)
                     res += connect_manager.GetResult('getDisposalList', params2, Columns)
+                    res += connect_manager.GetResult('getDisposalList', params3, Columns)
                     #убираем дубли
                     unique_list = []
                     [unique_list.append(obj) for obj in res if obj not in unique_list]

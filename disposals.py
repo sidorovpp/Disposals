@@ -158,9 +158,7 @@ class Disposals(App):
 
     def test(self, *args):
         #if platform == 'android':
-            #import jnius
-            #Compat = jnius.autoclass('android.support.v4.content.ContextCompat')
-            #from android.permissions import request_permissions, Permission
+            #from pythonforandroid.recipes.android.src.android.permissions import request_permissions, Permission
             #request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
             #                     Permission.READ_EXTERNAL_STORAGE])
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
