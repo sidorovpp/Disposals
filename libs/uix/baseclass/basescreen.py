@@ -12,7 +12,9 @@
 
 from kivy.uix.screenmanager import Screen
 from kivymd.button import MDFloatingActionButton
+from kivymd.textfields import MDTextField
 from kivy.app import App
+from kivy.clock import Clock
 
 #кнопка добавления задачи
 class AddDisposalButton(MDFloatingActionButton):
@@ -23,6 +25,18 @@ class AddDisposalButton(MDFloatingActionButton):
             app.translation._('Новая задача')
         app.screen.ids.action_bar.left_action_items = \
             [['chevron-left', lambda x: app.back_screen(27)]]
+
+class SearchTextField(MDTextField):
+
+    def start_select(self, *args):
+        if self.text != '':
+            self.select_all()
+
+    def on_focus(self, *args):
+        super().on_focus(*args)
+        if args[1] == True:
+            Clock.schedule_once(self.start_select, 0.1)
+
 
 class BaseScreen(Screen):
 
