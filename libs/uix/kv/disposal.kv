@@ -10,6 +10,7 @@
     task: task
     notes: notes
     number: number
+    urgency: urgency
     spinner: spinner
 
     MDSpinner:
@@ -31,6 +32,14 @@
             width: self.texture_size[0]
             halign: 'left'
             color: app.theme_cls.primary_color
+            font_size: '14sp'
+
+        Label:
+            id: urgency
+            size_hint: None, None
+            height: dp(16)
+            width: self.texture_size[0]
+            halign: 'left'
             font_size: '14sp'
 
         Label:

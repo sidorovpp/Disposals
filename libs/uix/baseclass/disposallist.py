@@ -15,6 +15,8 @@ from ast import literal_eval
 from libs.applibs.toast import toast
 from kivy.utils import platform
 from libs.uix.baseclass.utils import get_date
+from libs.uix.baseclass.utils import urgency_dict
+from libs.uix.baseclass.utils import urgency_color
 
 class NumberLabel(MDLabel):
     def on_ref_press(self, url):
@@ -62,7 +64,10 @@ class DisposalItem(MDFlatButton):
         theme = self.data['Theme']
         theme = theme.replace('\n', ' ')
         text = self.data['Task'].replace('\n', ' ')
-        self.theme_label.text = '{0}'.format(theme)
+        self.theme_label.text = '[color={u_color}]{urgency}[/color] {text}'.format(
+                text = theme,
+                urgency=urgency_dict[self.data['Urgency_id']],
+                u_color=urgency_color[self.data['Urgency_id']])
         self.text_label.text = '{0}'.format(text)
         # иконка и цвет выполнения
         if self.data['IsComplete'] == '0':
@@ -91,6 +96,7 @@ class DisposalItem(MDFlatButton):
         try:
             number = self.app.screen.ids.disposal.number.text
             connect_manager.GetResult('SetTaskRead', {'id': int(number)}, [])
+            self.app.manager.current = 'base'
         except:
             pass
 
@@ -176,9 +182,10 @@ class DisposalList(RecycleView):
                         'IsDisallowed': i[8],
                         'IsReaded': i[7],
                         'PlanDateTo': i[9],
-                        'Sender': i[11],
-                        'Receiver': i[12],
-                        'IsConfirmed': i[10]
+                        'Sender': i[12],
+                        'Receiver': i[13],
+                        'IsConfirmed': i[10],
+                        'Urgency_id': i[11]
                         })
 
             self.data.append({'data': item,'height': dp(70)})
@@ -225,7 +232,7 @@ class DisposalList(RecycleView):
             if connect_manager.StaffID == None:
                 connect_manager.StaffID = connect_manager.GetResult('getStaffID', {}, [])
 
-            Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo', 'IsConfirmed']
+            Columns = ['Number', 'Theme', 'ShortTask', 'Sender_id', 'Receiver_id', 'Task', 'isExecute', 'Readed', 'Disabled', 'PlanDateTo', 'IsConfirmed', 'Urgency_id']
             search = self.app.screen.ids.base.number_search.text.strip()
             if search != '' and len(search) > 2:
                 search = search.replace('%', '!%')

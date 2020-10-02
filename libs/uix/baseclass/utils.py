@@ -5,7 +5,7 @@ from kivy.app import App
 from datetime import datetime
 
 
-def show_dialog(title, text, ok_proc, inform = False):
+def show_dialog(title, text, ok_proc, inform=False):
     app = App.get_running_app()
     content = Label()
     content.text = text
@@ -21,12 +21,12 @@ def show_dialog(title, text, ok_proc, inform = False):
 
     if inform:
         dialog.add_action_button(app.translation._('ОК'),
-                                  action=lambda *x: dialog.dismiss())
+                                 action=lambda *x: dialog.dismiss())
     else:
         dialog.add_action_button(app.translation._('ОК'),
-                                  action=lambda *x: ok_proc(dialog))
+                                 action=lambda *x: ok_proc(dialog))
         dialog.add_action_button(app.translation._('Отмена'),
-                                  action=lambda *x: dialog.dismiss())
+                                 action=lambda *x: dialog.dismiss())
     dialog.open()
 
 
@@ -48,3 +48,5 @@ def get_date(str):
         return datetime.strptime(str, fmt[:8])
 
 
+urgency_dict = {'1': 'Очень важно', '2': 'Важно', '3': 'Нормальная', '4': 'Не важно', '6': 'Срочно'}
+urgency_color = {'1': '#FFA500', '2': '#FFC500', '3': '#00FF00', '4': '#0000FF', '6': '#FF0000'}

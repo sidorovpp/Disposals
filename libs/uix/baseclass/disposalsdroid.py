@@ -162,19 +162,22 @@ class ConnectManager():
         if not type(res['result'][0]) is dict:
             return res['result'][0]
         else:
-            for x in res['result'][0]['Data']:
-                if columns == []:
-                    collist = [x['Title'] for x in res['result'][0]['Columns']]
-                else:
-                    collist = columns
-                item = []
-                for y in collist:
-                    i = self.GetIndexByName(res['result'][0]['Columns'], 'Title', y)
-                    if i != -1:
-                        item.append(x[i])
+            if 'Data' in res['result'][0]:
+                for x in res['result'][0]['Data']:
+                    if columns == []:
+                        collist = [x['Title'] for x in res['result'][0]['Columns']]
                     else:
-                        item.append('empty')
-                c.append(item)
+                        collist = columns
+                    item = []
+                    for y in collist:
+                        i = self.GetIndexByName(res['result'][0]['Columns'], 'Title', y)
+                        if i != -1:
+                            item.append(x[i])
+                        else:
+                            item.append('empty')
+                    c.append(item)
+            else:
+                c.append(res['result'][0]['Result'])
 
         return c
 

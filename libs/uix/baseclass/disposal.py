@@ -35,6 +35,8 @@ from libs.applibs.toast import toast
 from kivy.uix.behaviors import ButtonBehavior
 from datetime import datetime
 from libs.uix.baseclass.utils import get_date
+from libs.uix.baseclass.utils import urgency_dict
+from libs.uix.baseclass.utils import urgency_color
 
 #кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
@@ -220,6 +222,12 @@ class Disposal(Screen):
 
     def set_params(self, params):
         self.ids.number.text = params['Number']
+        self.ids.urgency.text = urgency_dict[params['Urgency_id']]
+        #конвертирую цвет
+        h = urgency_color[params['Urgency_id']].lstrip('#')
+        c = tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+        self.ids.urgency.color = [c[0]/255, c[1]/255, c[2]/255,1]
+
         self.ids.theme.text = params['Theme']
         self.ids.sender.text = self.manager.app.translation._('Отправитель:') + ' ' +params['Sender']
         self.ids.receiver.text = self.manager.app.translation._('Получатель:') + ' ' + params['Receiver']
