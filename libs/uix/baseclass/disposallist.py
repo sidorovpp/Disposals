@@ -96,7 +96,7 @@ class DisposalItem(MDFlatButton):
         try:
             number = self.app.screen.ids.disposal.number.text
             connect_manager.GetResult('SetTaskRead', {'id': int(number)}, [])
-            self.app.manager.current = 'base'
+            self.app.back_screen(27)
         except:
             pass
 
