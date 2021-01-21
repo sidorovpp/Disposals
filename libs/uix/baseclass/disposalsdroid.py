@@ -177,7 +177,11 @@ class ConnectManager():
                             item.append('empty')
                     c.append(item)
             else:
-                c.append(res['result'][0]['Result'])
+                if 'Result' in res['result'][0]:
+                    c.append(res['result'][0]['Result'])
+                else:
+                    c.append(res['result'][0]['id'])
+
 
         return c
 
