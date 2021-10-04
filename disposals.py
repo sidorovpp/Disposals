@@ -17,7 +17,6 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import ConfigParser
-from kivy.logger import PY2
 from kivy.utils import get_hex_from_color
 from kivy.properties import ObjectProperty, StringProperty
 from main import __version__
@@ -211,11 +210,8 @@ class Disposals(App):
         for kv_file in os.listdir(directory_kv_files):
             kv_file = join(directory_kv_files, kv_file)
             if os.path.isfile(kv_file):
-                if not PY2:
-                    with open(kv_file, encoding='utf-8') as kv:
+                with open(kv_file, encoding='utf-8') as kv:
                         Builder.load_string(kv.read())
-                else:
-                    Builder.load_file(kv_file)
 
     def events_program(self, instance, keyboard, keycode, text, modifiers):
 
