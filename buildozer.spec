@@ -89,7 +89,7 @@ android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_S
 
 
 # (int) Target Android API, should be as high as possible.
-android.api = 28
+#android.api = 28
 
 # (int) Minimum API your APK will support.
 #android.minapi = 21
