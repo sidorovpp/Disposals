@@ -98,7 +98,7 @@ class Disposals(MDApp):
         self.screen.ids.base.add_refresh_button()
 
         #стартуем сервис уведомлений
-        self.start_service()
+        #self.start_service()
 
         #обновляем список
         self.refresh_list()

@@ -81,38 +81,12 @@ def main():
                  join(app.user_data_dir, 'error.log')
                  )
 
-        if app:
-            try:
-                app.stop()
-            except AttributeError:
-                app = None
+        #if app:
+        #    try:
+        #        app.stop()
+        #    except AttributeError:
+        #        app = None
 
-        """
-        def callback_report(*args):
-
-            try:
-                txt = six.moves.urllib.parse.quote(
-                    report.txt_traceback.text.encode('utf-8')
-                )
-                url = 'https://github.com/%s/issues/new?body=' % NICK_NAME_AND_NAME_REPOSITORY + txt
-                webbrowser.open(url)
-            except Exception:
-                sys.exit(1)
-
-        report = BugReporter(
-            callback_report=callback_report, txt_report=text_error,
-            icon_background=os.path.join('data', 'images', 'icon.png')
-        )
-
-        if app:
-            try:
-                app.screen.clear_widgets()
-                app.screen.add_widget(report)
-            except AttributeError:
-            	create_error_monitor()
-        else:
-            create_error_monitor()
-        """
 
 if __name__ in ('__main__', '__android__'):
     main()
