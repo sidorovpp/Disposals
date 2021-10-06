@@ -1,6 +1,6 @@
-#:import MDSeparator kivymd.uix.card.MDSeparator
-#:import MDTextField kivymd.uix.textfield.MDTextField
-#:import MDSlider kivymd.uix.slider.MDSlider
+#:import MDSeparator kivymd.card.MDSeparator
+#:import MDTextField kivymd.textfields.MDTextField
+#:import MDSlider kivymd.slider.MDSlider
 
 <DisposalForm>:
     name: 'disposal_form'
@@ -9,18 +9,16 @@
     task: task
     urgency: urgency
 
+    BoxLayout:
+        id: disposal_layout
+        orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
 
     BoxLayout:
         orientation: 'vertical'
         padding: dp(10), dp(10)
         spacing: dp(10)
-
-        MDToolbar:
-            id: actionbar
-            pos_hint: {"top": 1}
-            elevation: 10
-            title: app.translation._('Новая задача')
-            left_action_items: [['chevron-left', lambda x: app.back_screen(27)]]
 
         Label:
             size_hint: None, None

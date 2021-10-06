@@ -8,6 +8,8 @@
 # 
 # LICENSE: MIT
 
+#:import Toolbar kivymd.toolbar.Toolbar
+#:import NavDrawer libs.uix.baseclass.navdrawer.NavDrawer
 #:import License libs.uix.baseclass.license.License
 #:import BaseScreen libs.uix.baseclass.basescreen.BaseScreen
 #:import About libs.uix.baseclass.about.About
@@ -15,68 +17,40 @@
 #:import SettingsForm libs.uix.baseclass.settings.SettingsForm
 #:import DisposalForm libs.uix.baseclass.disposal_form.DisposalForm
 
-<ItemDrawer>:
-    IconLeftWidget:
-        id: icon
-        icon: root.icon
-        text_color: root.text_color
-
-
-<ContentNavigationDrawer>:
-    orientation: "vertical"
-    padding: "8dp"
-    spacing: "8dp"
-
-    AnchorLayout:
-        anchor_x: "left"
-        size_hint_y: None
-        height: avatar.height
-
-        Image:
-            id: avatar
-            size_hint: None, None
-            size: "56dp", "56dp"
-            source: "data/logo/kivy-icon-256.png"
-
-    MDLabel:
-        text: "Задачи ВКБ"
-        font_style: "Button"
-        adaptive_height: True
-
-
-    ScrollView:
-
-        DrawerList:
-            id: md_list
-
 <StartScreen>
+    orientation: 'vertical'
 
-    MDNavigationLayout:
-        id: start
+    NavDrawer:
+        id: nav_drawer
 
-        ScreenManager:
-            id: manager
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: dp(5)
 
-            BaseScreen:
-                id: base
+            Toolbar:
+                id: action_bar
+                background_color: app.theme_cls.primary_color
+                title: app.translation._(app.title)
+                left_action_items: [['menu', lambda x: nav_drawer._toggle()]]
+                elevation: 10
+                md_bg_color: app.theme_cls.primary_color
+            ScreenManager:
+                id: manager
 
-            License:
-                id: license
+                BaseScreen:
+                    id: base
 
-            About:
-                id: about
+                License:
+                    id: license
+                
+                About:
+                    id: about
 
-            Disposal:
-                id: disposal
+                Disposal:
+                    id: disposal
 
-            SettingsForm:
-                id: settings_form
+                SettingsForm:
+                    id: settings_form
 
-            DisposalForm:
-                id: disposal_form
-
-        MDNavigationDrawer:
-            id: nav_drawer
-
-            ContentNavigationDrawer:
-                id: content_drawer
+                DisposalForm:
+                    id: disposal_form

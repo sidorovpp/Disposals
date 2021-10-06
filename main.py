@@ -17,6 +17,8 @@ import traceback
 from shutil import copyfile
 from os.path import join
 
+NICK_NAME_AND_NAME_REPOSITORY = 'REPO_PROJECT'
+
 directory = os.path.split(os.path.abspath(sys.argv[0]))[0]
 #sys.path.insert(0, os.path.join(directory, 'libs/applibs'))
 
@@ -39,6 +41,8 @@ if platform == 'android':
     from plyer import orientation
     orientation.set_sensor(mode='portrait')
 
+from kivymd.theming import ThemeManager
+
 from libs.applibs.bugreporter import BugReporter
 #except Exception:
 #    traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
@@ -49,9 +53,8 @@ __version__ = '0.1'
 
 
 def main():
-    """
     def create_error_monitor():
-        class _App(MDApp):
+        class _App(App):
             theme_cls = ThemeManager()
             theme_cls.primary_palette = 'BlueGrey'
 
@@ -61,7 +64,7 @@ def main():
                 return box
         app = _App()
         app.run()
-    """
+
     app = None
 
     try:
@@ -72,8 +75,9 @@ def main():
         #load_plugin(app, __version__)
         app.run()
     except Exception:
-        #from kivy.app import App
-        #from kivy.uix.boxlayout import BoxLayout
+        from kivy.app import App
+        from kivy.uix.boxlayout import BoxLayout
+
 
         text_error = traceback.format_exc()
         traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
@@ -87,7 +91,6 @@ def main():
             except AttributeError:
                 app = None
 
-        """
         def callback_report(*args):
 
             try:
@@ -112,7 +115,7 @@ def main():
             	create_error_monitor()
         else:
             create_error_monitor()
-        """
+
 
 if __name__ in ('__main__', '__android__'):
     main()

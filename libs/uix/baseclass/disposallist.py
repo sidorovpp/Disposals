@@ -1,14 +1,15 @@
 # список задач
 from libs.uix.baseclass.disposalsdroid import connect_manager
-from kivymd.uix.button import MDFlatButton
+from kivymd.button import MDFlatButton
 from kivy.app import App
-from kivymd.uix.label import MDLabel
-from kivymd.uix.dialog import MDDialog
+from kivymd.label import MDLabel
+from kivymd.dialog import MDDialog
 from kivy.metrics import dp
 import threading
 from kivy.clock import Clock, mainthread
-from kivy.uix.recycleview import RecycleView,RecycleViewBehavior
+from kivy.uix.recycleview import RecycleView
 from datetime import datetime
+from libs.uix.baseclass.utils import show_dialog
 from kivy.utils import get_hex_from_color
 from ast import literal_eval
 from libs.applibs.toast import toast
@@ -91,19 +92,67 @@ class DisposalItem(MDFlatButton):
 
     data = property(get_data, set_data)
 
+    def set_readed(self):
+        try:
+            number = self.app.screen.ids.disposal.number.text
+            connect_manager.GetResult('SetTaskRead', {'id': int(number)}, [])
+            self.app.back_screen(27)
+        except:
+            pass
+
+    def execute(self):
+        def _execute(dialog):
+            try:
+                number = self.app.screen.ids.disposal.number.text
+                connect_manager.GetResult('ExecuteDisposal', {'disposal_id': int(number)}, [])
+                dialog.dismiss()
+            except:
+                pass
+
+        show_dialog(self.app.translation._('Вопрос'),
+                       self.app.translation._('Выполнить задачу?'),
+                       _execute)
+
     def set_disposal_params(self, item_data):
         self.app.screen.ids.disposal.set_params(item_data)
+
+    # ищем следующий элемент
+    def show_next(self):
+        number = self.app.screen.ids.disposal.number.text
+
+        for i in self.parent.parent.data:
+            if i['data']['Number'] < number:
+                self.set_disposal_params(i['data'])
+                break
+
+    # ищем предыдущий элемент
+    def show_prior(self):
+        number = self.app.screen.ids.disposal.number.text
+
+        for i in self.parent.parent.data[::-1]:
+            if i['data']['Number'] > number:
+                self.set_disposal_params(i['data'])
+                break
 
     def on_release(self):
         # считываем отправителя, получателя и добавляем к data
         self.set_disposal_params(self.data)
         self.app.manager.current = 'disposal'
+        self.app.screen.ids.action_bar.title = self.app.translation._('Задача')
+
+        # добавляем кнопки следующая, предыдущая, назад и прочитано
+        self.app.screen.ids.action_bar.left_action_items = [['chevron-left', lambda x: self.app.back_screen(27)]]
+        self.app.screen.ids.action_bar.right_action_items = [['read', lambda x: self.set_readed()],
+                                                             ['checkbox-marked-circle', lambda x: self.execute()],
+                                                             ['skip-previous', lambda x: self.show_prior()],
+                                                             ['skip-next', lambda x: self.show_next()]]
+
 
 def get_number(i):
     return i[0]
 
 
-class DisposalList(RecycleView, RecycleViewBehavior):
+class DisposalList(RecycleView):
 
     Receivers = []
 
@@ -113,9 +162,6 @@ class DisposalList(RecycleView, RecycleViewBehavior):
 
     def start_spinner(self, *args):
         self.app.screen.ids.base.spinner.active = True
-
-    def refresh_view(self, *args):
-        self.refresh_from_data()
 
     @mainthread
     def stop_spinner(self, *args):
@@ -147,8 +193,6 @@ class DisposalList(RecycleView, RecycleViewBehavior):
         self.stop_spinner()
         if platform == 'android':
             toast(self.app.translation._('Загружено задач:') + ' ' + str(len(res)))
-
-        Clock.schedule_once(self.refresh_view, 0.1)
 
     def on_scroll_stop(self, touch, check_children=True):
         super(DisposalList, self).on_scroll_stop(touch, check_children=True)
@@ -253,7 +297,5 @@ class DisposalList(RecycleView, RecycleViewBehavior):
     def refresh_list(self, params):
         mythread = threading.Thread(target=self.load_data,  kwargs = {'params':params})
         mythread.start()
-
-
 
 

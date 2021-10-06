@@ -18,18 +18,18 @@ from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.uix.modalview import ModalView
 
-from kivymd.uix.card import MDCard, MDSeparator
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.label import MDLabel
-from kivymd.uix.button import MDFlatButton
+from kivymd.card import MDCard, MDSeparator
+from kivymd.dialog import MDDialog
+from kivymd.label import MDLabel
+from kivymd.button import MDFlatButton
 
 from . selection import Selection
 
 
 Builder.load_string(
 '''
-#:import MDSpinner kivymd.uix.spinner.MDSpinner
-#:import MDTextField kivymd.uix.textfield.MDTextField
+#:import MDSpinner kivymd.spinner.MDSpinner
+#:import MDTextField kivymd.textfields.MDTextField
 
 # Окно для ввода текста.
 

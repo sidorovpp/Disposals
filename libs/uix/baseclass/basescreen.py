@@ -11,8 +11,8 @@
 # LICENSE: MIT
 
 from kivy.uix.screenmanager import Screen
-from kivymd.uix.button import MDFloatingActionButton
-from kivymd.uix.textfield import MDTextField
+from kivymd.button import MDFloatingActionButton
+from kivymd.textfields import MDTextField
 from kivy.app import App
 from kivy.clock import Clock
 
@@ -21,6 +21,10 @@ class AddDisposalButton(MDFloatingActionButton):
     def on_press(self):
         app = App.get_running_app()
         app.manager.current = 'disposal_form'
+        app.screen.ids.action_bar.title = \
+            app.translation._('Новая задача')
+        app.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x: app.back_screen(27)]]
 
 class SearchTextField(MDTextField):
 

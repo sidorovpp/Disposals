@@ -3,7 +3,7 @@ from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from libs.applibs.dialogs import card
 from libs.uix.lists import Lists
-from libs.uix.baseclass.utils import custom_dialog
+from libs.uix.baseclass.utils import show_dialog
 
 
 class DisposalForm(Screen):
@@ -78,7 +78,7 @@ class DisposalForm(Screen):
                                                             'Zadanie': self.task.text.strip(),
                                                             'Urgency': self.get_urgency()}, ['id'])
         except Exception as error:
-            custom_dialog.show_dialog(self.app.translation._('Ошибка'), str(error), None, True)
+            show_dialog(self.app.translation._('Ошибка'), str(error), None, True)
         self.app.screen.ids.base.disposal_list.refresh_list(params={'Number':res[0][0]})
         self.manager.current = 'base'
 

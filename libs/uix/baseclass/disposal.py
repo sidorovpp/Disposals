@@ -11,9 +11,9 @@
 # LICENSE: MIT
 
 from kivy.uix.screenmanager import Screen
-from kivymd.uix.button import MDFloatingActionButton
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.textfield import MDTextField
+from kivymd.button import MDFloatingActionButton
+from kivymd.dialog import MDDialog
+from kivymd.textfields import MDTextField
 from kivy.metrics import dp
 from libs.uix.baseclass.disposalsdroid import connect_manager
 from kivy.uix.recycleview import RecycleView

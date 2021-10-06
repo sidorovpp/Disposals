@@ -25,10 +25,10 @@ from kivy.properties import (
     ObjectProperty, DictProperty, StringProperty, BooleanProperty, ListProperty
 )
 
-from kivymd.uix.selectioncontrol import MDCheckbox
-from kivymd.uix.behaviors import CircularRippleBehavior
-from kivymd.uix.button import MDIconButton
-from kivymd.uix.list import (
+from kivymd.selectioncontrols import MDCheckbox
+from kivymd.ripplebehavior import CircularRippleBehavior
+from kivymd.button import MDIconButton
+from kivymd.list import (
     ILeftBody, ILeftBodyTouch, IRightBodyTouch, TwoLineAvatarIconListItem,
     OneLineListItem, OneLineIconListItem, ThreeLineAvatarIconListItem,
     OneLineAvatarIconListItem
@@ -233,7 +233,7 @@ class Lists(BoxLayout):
 
 Builder.load_string(
 '''
-#:import MDList kivymd.uix.list.MDList
+#:import MDList kivymd.list.MDList
 
 <RightButton>:
     # size_hint_x: None
