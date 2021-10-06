@@ -28,6 +28,16 @@
     BoxLayout:
         id: list_layout
         orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
+
+        MDToolbar:
+            id: actionbar
+            pos_hint: {"top": 1}
+            elevation: 10
+            title: app.translation._(app.title)
+            left_action_items: [["menu", lambda x: app.nav_drawer.set_state("open")]]
+
         SearchTextField:
             id: number_search
             hint_text: app.translation._('Номер или текст...')

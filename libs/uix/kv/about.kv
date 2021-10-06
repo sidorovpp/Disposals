@@ -13,28 +13,39 @@
 <About>:
     name: 'about'
 
-    FloatLayout:
+    BoxLayout:
+        id: list_layout
+        orientation: 'vertical'
 
-        Image:
-            source: 'icon.png'
-            opacity: .4
+        MDToolbar:
+            id: actionbar
+            pos_hint: {"top": 1}
+            elevation: 10
+            title: app.translation._(app.title)
+            left_action_items: [['chevron-left', lambda x: app.back_screen(27)]]
 
-        BoxLayout:
-            id: box
-            orientation: 'vertical'
-            padding: dp(0), dp(10)
+        FloatLayout:
 
-            Widget:
-            Widget:
+            Image:
+                source: 'icon.png'
+                opacity: .4
 
-            Label:
-                id: label
-                font_size: '14sp'
-                bold: True
-                color: 0, 0, 0, 1
-                markup: True
-                halign: 'center'
-                on_ref_press: root.open_url(*args)
+            BoxLayout:
+                id: box
+                orientation: 'vertical'
+                padding: dp(0), dp(10)
 
-            Widget:
-            Widget:
+                Widget:
+                Widget:
+
+                Label:
+                    id: label
+                    font_size: '14sp'
+                    bold: True
+                    color: 0, 0, 0, 1
+                    markup: True
+                    halign: 'center'
+                    on_ref_press: root.open_url(*args)
+
+                Widget:
+                Widget:

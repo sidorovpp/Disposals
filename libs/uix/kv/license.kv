@@ -10,7 +10,7 @@
 # 
 # LICENSE: MIT
 
-#:import MDSeparator kivymd.card.MDSeparator
+#:import MDSeparator kivymd.uix.card.MDSeparator
 #:import License libs.uix.baseclass.license.License
 
 # Экран с текстом лицензии.
@@ -22,6 +22,13 @@
         orientation: 'vertical'
         padding: dp(10), dp(10)
         spacing: dp(10)
+
+        MDToolbar:
+            id: actionbar
+            pos_hint: {"top": 1}
+            elevation: 10
+            title: app.translation._('Лицензия')
+            left_action_items: [['chevron-left', lambda x: app.back_screen(27)]]
 
         Label:
             size_hint: None, None
