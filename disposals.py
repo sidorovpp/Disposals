@@ -78,13 +78,13 @@ class Disposals(MDApp):
         self.theme_cls.primary_palette = 'Blue'
 
         #грузим файл конфигураций из пользовательской папки, если есть
-        #try:
-        #    copyfile(join(self.user_data_dir, 'disposals.ini'),
-        #             join(self.directory, 'disposals.ini')
-        #             )
-        #except:
-        #    pass
-        #self.set_value_from_config()
+        try:
+            copyfile(join(self.user_data_dir, 'disposals.ini'),
+                     join(self.directory, 'disposals.ini')
+                     )
+        except:
+            pass
+        self.set_value_from_config()
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
@@ -97,18 +97,19 @@ class Disposals(MDApp):
         #меню
         self.nav_drawer = self.screen.ids.nav_drawer
 
-        if platform == 'android':
-            from android.permissions import request_permissions, Permission
+        #if platform == 'android':
+        #    from android.permissions import request_permissions, Permission
             #request_permissions([Permission.READ_EXTERNAL_STORAGE])
-            request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
+
+        #    request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
             #request_permissions([Permission.INTERNET])
 
 
         #стартуем сервис уведомлений
-        #self.start_service()
+        self.start_service()
 
         #обновляем список
-        #self.refresh_list()
+        self.refresh_list()
 
         return self.screen
 

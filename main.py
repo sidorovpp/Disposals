@@ -64,19 +64,18 @@ def main():
     """
     app = None
 
-    try:
-        #from loadplugin import load_plugin
-        from disposals import Disposals
+    #from loadplugin import load_plugin
+    from disposals import Disposals
 
-        app = Disposals()
-        #load_plugin(app, __version__)
-        app.run()
-    except Exception:
+    app = Disposals()
+    #load_plugin(app, __version__)
+    app.run()
+    #except Exception:
         #from kivy.app import App
         #from kivy.uix.boxlayout import BoxLayout
 
-        text_error = traceback.format_exc()
-        traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
+    #    text_error = traceback.format_exc()
+    #    traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
         #copyfile(join(app.directory, 'error.log'),
         #         join(app.user_data_dir, 'error.log')
         #         )
