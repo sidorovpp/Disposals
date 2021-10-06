@@ -43,12 +43,3 @@ class BaseScreen(Screen):
     def refresh_list(self):
         #self.ids.disposal_list.clear_widgets()
         self.disposal_list.refresh_list(params={})
-
-    def add_refresh_button(self):
-        try:
-            self.manager.screen.ids.action_bar.right_action_items = [['refresh', lambda x: self.refresh_list()]]
-        except:
-            pass
-
-    def on_enter(self, *args):
-        self.add_refresh_button()

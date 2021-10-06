@@ -78,13 +78,14 @@ class Disposals(MDApp):
         self.theme_cls.primary_palette = 'Blue'
 
         #грузим файл конфигураций из пользовательской папки, если есть
-        try:
-            copyfile(join(self.user_data_dir, 'disposals.ini'),
-                     join(self.directory, 'disposals.ini')
-                     )
-        except:
-            pass
-        self.set_value_from_config()
+        #try:
+        #    copyfile(join(self.user_data_dir, 'disposals.ini'),
+        #             join(self.directory, 'disposals.ini')
+        #             )
+        #except:
+        #    pass
+
+        #self.set_value_from_config()
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
         #менеджер окон
@@ -95,13 +96,12 @@ class Disposals(MDApp):
         self.manager.app = self
         #меню
         self.nav_drawer = self.screen.ids.nav_drawer
-        self.screen.ids.base.add_refresh_button()
 
         #стартуем сервис уведомлений
         #self.start_service()
 
         #обновляем список
-        self.refresh_list()
+        #self.refresh_list()
 
         return self.screen
 
