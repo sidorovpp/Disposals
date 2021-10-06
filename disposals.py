@@ -97,6 +97,12 @@ class Disposals(MDApp):
         #меню
         self.nav_drawer = self.screen.ids.nav_drawer
 
+        if platform == 'android':
+            from android.permissions import request_permissions, Permission
+            request_permissions([Permission.READ_EXTERNAL_STORAGE,
+                                 Permission.WRITE_EXTERNAL_STORAGE,
+                                 Permission.INTERNET])
+
         #стартуем сервис уведомлений
         #self.start_service()
 
