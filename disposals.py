@@ -50,11 +50,10 @@ class Disposals(MDApp):
         self.title = 'Задачи ВКБ'
         self.icon = 'icon.png'
         self.nav_drawer = ObjectProperty()
-        self.lang = 'ru'
         super().__init__(**kwargs)
         Window.bind(on_keyboard=self.events_program)
         Window.soft_input_mode = 'below_target'
-
+        self._lang = 'ru'
 
         self.list_previous_screens = ['base']
         self.window = Window
@@ -71,6 +70,7 @@ class Disposals(MDApp):
         self.translation = Translation(
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
+
 
     def build(self):
 
@@ -112,6 +112,17 @@ class Disposals(MDApp):
         self.refresh_list()
 
         return self.screen
+
+    def get_lang(self):
+        return self._lang
+
+    # setter
+    def set_lang(self, value):
+        self._lang = value
+        self.translation.switch_lang(self._lang)
+
+    lang = property(get_lang, set_lang)
+
 
     def on_start(self):
         icons_item = {
@@ -373,9 +384,6 @@ class Disposals(MDApp):
         #        from jnius import autoclass
         #        activity = autoclass('org.kivy.android.PythonActivity').mActivity
         #        activity.moveTaskToBack(True)
-
-    def on_lang(self, instance, lang):
-        self.translation.switch_lang(lang)
 
     def on_resume(self):
         # стартуем сервис уведомлений
