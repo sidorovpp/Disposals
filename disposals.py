@@ -13,17 +13,16 @@
 import os
 from ast import literal_eval
 from os.path import join
-from kivy.app import App
+from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import ConfigParser
 from kivy.utils import get_hex_from_color
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty
 from main import __version__
 from libs.translation import Translation
-from libs.uix.baseclass.startscreen import StartScreen
+from libs.uix.baseclass.startscreen import StartScreen, ItemDrawer
 from libs.uix.lists import Lists
-from kivymd.theming import ThemeManager
 from libs.applibs.dialogs import card
 import os.path
 from shutil import copyfile
@@ -31,7 +30,9 @@ from kivy.utils import platform
 from libs.uix.baseclass.disposalsdroid import connect_manager
 from libs.applibs.toast import toast
 from kivy.clock import Clock
+from libs.uix.baseclass.utils import custom_dialog
 from libs.uix.baseclass.disposallist import DisposalList
+
 
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
@@ -42,19 +43,18 @@ class LoadDialog(FloatLayout):
     cancel = ObjectProperty(None)
 
 
-class Disposals(App):
+class Disposals(MDApp):
 
-    title = 'Задачи ВКБ'
-    icon = 'icon.png'
-    nav_drawer = ObjectProperty()
-    theme_cls = ThemeManager()
-    theme_cls.primary_palette = 'Blue'
-    lang = StringProperty('ru')
 
-    def __init__(self, **kvargs):
-        super(Disposals, self).__init__(**kvargs)
+    def __init__(self, **kwargs):
+        self.title = 'Задачи ВКБ'
+        self.icon = 'icon.png'
+        self.nav_drawer = ObjectProperty()
+        self.lang = 'ru'
+        super().__init__(**kwargs)
         Window.bind(on_keyboard=self.events_program)
         Window.soft_input_mode = 'below_target'
+
 
         self.list_previous_screens = ['base']
         self.window = Window
@@ -74,6 +74,9 @@ class Disposals(App):
 
     def build(self):
 
+        self.theme_cls.theme_style = 'Light'
+        self.theme_cls.primary_palette = 'Blue'
+
         #грузим файл конфигураций из пользовательской папки, если есть
         try:
             copyfile(join(self.user_data_dir, 'disposals.ini'),
@@ -88,7 +91,7 @@ class Disposals(App):
         self.manager = self.screen.ids.manager
         #для упрощения доступа к screen
         self.manager.screen = self.screen
-        #для упрощения доступа к app
+        ##для упрощения доступа к app
         self.manager.app = self
         #меню
         self.nav_drawer = self.screen.ids.nav_drawer
@@ -96,10 +99,25 @@ class Disposals(App):
 
         #стартуем сервис уведомлений
         self.start_service()
-        #обвноляем список
+
+        #обновляем список
         self.refresh_list()
 
         return self.screen
+
+    def on_start(self):
+        icons_item = {
+            'refresh': self.translation._('Обновить'),
+            'filter': self.translation._('Фильтр'),
+            'application-settings': self.translation._('Настройки'),
+            'web': self.translation._('Язык'),
+            'language-python': self.translation._('Лицензия'),
+            'information': self.translation._('О программе'),
+        }
+        for icon_name in icons_item.keys():
+            item = ItemDrawer(icon=icon_name, text=icons_item[icon_name])
+            item.app = self
+            self.root.ids.content_drawer.ids.md_list.add_widget(item)
 
     def get_application_config(self):
         return super(Disposals, self).get_application_config(
@@ -230,12 +248,8 @@ class Disposals(App):
                 self.manager.current = self.list_previous_screens.pop()
             except:
                 self.manager.current = 'base'
-            self.screen.ids.action_bar.title = self.translation._(self.title)
-            self.screen.ids.action_bar.left_action_items = \
-                [['menu', lambda x: self.nav_drawer._toggle()]]
 
     def show_about(self, *args):
-        self.nav_drawer.toggle_nav_drawer()
         self.screen.ids.about.ids.label.text = \
             self.translation._(
                 u'[size=20][b]Disposals[/b][/size]\n\n'
@@ -251,39 +265,27 @@ class Disposals(App):
                 link_color=get_hex_from_color(self.theme_cls.primary_color)
             )
         self.manager.current = 'about'
-        self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen(27)]]
+        if self.nav_drawer.state == 'open':
+            self.nav_drawer.set_state('close')
 
     def show_license(self, *args):
-        if not PY2:
-            self.screen.ids.license.ids.text_license.text = \
-                self.translation._('%s') % open(
-                    join(self.directory, 'LICENSE'), encoding='utf-8').read()
-        else:
-            self.screen.ids.license.ids.text_license.text = \
-                self.translation._('%s') % open(
-                    join(self.directory, 'LICENSE')).read()
-        self.nav_drawer._toggle()
+        self.screen.ids.license.ids.text_license.text = \
+            self.translation._('%s') % open(
+                join(self.directory, 'LICENSE'), encoding='utf-8').read()
+        if self.nav_drawer.state == 'open':
+            self.nav_drawer.set_state('close')
         self.manager.current = 'license'
-        self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen(27)]]
-        self.screen.ids.action_bar.title = \
-            self.translation._('Лицензия')
 
     def refresh_list(self, *args):
         if self.nav_drawer.state == 'open':
-            self.nav_drawer._toggle()
-        #self.screen.ids.base.ids.disposal_list.clear_widgets()
+            self.nav_drawer.set_state('close')
         self.screen.ids.base.disposal_list.refresh_list(params={})
 
 
     def show_settings(self, *args):
-        self.nav_drawer._toggle()
+        if self.nav_drawer.state == 'open':
+            self.nav_drawer.set_state('close')
         self.manager.current = 'settings_form'
-        self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen(27)]]
-        self.screen.ids.action_bar.title = \
-            self.translation._('Настройки')
 
     def filter_list(self, *args):
 
@@ -371,3 +373,43 @@ class Disposals(App):
         # стартуем сервис уведомлений
         #self.start_service()
         self.refresh_list()
+
+    def set_readed(self):
+        try:
+            number = self.screen.ids.disposal.number.text
+            connect_manager.GetResult('SetTaskRead', {'id': int(number)}, [])
+            self.back_screen(27)
+        except:
+            pass
+
+    #выполняем задачу
+    def execute(self):
+        def _execute(dialog):
+            try:
+                number = self.screen.ids.disposal.number.text
+                connect_manager.GetResult('ExecuteDisposal', {'disposal_id': int(number)}, [])
+                dialog.dismiss()
+            except:
+                pass
+
+        custom_dialog.show_dialog(self.translation._('Вопрос'),
+                       self.translation._('Выполнить задачу?'),
+                       _execute)
+
+    # ищем следующий элемент
+    def show_next(self):
+        number = self.screen.ids.disposal.number.text
+
+        for i in self.screen.ids.base.disposal_list.data[:]:
+            if i['data']['Number'] < number:
+                self.screen.ids.disposal.set_params(i['data'])
+                break
+
+    # ищем предыдущий элемент
+    def show_prior(self):
+        number = self.screen.ids.disposal.number.text
+
+        for i in self.screen.ids.base.disposal_list.data[::-1]:
+            if i['data']['Number'] > number:
+                self.screen.ids.disposal.set_params(i['data'])
+                break

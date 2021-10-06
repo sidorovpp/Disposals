@@ -1,5 +1,5 @@
-#:import MDSeparator kivymd.card.MDSeparator
-#:import MDDropdownMenu kivymd.menu.MDDropdownMenu
+#:import MDSeparator kivymd.uix.card.MDSeparator
+#:import MDDropdownMenu kivymd.uix.menu.MDDropdownMenu
 #:import License libs.uix.baseclass.license.License
 #:import RecycleView kivy.uix.recycleview
 
@@ -24,6 +24,14 @@
         orientation: 'vertical'
         padding: dp(10), dp(10)
         spacing: dp(10)
+
+        MDToolbar:
+            id: actionbar
+            pos_hint: {"top": 1}
+            elevation: 10
+            title: app.translation._('Задача')
+            left_action_items: [['chevron-left', lambda x: app.back_screen(27)]]
+            right_action_items: [['read', lambda x: app.set_readed()],['checkbox-marked-circle', lambda x: app.execute()],['skip-previous', lambda x: app.show_prior()],['skip-next', lambda x: app.show_next()]]
 
         Label:
             id: number

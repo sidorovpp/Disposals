@@ -1,33 +1,47 @@
-from kivymd.dialog import MDDialog
-from kivy.uix.label import Label
-from kivy.metrics import dp
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.button import MDFlatButton
 from kivy.app import App
 from datetime import datetime
+from kivy.properties import ObjectProperty
 
+class CustomDialog():
+    dialog = None
+    ok_proc = None
 
-def show_dialog(title, text, ok_proc, inform=False):
-    app = App.get_running_app()
-    content = Label()
-    content.text = text
-    content.color = [0, 0, 0, 1]
-    content.size_hint = (1, None)
-    content.height = 50
+    def dialog_dismiss(self, inst):
+        self.dialog.dismiss()
+        self.dialog = None
 
-    dialog = MDDialog(title=title,
-                      content=content,
-                      size_hint=(.8, None),
-                      height=dp(200),
-                      auto_dismiss=False)
+    def execute_proc(self, inst):
+        self.ok_proc(self.dialog)
+        self.dialog = None
 
-    if inform:
-        dialog.add_action_button(app.translation._('ОК'),
-                                 action=lambda *x: dialog.dismiss())
-    else:
-        dialog.add_action_button(app.translation._('ОК'),
-                                 action=lambda *x: ok_proc(dialog))
-        dialog.add_action_button(app.translation._('Отмена'),
-                                 action=lambda *x: dialog.dismiss())
-    dialog.open()
+    def show_dialog(self, title, text, ok_proc, inform=False):
+        self.ok_proc = ok_proc
+        app = App.get_running_app()
+        if not self.dialog:
+            if inform:
+                dialog = MDDialog(
+                    text=text,
+                    buttons=[
+                        MDFlatButton(
+                            text=app.translation._('ОК'), text_color=app.theme_cls.primary_color, on_release = self.dialog_dismiss
+                        ),
+                    ],
+                )
+            else:
+                self.dialog = MDDialog(
+                    text=text,
+                    buttons=[
+                        MDFlatButton(
+                            text=app.translation._('ОК'), text_color=app.theme_cls.primary_color, on_release = self.execute_proc
+                        ),
+                        MDFlatButton(
+                            text=app.translation._('Отмена'), text_color=app.theme_cls.primary_color, on_release = self.dialog_dismiss
+                        ),
+                    ],
+                )
+            self.dialog.open()
 
 
 # конвертация даты
@@ -50,3 +64,5 @@ def get_date(str):
 
 urgency_dict = {'1': 'Очень важно', '2': 'Важно', '3': 'Нормальная', '4': 'Не важно', '6': 'Срочно'}
 urgency_color = {'1': '#FFA500', '2': '#FFC500', '3': '#00FF00', '4': '#0000FF', '6': '#FF0000'}
+
+custom_dialog = CustomDialog()

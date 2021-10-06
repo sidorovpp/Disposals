@@ -19,8 +19,8 @@ from kivy.properties import StringProperty, ObjectProperty
 
 
 ACTIVITY = '''
-#:import MDLabel kivymd.label.MDLabel
-#:import MDCheckbox kivymd.selectioncontrols.MDCheckbox
+#:import MDLabel kivymd.uix.label.MDLabel
+#:import MDCheckbox kivymd.uix.selectioncontrol.MDCheckbox
 
 <Selection>:
     spacing: dp(5)
