@@ -16,6 +16,7 @@ from kivy.utils import platform
 from libs.uix.baseclass.utils import get_date
 from libs.uix.baseclass.utils import urgency_dict
 from libs.uix.baseclass.utils import urgency_color
+from libs.uix.baseclass.utils import custom_dialog
 
 class NumberLabel(MDLabel):
     def on_ref_press(self, url):
@@ -158,20 +159,11 @@ class DisposalList(RecycleView, RecycleViewBehavior):
     @mainthread
     def show_connect_error(self):
         self.stop_spinner()
-        content = MDLabel(
-            font_style='Body1',
-            text=self.app.translation._('Нет подключения, проверьте настройки!'),
-            size_hint_y=None,
-            valign='top')
-        content.bind(texture_size=content.setter('size'))
-        self.dialog = MDDialog(title=self.app.translation._('Внимание'),
-                               content=content,
-                               size_hint=(.8, None),
-                               height=dp(200))
+        self.stop_spinner()
+        custom_dialog.show_dialog(self.app.translation._('Информация'),
+                                  self.app.translation._('Нет подключения, проверьте настройки!'),
+                                  None, True)
 
-        self.dialog.add_action_button("ОК",
-                                      action=lambda *x: self.dialog.dismiss())
-        self.dialog.open()
 
     # загрузка списка
     def load_data(self, params):

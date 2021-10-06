@@ -21,7 +21,7 @@ class CustomDialog():
         app = App.get_running_app()
         if not self.dialog:
             if inform:
-                dialog = MDDialog(
+                self.dialog = MDDialog(
                     text=text,
                     buttons=[
                         MDFlatButton(

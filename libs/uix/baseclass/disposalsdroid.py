@@ -4,6 +4,7 @@ from urllib.error import HTTPError
 import base64
 import json
 
+
 # if sys.platform.startswith('linux'):
 #    server = '77.233.5.22'
 # else:
