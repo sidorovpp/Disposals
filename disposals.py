@@ -218,11 +218,6 @@ class Disposals(MDApp):
                          join(self.user_data_dir, 'error.log')
                          )
 
-                #service = AndroidService(
-                #   'Disposals', 'Disposals Service')
-                #service.start('Hello From Service')
-
-
 
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
