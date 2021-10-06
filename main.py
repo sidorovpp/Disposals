@@ -77,9 +77,9 @@ def main():
 
         text_error = traceback.format_exc()
         traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
-        copyfile(join(app.directory, 'error.log'),
-                 join(app.user_data_dir, 'error.log')
-                 )
+        #copyfile(join(app.directory, 'error.log'),
+        #         join(app.user_data_dir, 'error.log')
+        #         )
 
         #if app:
         #    try:
