@@ -84,7 +84,6 @@ class Disposals(MDApp):
                      )
         except:
             pass
-        self.set_value_from_config()
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
@@ -96,6 +95,8 @@ class Disposals(MDApp):
         self.manager.app = self
         #меню
         self.nav_drawer = self.screen.ids.nav_drawer
+        #загружаем конфигурацию
+        self.set_value_from_config()
 
         #if platform == 'android':
         #    from android.permissions import request_permissions, Permission
@@ -120,11 +121,12 @@ class Disposals(MDApp):
     def set_lang(self, value):
         self._lang = value
         self.translation.switch_lang(self._lang)
+        self.build_menu()
 
     lang = property(get_lang, set_lang)
 
 
-    def on_start(self):
+    def build_menu(self):
         icons_item = {
             'refresh': self.translation._('Обновить'),
             'filter': self.translation._('Фильтр'),
@@ -133,10 +135,16 @@ class Disposals(MDApp):
             'language-python': self.translation._('Лицензия'),
             'information': self.translation._('О программе'),
         }
+        md_list = self.screen.ids.content_drawer.ids.md_list
+        md_list.clear_widgets()
         for icon_name in icons_item.keys():
             item = ItemDrawer(icon=icon_name, text=icons_item[icon_name])
             item.app = self
-            self.root.ids.content_drawer.ids.md_list.add_widget(item)
+            md_list.add_widget(item)
+
+    def on_start(self):
+        self.build_menu()
+
 
     def get_application_config(self):
         return super(Disposals, self).get_application_config(

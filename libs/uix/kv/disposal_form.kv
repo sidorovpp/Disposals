@@ -39,6 +39,7 @@
                 hint_text: app.translation._('Введите часть ФИО для поиска')
                 on_text: root.receiver_change(self.text)
                 theme_foreground_color : 'Custom'
+                helper_text: app.translation._('Поле обязательное!')
             MDIconButton:
                 icon: 'magnify'
                 on_release: root.search_staff()
@@ -56,6 +57,7 @@
             id: theme
             required: True
             hint_text: app.translation._('Введите тему')
+            helper_text: app.translation._('Поле обязательное!')
 
         Label:
             size_hint: None, None
@@ -71,6 +73,7 @@
             hint_text: app.translation._('Введите задачу')
             required: True
             multiline: True
+            helper_text: app.translation._('Поле обязательное!')
 
         Label:
             size_hint: None, None

@@ -187,3 +187,6 @@ msgstr "No installed plugins!"
 
 msgid "Не поддерживается!"
 msgstr "Not supported"
+
+msgid "Поле обязательное!"
+msgstr "This field is required!"
