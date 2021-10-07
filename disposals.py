@@ -228,18 +228,21 @@ class Disposals(MDApp):
             from jnius import autoclass
             from android import AndroidService
             try:
+                print('Start service')
                 service = autoclass(
                     'ru.mrcpp.disposals.ServiceDisposals')
                 mActivity = autoclass(
                     'org.kivy.android.PythonActivity').mActivity
                 argument = ''
                 service.start(mActivity, argument)
+                print('End starting service')
                 ##PythonService = autoclass('org.kivy.android.PythonService')
                 ##service.mService.setAutoRestartService(True)
             except:
                 #пишу ошибку старта сервиса
                 import traceback
                 text_error = traceback.format_exc()
+                print(text_error)
                 traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
                 copyfile(join(self.directory, 'error.log'),
                          join(self.user_data_dir, 'error.log')
