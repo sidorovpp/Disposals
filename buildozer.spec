@@ -55,7 +55,7 @@ icon.filename = %(source.dir)s/data/icon.png
 orientation = portrait
 
 # (list) List of service to declare
-services = Disposals:./service/main.py:sticky
+services = Disposals:./service/main.py:foreground
 
 #
 # OSX Specific
@@ -75,7 +75,7 @@ fullscreen = 0
 android.presplash_color = #003380
 
 # (list) Permissions
-android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
+android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, FOREGROUND_SERVICE
 
 # (int) Target Android API, should be as high as possible.
 android.api = 28
@@ -101,6 +101,16 @@ android.accept_sdk_license = True
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 android.arch = armeabi-v7a
 
+#добавил для Notifications
+p4a.branch = develop
+
+# (list) Gradle dependencies to add
+android.gradle_dependencies = androidx.work:work-runtime:2.2.0
+
+# (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
+# contains an 'androidx' package, or any package from Kotlin source.
+# android.enable_androidx requires android.api >= 28
+android.enable_androidx = True
 
 [buildozer]
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))

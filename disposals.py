@@ -34,10 +34,10 @@ from kivy.clock import Clock
 from libs.uix.baseclass.utils import custom_dialog
 from libs.uix.baseclass.disposallist import DisposalList
 
-
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
@@ -45,7 +45,6 @@ class LoadDialog(FloatLayout):
 
 
 class Disposals(MDApp):
-
 
     def __init__(self, **kwargs):
         self.title = 'Задачи ВКБ'
@@ -77,20 +76,25 @@ class Disposals(MDApp):
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
 
+        self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
+                             'FromMe': self.translation._('Задачи от меня'),
+                             'ToMe': self.translation._('Задачи на меня'),
+                             'MyNotComplete': self.translation._('Все в работе')}
+
 
     def build(self):
 
         self.theme_cls.theme_style = 'Light'
         self.theme_cls.primary_palette = 'Blue'
 
-        #запрашиваем права на запись файла
+        # запрашиваем права на запись файла
         if platform == 'android':
             from android.permissions import request_permissions, Permission
             request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
-        print(join(self.public_dir, 'disposals.ini'),)
+        print(join(self.public_dir, 'disposals.ini'), )
         print(join(self.directory, 'disposals.ini'))
-        #грузим файл конфигураций из пользовательской папки, если есть
+        # грузим файл конфигураций из пользовательской папки, если есть
         try:
             copyfile(join(self.public_dir, 'disposals.ini'),
                      join(self.directory, 'disposals.ini')
@@ -101,21 +105,21 @@ class Disposals(MDApp):
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
-        #менеджер окон
+        # менеджер окон
         self.manager = self.screen.ids.manager
-        #для упрощения доступа к screen
+        # для упрощения доступа к screen
         self.manager.screen = self.screen
         ##для упрощения доступа к app
         self.manager.app = self
-        #меню
+        # меню
         self.nav_drawer = self.screen.ids.nav_drawer
-        #загружаем конфигурацию
+        # загружаем конфигурацию
         self.set_value_from_config()
 
-        #стартуем сервис уведомлений
+        # стартуем сервис уведомлений
         self.start_service()
 
-        #обновляем список
+        # обновляем список
         self.refresh_list()
 
         return self.screen
@@ -130,7 +134,6 @@ class Disposals(MDApp):
         self.build_menu()
 
     lang = property(get_lang, set_lang)
-
 
     def build_menu(self):
         icons_item = {
@@ -151,10 +154,9 @@ class Disposals(MDApp):
     def on_start(self):
         self.build_menu()
 
-
-    def get_application_config(self):
+    def get_application_config(self, **kwargs):
         return super(Disposals, self).get_application_config(
-                        '{}/%(appname)s.ini'.format(self.directory))
+            '{}/%(appname)s.ini'.format(self.directory))
 
     def build_config(self, config):
 
@@ -168,7 +170,7 @@ class Disposals(MDApp):
 
     def set_value_from_config(self):
 
-        #пользовательские настройки
+        # пользовательские настройки
         self.config.read(join(self.directory, 'disposals.ini'))
         self.lang = self.config.get('General', 'language')
         self.current_filter = self.config.get('General', 'filter')
@@ -177,17 +179,17 @@ class Disposals(MDApp):
         connect_manager.password = self.config.get('General', 'password')
         connect_manager.sms = self.config.get('General', 'sms')
 
-        #системные настройки
+        # системные настройки
         self.sysconfig.read(join(self.directory, 'server.ini'))
         connect_manager.sysusername = self.sysconfig.get('Access', 'user')
         connect_manager.syspassword = self.sysconfig.get('Access', 'password')
 
-        #инициализируем соединение
+        # инициализируем соединение
         try:
             connect_manager.InitConnect()
         except:
             pass
-        #скидываем копию конфигураций в пользовательскую папку
+        # скидываем копию конфигураций в пользовательскую папку
         try:
             copyfile(join(self.directory, 'disposals.ini'),
                      join(self.public_dir, 'disposals.ini')
@@ -208,16 +210,16 @@ class Disposals(MDApp):
         self._popup.dismiss()
 
     def test(self, *args):
-        #if platform == 'android':
-            #from pythonforandroid.recipes.android.src.android.permissions import request_permissions, Permission
-            #request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
-            #                     Permission.READ_EXTERNAL_STORAGE])
+        # if platform == 'android':
+        # from pythonforandroid.recipes.android.src.android.permissions import request_permissions, Permission
+        # request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
+        #                     Permission.READ_EXTERNAL_STORAGE])
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup = Popup(title="Load file", content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
-        #if platform == 'android':
+        # if platform == 'android':
         #    from jnius import autoclass
         #    #перезапуск автоматически
         #    PythonService = autoclass('org.kivy.android.PythonService')
@@ -225,6 +227,18 @@ class Disposals(MDApp):
 
     def start_service(self):
 
+        '''
+        if platform == 'android':
+            from android import mActivity
+            context = mActivity.getApplicationContext()
+            SERVICE_NAME = str(context.getPackageName()) + '.Service' + 'Disposals'
+            self.service = autoclass(SERVICE_NAME)
+            self.service.start(mActivity, '')
+
+            from jnius import autoclass
+            PythonService = autoclass('org.kivy.android.PythonService')
+            PythonService.mService.setAutoRestartService(True)
+        '''
         # if platform == 'android':
         #     service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
         #     from jnius import autoclass
@@ -246,7 +260,7 @@ class Disposals(MDApp):
                 ##PythonService = autoclass('org.kivy.android.PythonService')
                 ##service.mService.setAutoRestartService(True)
             except:
-                #пишу ошибку старта сервиса
+                # пишу ошибку старта сервиса
                 text_error = traceback.format_exc()
                 print(text_error)
                 traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
@@ -254,13 +268,12 @@ class Disposals(MDApp):
                          join(self.public_dir, 'error.log')
                          )
 
-
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
             kv_file = join(directory_kv_files, kv_file)
             if os.path.isfile(kv_file):
                 with open(kv_file, encoding='utf-8') as kv:
-                        Builder.load_string(kv.read())
+                    Builder.load_string(kv.read())
 
     def events_program(self, instance, keyboard, keycode, text, modifiers):
 
@@ -270,7 +283,7 @@ class Disposals(MDApp):
             self.back_screen(event=keyboard)
         elif keyboard in (282, 319):
             pass
-        elif keyboard == 13 and self.manager.current == 'base' :
+        elif keyboard == 13 and self.manager.current == 'base':
             self.refresh_list()
         return True
 
@@ -317,7 +330,6 @@ class Disposals(MDApp):
             self.nav_drawer.set_state('close')
         self.screen.ids.base.disposal_list.refresh_list(params={})
 
-
     def show_settings(self, *args):
         if self.nav_drawer.state == 'open':
             self.nav_drawer.set_state('close')
@@ -335,11 +347,6 @@ class Disposals(MDApp):
                     self.set_value_from_config()
                     self.refresh_list()
 
-        self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
-                             'FromMe': self.translation._('Задачи от меня'),
-                             'ToMe': self.translation._('Задачи на меня'),
-                             'MyNotComplete': self.translation._('Все в работе')}
-
         dict_info_filters = {}
         for filter in self.filter_items:
             dict_info_filters[self.filter_items[filter]] = \
@@ -351,7 +358,7 @@ class Disposals(MDApp):
                 events_callback=select_filter, flag='one_select_check'
             ),
             size=(.85, .55)
-            )
+        )
 
         self.window_filter.open()
 
@@ -395,7 +402,6 @@ class Disposals(MDApp):
         Clock.schedule_interval(check_interval_press, 0.5)
         toast(self.translation._('Нажмите еще раз для выхода'))
 
-
         # Прячу приложение, при выходе выдаёт ошибку (пока не разобрался)
         #    if platform == 'android':
         #        from jnius import autoclass
@@ -404,7 +410,7 @@ class Disposals(MDApp):
 
     def on_resume(self):
         # стартуем сервис уведомлений
-        #self.start_service()
+        # self.start_service()
         self.refresh_list()
 
     def set_readed(self):
@@ -415,7 +421,7 @@ class Disposals(MDApp):
         except:
             pass
 
-    #выполняем задачу
+    # выполняем задачу
     def execute(self):
         def _execute(dialog):
             try:
@@ -426,8 +432,8 @@ class Disposals(MDApp):
                 pass
 
         custom_dialog.show_dialog(self.translation._('Вопрос'),
-                       self.translation._('Выполнить задачу?'),
-                       _execute)
+                                  self.translation._('Выполнить задачу?'),
+                                  _execute)
 
     # ищем следующий элемент
     def show_next(self):
