@@ -10,6 +10,7 @@ from plyer import notification
 from plyer import vibrator
 from kivy.core.audio import SoundLoader
 import traceback
+from common.utils import write_debug_log
 
 
 
@@ -92,28 +93,43 @@ def play_sound():
         sleep(int(duration + 1))
         mPlayer.release()
 
-def create_channel(title, desc):
-
+def show_notification_new(title, text, notification_id):
     from jnius import autoclass, cast
     from android import python_act
+
     # Gets the current running instance of the app so as to speak
     mActivity = autoclass("org.kivy.android.PythonActivity").mActivity
+    write_debug_log('mActivity = autoclass("org.kivy.android.PythonActivity").mActivity')
     context = mActivity.getApplicationContext()
+    write_debug_log('context = mActivity.getApplicationContext()')
 
     # Autoclass necessary java classes so they can be used in python
     RingtoneManager = autoclass("android.media.RingtoneManager")
+    write_debug_log('RingtoneManager = autoclass("android.media.RingtoneManager")')
     Uri = autoclass("android.net.Uri")
+    write_debug_log('Uri = autoclass("android.net.Uri")')
     AudioAttributesBuilder = autoclass("android.media.AudioAttributes$Builder")
+    write_debug_log('AudioAttributesBuilder = autoclass("android.media.AudioAttributes$Builder")')
     AudioAttributes = autoclass("android.media.AudioAttributes")
+    write_debug_log('AudioAttributes = autoclass("android.media.AudioAttributes")')
     AndroidString = autoclass("java.lang.String")
+    write_debug_log('AndroidString = autoclass("java.lang.String")')
     NotificationManager = autoclass("android.app.NotificationManager")
+    write_debug_log('NotificationManager = autoclass("android.app.NotificationManager")')
     NotificationChannel = autoclass("android.app.NotificationChannel")
+    write_debug_log('NotificationChannel = autoclass("android.app.NotificationChannel")')
     NotificationCompat = autoclass("androidx.core.app.NotificationCompat")
+    write_debug_log('NotificationCompat = autoclass("androidx.core.app.NotificationCompat")')
     NotificationCompatBuilder = autoclass("androidx.core.app.NotificationCompat$Builder")
+    write_debug_log('NotificationCompatBuilder = autoclass("androidx.core.app.NotificationCompat$Builder")')
     NotificationManagerCompat = autoclass("androidx.core.app.NotificationManagerCompat")
+    write_debug_log('NotificationManagerCompat = autoclass("androidx.core.app.NotificationManagerCompat")')
     func_from = getattr(NotificationManagerCompat, "from")
+    write_debug_log('func_from = getattr(NotificationManagerCompat, "from")')
     Intent = autoclass("android.content.Intent")
+    write_debug_log('Intent = autoclass("android.content.Intent")')
     PendingIntent = autoclass("android.app.PendingIntent")
+    write_debug_log('PendingIntent = autoclass("android.app.PendingIntent")')
 
     # create an object that represents the sound type of the notification
     sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -125,7 +141,7 @@ def create_channel(title, desc):
     # Name of the notification channel
     name = cast("java.lang.CharSequence", AndroidString(title))
     # Description for the notification channel
-    description = AndroidString(desc)
+    description = AndroidString('Непрочитанные задачи')
     # Unique id for a notification channel. Is used to send notification through
     # this channel
     channel_id = AndroidString("disposals")
@@ -142,29 +158,6 @@ def create_channel(title, desc):
     notificationManager = context.getSystemService(NotificationManager)
     # Register the notification channel
     notificationManager.createNotificationChannel(channel)
-
-def show_notification_new(title, text, notification_id):
-    from jnius import autoclass, cast
-    from android import python_act
-
-    # Gets the current running instance of the app so as to speak
-    mActivity = autoclass("org.kivy.android.PythonActivity").mActivity
-    context = mActivity.getApplicationContext()
-
-    # Autoclass necessary java classes so they can be used in python
-    RingtoneManager = autoclass("android.media.RingtoneManager")
-    Uri = autoclass("android.net.Uri")
-    AudioAttributesBuilder = autoclass("android.media.AudioAttributes$Builder")
-    AudioAttributes = autoclass("android.media.AudioAttributes")
-    AndroidString = autoclass("java.lang.String")
-    NotificationManager = autoclass("android.app.NotificationManager")
-    NotificationChannel = autoclass("android.app.NotificationChannel")
-    NotificationCompat = autoclass("androidx.core.app.NotificationCompat")
-    NotificationCompatBuilder = autoclass("androidx.core.app.NotificationCompat$Builder")
-    NotificationManagerCompat = autoclass("androidx.core.app.NotificationManagerCompat")
-    func_from = getattr(NotificationManagerCompat, "from")
-    Intent = autoclass("android.content.Intent")
-    PendingIntent = autoclass("android.app.PendingIntent")
 
     # Set notification sound
     sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -290,8 +283,6 @@ if __name__ == '__main__':
         except:
             pass
 
-        if platform == 'android':
-            create_channel('Disposals', 'Непрочитанные задачи')
         count = check_disposals(0, True)
         while True:
             sleep(300)

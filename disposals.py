@@ -252,8 +252,10 @@ class Disposals(MDApp):
                 print('Start service')
                 service = autoclass(
                     'ru.mrcpp.disposals.ServiceDisposals')
+                print(service)
                 mActivity = autoclass(
                     'org.kivy.android.PythonActivity').mActivity
+                print(mActivity)
                 argument = ''
                 service.start(mActivity, argument)
                 print('End starting service')
