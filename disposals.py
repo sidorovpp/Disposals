@@ -51,7 +51,12 @@ class Disposals(MDApp):
         self.title = 'Задачи ВКБ'
         self.icon = 'icon.png'
         self.nav_drawer = ObjectProperty()
+        if platform == 'android':
+            self.public_dir = '/sdcard/disposals'
+
         super().__init__(**kwargs)
+
+        self.public_dir = self.user_data_dir
         Window.bind(on_keyboard=self.events_program)
         Window.soft_input_mode = 'below_target'
         self._lang = 'ru'
@@ -83,11 +88,11 @@ class Disposals(MDApp):
             from android.permissions import request_permissions, Permission
             request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
-        print(join(self.user_data_dir, 'disposals.ini'),)
+        print(join(self.public_dir, 'disposals.ini'),)
         print(join(self.directory, 'disposals.ini'))
         #грузим файл конфигураций из пользовательской папки, если есть
         try:
-            copyfile(join(self.user_data_dir, 'disposals.ini'),
+            copyfile(join(self.public_dir, 'disposals.ini'),
                      join(self.directory, 'disposals.ini')
                      )
         except:
@@ -106,14 +111,6 @@ class Disposals(MDApp):
         self.nav_drawer = self.screen.ids.nav_drawer
         #загружаем конфигурацию
         self.set_value_from_config()
-
-        #if platform == 'android':
-        #    from android.permissions import request_permissions, Permission
-            #request_permissions([Permission.READ_EXTERNAL_STORAGE])
-
-        #    request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
-            #request_permissions([Permission.INTERNET])
-
 
         #стартуем сервис уведомлений
         self.start_service()
@@ -193,7 +190,7 @@ class Disposals(MDApp):
         #скидываем копию конфигураций в пользовательскую папку
         try:
             copyfile(join(self.directory, 'disposals.ini'),
-                     join(self.user_data_dir, 'disposals.ini')
+                     join(self.public_dir, 'disposals.ini')
                      )
         except:
             text_error = traceback.format_exc()
@@ -254,7 +251,7 @@ class Disposals(MDApp):
                 print(text_error)
                 traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
                 copyfile(join(self.directory, 'error.log'),
-                         join(self.user_data_dir, 'error.log')
+                         join(self.public_dir, 'error.log')
                          )
 
 

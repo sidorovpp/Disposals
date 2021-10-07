@@ -6,19 +6,20 @@ from os.path import pardir
 from os.path import realpath
 from kivy.config import ConfigParser
 from kivy.utils import platform
-from common.utils import write_debug_log
 from plyer import notification
 from plyer import vibrator
 from kivy.core.audio import SoundLoader
+import traceback
 
 
 #проверка непрочитанных задач и уведомление
 def check_disposals(count, first):
     #write_debug_log('check')
+    print('Service check starting...')
     try:
         res = connect_manager.GetResult('getDisposalList', {'readed': 0}, ['Number'])
     except:
-        write_debug_log('connect error')
+        print('Service connection error')
         return 0
 
     if len(res) > 0:
@@ -169,11 +170,13 @@ if __name__ == '__main__':
 
         count = check_disposals(0, True)
         while True:
-            #write_debug_log('cycle')
             sleep(300)
             count = check_disposals(count, False)
 
     except Exception as E:
+        print('Service error:')
+        text_error = traceback.format_exc()
+        print(text_error)
         if platform == 'android':
             # пишу в папку на карту ошибку (андроид)
             f = '/sdcard/disposals/service_error.log'
