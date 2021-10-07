@@ -45,7 +45,11 @@ def check_disposals(count, first):
             play_sound()
     else:
         if (len(res) != count) or first:
-            show_notification_new(title, message, '1000')
+            if len(res) > 0:
+                id = res[0][0]
+            else:
+                id = '0'
+            show_notification_new(title, message, id)
             if (len(res) > 0):
                 from jnius import autoclass
                 AudioManager = autoclass('android.media.AudioManager')
