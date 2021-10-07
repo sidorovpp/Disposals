@@ -92,8 +92,6 @@ class Disposals(MDApp):
             from android.permissions import request_permissions, Permission
             request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
-        print(join(self.public_dir, 'disposals.ini'), )
-        print(join(self.directory, 'disposals.ini'))
         # грузим файл конфигураций из пользовательской папки, если есть
         try:
             copyfile(join(self.public_dir, 'disposals.ini'),
@@ -191,6 +189,7 @@ class Disposals(MDApp):
             pass
         # скидываем копию конфигураций в пользовательскую папку
         try:
+            os.makedirs(os.path.dirname(self.public_dir), exist_ok=True)
             copyfile(join(self.directory, 'disposals.ini'),
                      join(self.public_dir, 'disposals.ini')
                      )
@@ -249,16 +248,12 @@ class Disposals(MDApp):
             from jnius import autoclass
             from android import AndroidService
             try:
-                print('Start service')
                 service = autoclass(
                     'ru.mrcpp.disposals.ServiceDisposals')
-                print(service)
                 mActivity = autoclass(
                     'org.kivy.android.PythonActivity').mActivity
-                print(mActivity)
                 argument = ''
                 service.start(mActivity, argument)
-                print('End starting service')
                 ##PythonService = autoclass('org.kivy.android.PythonService')
                 ##service.mService.setAutoRestartService(True)
             except:
@@ -266,6 +261,7 @@ class Disposals(MDApp):
                 text_error = traceback.format_exc()
                 print(text_error)
                 traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
+                os.makedirs(os.path.dirname(self.public_dir), exist_ok=True)
                 copyfile(join(self.directory, 'error.log'),
                          join(self.public_dir, 'error.log')
                          )
