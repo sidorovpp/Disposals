@@ -11,6 +11,7 @@
 # LICENSE: MIT
 
 import os
+import traceback
 from ast import literal_eval
 from os.path import join
 from kivymd.app import MDApp
@@ -77,12 +78,21 @@ class Disposals(MDApp):
         self.theme_cls.theme_style = 'Light'
         self.theme_cls.primary_palette = 'Blue'
 
+        #запрашиваем права на запись файла
+        if platform == 'android':
+            from android.permissions import request_permissions, Permission
+            request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
+
         print(join(self.user_data_dir, 'disposals.ini'),)
         print(join(self.directory, 'disposals.ini'))
         #грузим файл конфигураций из пользовательской папки, если есть
-        copyfile(join(self.user_data_dir, 'disposals.ini'),
-                 join(self.directory, 'disposals.ini')
-                 )
+        try:
+            copyfile(join(self.user_data_dir, 'disposals.ini'),
+                     join(self.directory, 'disposals.ini')
+                     )
+        except:
+            text_error = traceback.format_exc()
+            print(text_error)
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
@@ -186,7 +196,8 @@ class Disposals(MDApp):
                      join(self.user_data_dir, 'disposals.ini')
                      )
         except:
-            pass
+            text_error = traceback.format_exc()
+            print(text_error)
 
     def load(self, path, filename):
         popup = Popup(title='Test popup',
@@ -239,7 +250,6 @@ class Disposals(MDApp):
                 ##service.mService.setAutoRestartService(True)
             except:
                 #пишу ошибку старта сервиса
-                import traceback
                 text_error = traceback.format_exc()
                 print(text_error)
                 traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))

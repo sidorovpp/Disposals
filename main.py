@@ -57,9 +57,6 @@ def main():
         app = Disposals()
         app.run()
     except Exception:
-        from kivy.app import App
-        from kivy.uix.boxlayout import BoxLayout
-
         text_error = traceback.format_exc()
         print(text_error)
         traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
