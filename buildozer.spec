@@ -83,6 +83,10 @@ android.api = 28
 android.minapi = 21
 # (str) Android NDK version to use
 android.ndk = 19b
+
+# (bool) Use --private data storage (True) or --dir public storage (False)
+android.private_storage = True
+
 # (bool) If True, then skip trying to update the Android sdk
 # This can be useful to avoid excess Internet downloads or save time
 # when an update is due and you just want to test/build your package
@@ -96,7 +100,7 @@ android.accept_sdk_license = True
 # android.logcat_filters = *:S python:D
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 android.arch = armeabi-v7a
-android.private_storage = False
+
 
 [buildozer]
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
