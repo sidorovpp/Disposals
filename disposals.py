@@ -77,13 +77,12 @@ class Disposals(MDApp):
         self.theme_cls.theme_style = 'Light'
         self.theme_cls.primary_palette = 'Blue'
 
+        print(join(self.user_data_dir, 'disposals.ini'),)
+        print(join(self.directory, 'disposals.ini'))
         #грузим файл конфигураций из пользовательской папки, если есть
-        try:
-            copyfile(join(self.user_data_dir, 'disposals.ini'),
-                     join(self.directory, 'disposals.ini')
-                     )
-        except:
-            pass
+        copyfile(join(self.user_data_dir, 'disposals.ini'),
+                 join(self.directory, 'disposals.ini')
+                 )
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
@@ -384,7 +383,7 @@ class Disposals(MDApp):
                 Clock.unschedule(check_interval_press)
 
         if self.exit_interval:
-            self.terminate()
+            self.stop()
 
         Clock.schedule_interval(check_interval_press, 0.5)
         toast(self.translation._('Нажмите еще раз для выхода'))
