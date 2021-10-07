@@ -82,6 +82,12 @@ class Disposals(MDApp):
                              'MyNotComplete': self.translation._('Все в работе')}
 
 
+    def callback_permission(self, permissions, grants):
+        copyfile(join(self.public_dir, 'disposals.ini'),
+                 join(self.directory, 'disposals.ini')
+                 )
+        self.refresh_list()
+
     def build(self):
 
         self.theme_cls.theme_style = 'Light'
@@ -90,7 +96,8 @@ class Disposals(MDApp):
         # запрашиваем права на запись файла
         if platform == 'android':
             from android.permissions import request_permissions, Permission
-            request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
+            request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE],
+                                self.callback_permission)
 
         # грузим файл конфигураций из пользовательской папки, если есть
         try:
