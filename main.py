@@ -49,42 +49,24 @@ __version__ = '0.1'
 
 
 def main():
-    """
-    def create_error_monitor():
-        class _App(MDApp):
-            theme_cls = ThemeManager()
-            theme_cls.primary_palette = 'BlueGrey'
 
-            def build(self):
-                box = BoxLayout()
-                box.add_widget(report)
-                return box
-        app = _App()
-        app.run()
-    """
     app = None
 
-    #from loadplugin import load_plugin
     from disposals import Disposals
+    try:
+        app = Disposals()
+        app.run()
+    except Exception:
+        from kivy.app import App
+        from kivy.uix.boxlayout import BoxLayout
 
-    app = Disposals()
-    #load_plugin(app, __version__)
-    app.run()
-    #except Exception:
-        #from kivy.app import App
-        #from kivy.uix.boxlayout import BoxLayout
+        text_error = traceback.format_exc()
+        print(text_error)
+        traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
+        copyfile(join(app.directory, 'error.log'),
+                 join(app.user_data_dir, 'error.log')
+                 )
 
-    #    text_error = traceback.format_exc()
-    #    traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
-        #copyfile(join(app.directory, 'error.log'),
-        #         join(app.user_data_dir, 'error.log')
-        #         )
-
-        #if app:
-        #    try:
-        #        app.stop()
-        #    except AttributeError:
-        #        app = None
 
 
 if __name__ in ('__main__', '__android__'):
