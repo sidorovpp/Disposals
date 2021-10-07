@@ -85,7 +85,7 @@ android.minapi = 21
 android.ndk = 19b
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
-android.private_storage = False
+#android.private_storage = False
 
 # (bool) If True, then skip trying to update the Android sdk
 # This can be useful to avoid excess Internet downloads or save time
