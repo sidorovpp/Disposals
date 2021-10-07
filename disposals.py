@@ -83,10 +83,12 @@ class Disposals(MDApp):
 
 
     def callback_permission(self, permissions, grants):
-        copyfile(join(self.public_dir, 'disposals.ini'),
-                 join(self.directory, 'disposals.ini')
-                 )
-        self.refresh_list()
+        import os.path
+        if os.path.isfile(join(self.public_dir, 'disposals.ini')):
+            copyfile(join(self.public_dir, 'disposals.ini'),
+                     join(self.directory, 'disposals.ini')
+                     )
+            self.refresh_list()
 
     def build(self):
 
