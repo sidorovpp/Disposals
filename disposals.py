@@ -51,12 +51,12 @@ class Disposals(MDApp):
         self.title = 'Задачи ВКБ'
         self.icon = 'icon.png'
         self.nav_drawer = ObjectProperty()
-        if platform == 'android':
-            self.public_dir = '/sdcard/disposals'
 
         super().__init__(**kwargs)
 
         self.public_dir = self.user_data_dir
+        if platform == 'android':
+            self.public_dir = '/sdcard/disposals'
         Window.bind(on_keyboard=self.events_program)
         Window.soft_input_mode = 'below_target'
         self._lang = 'ru'
