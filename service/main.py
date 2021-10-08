@@ -31,12 +31,12 @@ def check_disposals(count, first):
         title = 'Нет непрочитанных задач'
         message = 'Все задачи прочитаны'
 
+    '''
     ticker = 'Уведомление'
     kwargs = {'title': title, 'message': message}
     kwargs['app_name'] = 'disposals'
 
     kwargs = {'title': title, 'message': message, 'ticker': ticker}
-    '''
     if mode == 'fancy':
         kwargs['app_name'] = "Plyer Notification Example"
         if platform == "win":
@@ -48,7 +48,6 @@ def check_disposals(count, first):
                                       'plyer-icon.png')
     elif mode == 'toast':
         kwargs['toast'] = True
-    '''
     notification.notify(**kwargs)
     '''
     if platform != 'android':
@@ -84,7 +83,6 @@ def check_disposals(count, first):
                     vibrator.vibrate(1)
                     sleep(1)
                     vibrator.cancel()
-    '''
     return len(res)
 
 def play_sound():
