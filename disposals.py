@@ -88,8 +88,7 @@ class Disposals(MDApp):
         # запрашиваем права на запись файла
         if platform == 'android':
             from android.permissions import request_permissions, Permission
-            request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE],
-                                self.callback_permission)
+            request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
