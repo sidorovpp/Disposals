@@ -11,20 +11,19 @@
 # LICENSE: MIT
 
 import os
+import traceback
 from ast import literal_eval
 from os.path import join
-from kivy.app import App
+from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import ConfigParser
-from kivy.logger import PY2
 from kivy.utils import get_hex_from_color
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty
 from main import __version__
 from libs.translation import Translation
-from libs.uix.baseclass.startscreen import StartScreen
+from libs.uix.baseclass.startscreen import StartScreen, ItemDrawer
 from libs.uix.lists import Lists
-from kivymd.theming import ThemeManager
 from libs.applibs.dialogs import card
 import os.path
 from shutil import copyfile
@@ -32,30 +31,34 @@ from kivy.utils import platform
 from libs.uix.baseclass.disposalsdroid import connect_manager
 from libs.applibs.toast import toast
 from kivy.clock import Clock
+from libs.uix.baseclass.utils import custom_dialog
 from libs.uix.baseclass.disposallist import DisposalList
 
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 
+
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
 
-class Disposals(App):
+class Disposals(MDApp):
 
-    title = 'Задачи ВКБ'
-    icon = 'icon.png'
-    nav_drawer = ObjectProperty()
-    theme_cls = ThemeManager()
-    theme_cls.primary_palette = 'Blue'
-    lang = StringProperty('ru')
+    def __init__(self, **kwargs):
+        self.title = 'Задачи ВКБ'
+        self.icon = 'icon.png'
+        self.nav_drawer = ObjectProperty()
 
-    def __init__(self, **kvargs):
-        super(Disposals, self).__init__(**kvargs)
+        super().__init__(**kwargs)
+
+        self.public_dir = self.user_data_dir
+        if platform == 'android':
+            self.public_dir = '/sdcard/disposals'
         Window.bind(on_keyboard=self.events_program)
         Window.soft_input_mode = 'below_target'
+        self._lang = 'ru'
 
         self.list_previous_screens = ['base']
         self.window = Window
@@ -73,38 +76,81 @@ class Disposals(App):
             self.lang, 'Ttest', os.path.join(self.directory, 'data', 'locales')
         )
 
-    def build(self):
+        self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
+                             'FromMe': self.translation._('Задачи от меня'),
+                             'ToMe': self.translation._('Задачи на меня'),
+                             'MyNotComplete': self.translation._('Все в работе')}
 
-        #грузим файл конфигураций из пользовательской папки, если есть
-        try:
-            copyfile(join(self.user_data_dir, 'disposals.ini'),
-                     join(self.directory, 'disposals.ini')
-                     )
-        except:
-            pass
-        self.set_value_from_config()
+    def build(self):
+        self.theme_cls.theme_style = 'Light'
+        self.theme_cls.primary_palette = 'Blue'
+
+        # запрашиваем права на запись файла
+        if platform == 'android':
+            from android.permissions import Permission, check_permission, request_permissions
+            perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.FOREGROUND_SERVICE]
+            if not all([check_permission(perm) for perm in perms]):
+                request_permissions(perms)
+
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
-        #менеджер окон
+        # менеджер окон
         self.manager = self.screen.ids.manager
-        #для упрощения доступа к screen
+        # для упрощения доступа к screen
         self.manager.screen = self.screen
-        #для упрощения доступа к app
+        ##для упрощения доступа к app
         self.manager.app = self
-        #меню
+        # меню
         self.nav_drawer = self.screen.ids.nav_drawer
-        self.screen.ids.base.add_refresh_button()
-
-        #стартуем сервис уведомлений
-        self.start_service()
-        #обвноляем список
-        self.refresh_list()
 
         return self.screen
 
-    def get_application_config(self):
+    def get_lang(self):
+        return self._lang
+
+    # setter
+    def set_lang(self, value):
+        self._lang = value
+        self.translation.switch_lang(self._lang)
+        self.build_menu()
+
+    lang = property(get_lang, set_lang)
+
+    def build_menu(self):
+        icons_item = {
+            'refresh': self.translation._('Обновить'),
+            'filter': self.translation._('Фильтр'),
+            'application-settings': self.translation._('Настройки'),
+            'web': self.translation._('Язык'),
+            'language-python': self.translation._('Лицензия'),
+            'information': self.translation._('О программе'),
+        }
+        md_list = self.screen.ids.content_drawer.ids.md_list
+        md_list.clear_widgets()
+        for icon_name in icons_item.keys():
+            item = ItemDrawer(icon=icon_name, text=icons_item[icon_name])
+            item.app = self
+            md_list.add_widget(item)
+
+    def on_start(self):
+        #строим меню
+        self.build_menu()
+        copyfile(join(self.public_dir, 'disposals.ini'),
+                 join(self.directory, 'disposals.ini')
+                 )
+
+        # загружаем конфигурацию
+        self.set_value_from_config()
+
+        # стартуем сервис уведомлений
+        self.start_service()
+
+        #обновляем список
+        self.refresh_list()
+
+    def get_application_config(self, **kwargs):
         return super(Disposals, self).get_application_config(
-                        '{}/%(appname)s.ini'.format(self.directory))
+            '{}/%(appname)s.ini'.format(self.directory))
 
     def build_config(self, config):
 
@@ -118,7 +164,7 @@ class Disposals(App):
 
     def set_value_from_config(self):
 
-        #пользовательские настройки
+        # пользовательские настройки
         self.config.read(join(self.directory, 'disposals.ini'))
         self.lang = self.config.get('General', 'language')
         self.current_filter = self.config.get('General', 'filter')
@@ -127,23 +173,25 @@ class Disposals(App):
         connect_manager.password = self.config.get('General', 'password')
         connect_manager.sms = self.config.get('General', 'sms')
 
-        #системные настройки
+        # системные настройки
         self.sysconfig.read(join(self.directory, 'server.ini'))
         connect_manager.sysusername = self.sysconfig.get('Access', 'user')
         connect_manager.syspassword = self.sysconfig.get('Access', 'password')
 
-        #инициализируем соединение
+        # инициализируем соединение
         try:
             connect_manager.InitConnect()
         except:
             pass
-        #скидываем копию конфигураций в пользовательскую папку
+        # скидываем копию конфигураций в пользовательскую папку
         try:
+            os.makedirs(os.path.dirname(self.public_dir), exist_ok=True)
             copyfile(join(self.directory, 'disposals.ini'),
-                     join(self.user_data_dir, 'disposals.ini')
+                     join(self.public_dir, 'disposals.ini')
                      )
         except:
-            pass
+            text_error = traceback.format_exc()
+            print(text_error)
 
     def load(self, path, filename):
         popup = Popup(title='Test popup',
@@ -157,16 +205,16 @@ class Disposals(App):
         self._popup.dismiss()
 
     def test(self, *args):
-        #if platform == 'android':
-            #from pythonforandroid.recipes.android.src.android.permissions import request_permissions, Permission
-            #request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
-            #                     Permission.READ_EXTERNAL_STORAGE])
+        # if platform == 'android':
+        # from pythonforandroid.recipes.android.src.android.permissions import request_permissions, Permission
+        # request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
+        #                     Permission.READ_EXTERNAL_STORAGE])
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup = Popup(title="Load file", content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
-        #if platform == 'android':
+        # if platform == 'android':
         #    from jnius import autoclass
         #    #перезапуск автоматически
         #    PythonService = autoclass('org.kivy.android.PythonService')
@@ -174,6 +222,18 @@ class Disposals(App):
 
     def start_service(self):
 
+        '''
+        if platform == 'android':
+            from android import mActivity
+            context = mActivity.getApplicationContext()
+            SERVICE_NAME = str(context.getPackageName()) + '.Service' + 'Disposals'
+            self.service = autoclass(SERVICE_NAME)
+            self.service.start(mActivity, '')
+
+            from jnius import autoclass
+            PythonService = autoclass('org.kivy.android.PythonService')
+            PythonService.mService.setAutoRestartService(True)
+        '''
         # if platform == 'android':
         #     service = autoclass('ru.mrcpp.disposals.ServiceDisposals')
         #     from jnius import autoclass
@@ -193,29 +253,21 @@ class Disposals(App):
                 ##PythonService = autoclass('org.kivy.android.PythonService')
                 ##service.mService.setAutoRestartService(True)
             except:
-                #пишу ошибку старта сервиса
-                import traceback
+                # пишу ошибку старта сервиса
                 text_error = traceback.format_exc()
+                print(text_error)
                 traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
+                os.makedirs(os.path.dirname(self.public_dir), exist_ok=True)
                 copyfile(join(self.directory, 'error.log'),
-                         join(self.user_data_dir, 'error.log')
+                         join(self.public_dir, 'error.log')
                          )
-
-                #service = AndroidService(
-                #   'Disposals', 'Disposals Service')
-                #service.start('Hello From Service')
-
-
 
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
             kv_file = join(directory_kv_files, kv_file)
             if os.path.isfile(kv_file):
-                if not PY2:
-                    with open(kv_file, encoding='utf-8') as kv:
-                        Builder.load_string(kv.read())
-                else:
-                    Builder.load_file(kv_file)
+                with open(kv_file, encoding='utf-8') as kv:
+                    Builder.load_string(kv.read())
 
     def events_program(self, instance, keyboard, keycode, text, modifiers):
 
@@ -225,7 +277,7 @@ class Disposals(App):
             self.back_screen(event=keyboard)
         elif keyboard in (282, 319):
             pass
-        elif keyboard == 13 and self.manager.current == 'base' :
+        elif keyboard == 13 and self.manager.current == 'base':
             self.refresh_list()
         return True
 
@@ -239,12 +291,8 @@ class Disposals(App):
                 self.manager.current = self.list_previous_screens.pop()
             except:
                 self.manager.current = 'base'
-            self.screen.ids.action_bar.title = self.translation._(self.title)
-            self.screen.ids.action_bar.left_action_items = \
-                [['menu', lambda x: self.nav_drawer._toggle()]]
 
     def show_about(self, *args):
-        self.nav_drawer.toggle_nav_drawer()
         self.screen.ids.about.ids.label.text = \
             self.translation._(
                 u'[size=20][b]Disposals[/b][/size]\n\n'
@@ -260,39 +308,26 @@ class Disposals(App):
                 link_color=get_hex_from_color(self.theme_cls.primary_color)
             )
         self.manager.current = 'about'
-        self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen(27)]]
+        if self.nav_drawer.state == 'open':
+            self.nav_drawer.set_state('close')
 
     def show_license(self, *args):
-        if not PY2:
-            self.screen.ids.license.ids.text_license.text = \
-                self.translation._('%s') % open(
-                    join(self.directory, 'LICENSE'), encoding='utf-8').read()
-        else:
-            self.screen.ids.license.ids.text_license.text = \
-                self.translation._('%s') % open(
-                    join(self.directory, 'LICENSE')).read()
-        self.nav_drawer._toggle()
+        self.screen.ids.license.ids.text_license.text = \
+            self.translation._('%s') % open(
+                join(self.directory, 'LICENSE'), encoding='utf-8').read()
+        if self.nav_drawer.state == 'open':
+            self.nav_drawer.set_state('close')
         self.manager.current = 'license'
-        self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen(27)]]
-        self.screen.ids.action_bar.title = \
-            self.translation._('Лицензия')
 
     def refresh_list(self, *args):
         if self.nav_drawer.state == 'open':
-            self.nav_drawer._toggle()
-        #self.screen.ids.base.ids.disposal_list.clear_widgets()
+            self.nav_drawer.set_state('close')
         self.screen.ids.base.disposal_list.refresh_list(params={})
 
-
     def show_settings(self, *args):
-        self.nav_drawer._toggle()
+        if self.nav_drawer.state == 'open':
+            self.nav_drawer.set_state('close')
         self.manager.current = 'settings_form'
-        self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen(27)]]
-        self.screen.ids.action_bar.title = \
-            self.translation._('Настройки')
 
     def filter_list(self, *args):
 
@@ -306,11 +341,6 @@ class Disposals(App):
                     self.set_value_from_config()
                     self.refresh_list()
 
-        self.filter_items = {'NotReaded': self.translation._('Непрочитанные'),
-                             'FromMe': self.translation._('Задачи от меня'),
-                             'ToMe': self.translation._('Задачи на меня'),
-                             'MyNotComplete': self.translation._('Все в работе')}
-
         dict_info_filters = {}
         for filter in self.filter_items:
             dict_info_filters[self.filter_items[filter]] = \
@@ -322,7 +352,7 @@ class Disposals(App):
                 events_callback=select_filter, flag='one_select_check'
             ),
             size=(.85, .55)
-            )
+        )
 
         self.window_filter.open()
 
@@ -361,11 +391,10 @@ class Disposals(App):
                 Clock.unschedule(check_interval_press)
 
         if self.exit_interval:
-            self.terminate()
+            self.stop()
 
         Clock.schedule_interval(check_interval_press, 0.5)
         toast(self.translation._('Нажмите еще раз для выхода'))
-
 
         # Прячу приложение, при выходе выдаёт ошибку (пока не разобрался)
         #    if platform == 'android':
@@ -373,10 +402,47 @@ class Disposals(App):
         #        activity = autoclass('org.kivy.android.PythonActivity').mActivity
         #        activity.moveTaskToBack(True)
 
-    def on_lang(self, instance, lang):
-        self.translation.switch_lang(lang)
-
     def on_resume(self):
         # стартуем сервис уведомлений
-        #self.start_service()
+        # self.start_service()
         self.refresh_list()
+
+    def set_readed(self):
+        try:
+            number = self.screen.ids.disposal.number.text
+            connect_manager.GetResult('SetTaskRead', {'id': int(number)}, [])
+            self.back_screen(27)
+        except:
+            pass
+
+    # выполняем задачу
+    def execute(self):
+        def _execute(dialog):
+            try:
+                number = self.screen.ids.disposal.number.text
+                connect_manager.GetResult('ExecuteDisposal', {'disposal_id': int(number)}, [])
+                dialog.dismiss()
+            except:
+                pass
+
+        custom_dialog.show_dialog(self.translation._('Вопрос'),
+                                  self.translation._('Выполнить задачу?'),
+                                  _execute)
+
+    # ищем следующий элемент
+    def show_next(self):
+        number = self.screen.ids.disposal.number.text
+
+        for i in self.screen.ids.base.disposal_list.data[:]:
+            if i['data']['Number'] < number:
+                self.screen.ids.disposal.set_params(i['data'])
+                break
+
+    # ищем предыдущий элемент
+    def show_prior(self):
+        number = self.screen.ids.disposal.number.text
+
+        for i in self.screen.ids.base.disposal_list.data[::-1]:
+            if i['data']['Number'] > number:
+                self.screen.ids.disposal.set_params(i['data'])
+                break
