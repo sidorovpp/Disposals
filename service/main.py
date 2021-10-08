@@ -37,11 +37,13 @@ def check_disposals(count, first):
 
     if platform != 'android':
         if (len(res) != count):
-            kwargs['app_icon'] = join(dirname(realpath(__file__)), 'notify.ico')
-            kwargs['ticker'] = ticker
+            title = title
+            message = message
+            ticker = ticker
+            app_ico = join(dirname(realpath(__file__)), 'notify.ico')
 
             #показываем уведомление
-            notification.notify(**kwargs)
+            notification.notify(app_icon=app_ico, title=title, message=message, ticker=ticker, timeout=10)
             # звук
             play_sound()
     else:
@@ -135,7 +137,7 @@ def show_notification(title, message):
 
     Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     #icon = getattr(Drawable, 'icon')
-    icon = getattr(Drawable, 'icon_android')
+    icon = getattr(Drawable, 'presplash')
     notification_builder.setSmallIcon(icon)
     notification_builder.setAutoCancel(True)
     new_notification = notification_builder.getNotification()
