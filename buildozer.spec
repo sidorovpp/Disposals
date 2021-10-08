@@ -55,7 +55,7 @@ icon.filename = %(source.dir)s/data/icon.png
 orientation = portrait
 
 # (list) List of service to declare
-services = Disposals:./service/main.py:foreground
+services = Disposals:./service/main.py:sticky
 
 #
 # OSX Specific
