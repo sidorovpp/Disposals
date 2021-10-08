@@ -49,7 +49,7 @@ requirements =  python3,kivy==2.0.0,https://github.com/kivymd/KivyMD/archive/mas
 presplash.filename = %(source.dir)s/data/wait.png
 
 # (str) Icon of the application
-icon.filename = %(source.dir)s/data/icon.png
+icon.filename = %(source.dir)s/icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
