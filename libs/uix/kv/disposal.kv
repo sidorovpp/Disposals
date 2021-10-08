@@ -34,37 +34,43 @@
         Label:
             id: number
             size_hint: None, None
-            height: dp(16)
+            height: dp(20)
             width: self.texture_size[0]
             halign: 'left'
             color: app.theme_cls.primary_color
             font_size: '14sp'
+            padding: [10, 0]
 
         Label:
             id: urgency
             size_hint: None, None
-            height: dp(16)
+            height: dp(20)
             width: self.texture_size[0]
             halign: 'left'
             font_size: '14sp'
+            padding: [10, 0]
+
+        MDSeparator:
 
         Label:
             id: sender
             size_hint: None, None
-            height: dp(14)
+            height: dp(20)
             width: self.texture_size[0]
             halign: 'left'
             color: 0, 0, 0, 1
             font_size: '12sp'
+            padding: [10, 0]
 
         Label:
             id: receiver
             size_hint: None, None
-            height: dp(14)
+            height: dp(20)
             width: self.texture_size[0]
             halign: 'left'
             color: 0, 0, 0, 1
             font_size: '12sp'
+            padding: [10, 0]
 
         MDSeparator:
 
@@ -75,6 +81,7 @@
             size_hint: 1, None
             height: self.texture_size[1]
             font_size: '14sp'
+            padding: [10, 10]
 
         MDSeparator:
 
@@ -87,6 +94,7 @@
                 size_hint_y: None
                 height: self.minimum_height
                 orientation: 'vertical'
+                padding: [10, 10]
 
         MDSeparator:
 

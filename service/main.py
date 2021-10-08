@@ -133,9 +133,10 @@ def show_notification(title, message):
     notification_builder.setContentText(message)
     notification_builder.setContentIntent(intent)
 
-    #Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
+    Drawable = jnius.autoclass("{}.R$drawable".format(service.getPackageName()))
     #icon = getattr(Drawable, 'icon')
-    #notification_builder.setSmallIcon(icon)
+    icon = getattr(Drawable, 'icon_android')
+    notification_builder.setSmallIcon(icon)
     notification_builder.setAutoCancel(True)
     new_notification = notification_builder.getNotification()
     service.startForeground(1, new_notification)

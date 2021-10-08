@@ -81,25 +81,6 @@ class Disposals(MDApp):
                              'ToMe': self.translation._('Задачи на меня'),
                              'MyNotComplete': self.translation._('Все в работе')}
 
-    #копируем файл после выдачи прав и инициализируем коннект (для переустановки)
-    def callback_permission(self, permissions, grants):
-        import os.path
-        from android.permissions import request_permissions, Permission
-        print('callback permissions: ' + join(self.public_dir, 'disposals.ini'))
-        print(permissions)
-        if Permission.READ_EXTERNAL_STORAGE in permissions:
-            if os.path.isfile(join(self.public_dir, 'disposals.ini')):
-                print('copy file')
-                copyfile(join(self.public_dir, 'disposals.ini'),
-                         join(self.directory, 'disposals.ini')
-                         )
-            print('Init connection...')
-            # инициализируем соединение
-            try:
-                connect_manager.InitConnect()
-            except:
-                pass
-
     def build(self):
         self.theme_cls.theme_style = 'Light'
         self.theme_cls.primary_palette = 'Blue'
@@ -109,15 +90,6 @@ class Disposals(MDApp):
             from android.permissions import request_permissions, Permission
             request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE],
                                 self.callback_permission)
-
-        # грузим файл конфигураций из пользовательской папки, если есть
-        try:
-            copyfile(join(self.public_dir, 'disposals.ini'),
-                     join(self.directory, 'disposals.ini')
-                     )
-        except:
-            text_error = traceback.format_exc()
-            print(text_error)
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
@@ -129,11 +101,6 @@ class Disposals(MDApp):
         self.manager.app = self
         # меню
         self.nav_drawer = self.screen.ids.nav_drawer
-        # загружаем конфигурацию
-        self.set_value_from_config()
-
-        # стартуем сервис уведомлений
-        self.start_service()
 
         return self.screen
 
@@ -165,8 +132,19 @@ class Disposals(MDApp):
             md_list.add_widget(item)
 
     def on_start(self):
+        #строим меню
         self.build_menu()
-        # обновляем список
+        copyfile(join(self.public_dir, 'disposals.ini'),
+                 join(self.directory, 'disposals.ini')
+                 )
+
+        # загружаем конфигурацию
+        self.set_value_from_config()
+
+        # стартуем сервис уведомлений
+        self.start_service()
+
+        #обновляем список
         self.refresh_list()
 
     def get_application_config(self, **kwargs):
