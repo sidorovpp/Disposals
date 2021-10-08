@@ -35,6 +35,22 @@ def check_disposals(count, first):
     kwargs = {'title': title, 'message': message}
     kwargs['app_name'] = 'disposals'
 
+    kwargs = {'title': title, 'message': message, 'ticker': ticker}
+    '''
+    if mode == 'fancy':
+        kwargs['app_name'] = "Plyer Notification Example"
+        if platform == "win":
+            kwargs['app_icon'] = join(dirname(realpath(__file__)),
+                                      'plyer-icon.ico')
+            kwargs['timeout'] = 4
+        else:
+            kwargs['app_icon'] = join(dirname(realpath(__file__)),
+                                      'plyer-icon.png')
+    elif mode == 'toast':
+        kwargs['toast'] = True
+    '''
+    notification.notify(**kwargs)
+    '''
     if platform != 'android':
         if (len(res) != count):
             title = title
@@ -68,7 +84,7 @@ def check_disposals(count, first):
                     vibrator.vibrate(1)
                     sleep(1)
                     vibrator.cancel()
-
+    '''
     return len(res)
 
 def play_sound():
