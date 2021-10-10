@@ -87,7 +87,7 @@ class Disposals(MDApp):
         res= True
         if platform == 'android':
             from android.permissions import Permission, check_permission, request_permissions
-            perms = [Permission.READ_EXTERNAL_STORAGE]
+            perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE]
             if not all([check_permission(perm) for perm in perms]):
                 res = False
         return res
