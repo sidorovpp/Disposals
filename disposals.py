@@ -80,6 +80,22 @@ class Disposals(MDApp):
                              'FromMe': self.translation._('Задачи от меня'),
                              'ToMe': self.translation._('Задачи на меня'),
                              'MyNotComplete': self.translation._('Все в работе')}
+        self.service_started = False
+
+    #проверка доступов
+    def check_permissions(self):
+        res= True
+        if platform == 'android':
+            from android.permissions import Permission, check_permission, request_permissions
+            perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.FOREGROUND_SERVICE]
+            if not all([check_permission(perm) for perm in perms]):
+                res = False
+        return res
+
+    def callback(self, permissions, grants):
+        copyfile(join(self.public_dir, 'disposals.ini'),
+                 join(self.directory, 'disposals.ini')
+                 )
 
     def build(self):
         self.theme_cls.theme_style = 'Light'
@@ -90,7 +106,7 @@ class Disposals(MDApp):
             from android.permissions import Permission, check_permission, request_permissions
             perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.FOREGROUND_SERVICE]
             if not all([check_permission(perm) for perm in perms]):
-                request_permissions(perms)
+                request_permissions(perms, self.callback)
 
         self.load_all_kv_files(join(self.directory, 'libs', 'uix', 'kv'))
         self.screen = StartScreen()
@@ -135,15 +151,9 @@ class Disposals(MDApp):
     def on_start(self):
         #строим меню
         self.build_menu()
-        copyfile(join(self.public_dir, 'disposals.ini'),
-                 join(self.directory, 'disposals.ini')
-                 )
 
         # загружаем конфигурацию
         self.set_value_from_config()
-
-        # стартуем сервис уведомлений
-        self.start_service()
 
         #обновляем список
         self.refresh_list()
@@ -241,26 +251,31 @@ class Disposals(MDApp):
         #     service.start(mActivity, '')
 
         if platform == 'android':
+            if not self.check_permissions():
+                return
+
             from jnius import autoclass
             from android import AndroidService
-            try:
-                service = autoclass(
-                    'ru.mrcpp.disposals.ServiceDisposals')
-                mActivity = autoclass(
-                    'org.kivy.android.PythonActivity').mActivity
-                argument = ''
-                service.start(mActivity, argument)
-                ##PythonService = autoclass('org.kivy.android.PythonService')
-                ##service.mService.setAutoRestartService(True)
-            except:
-                # пишу ошибку старта сервиса
-                text_error = traceback.format_exc()
-                print(text_error)
-                traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
-                os.makedirs(os.path.dirname(self.public_dir), exist_ok=True)
-                copyfile(join(self.directory, 'error.log'),
-                         join(self.public_dir, 'error.log')
-                         )
+            if not self.service_started:
+                try:
+                    service = autoclass(
+                        'ru.mrcpp.disposals.ServiceDisposals')
+                    mActivity = autoclass(
+                        'org.kivy.android.PythonActivity').mActivity
+                    argument = ''
+                    service.start(mActivity, argument)
+                    ##PythonService = autoclass('org.kivy.android.PythonService')
+                    ##service.mService.setAutoRestartService(True)
+                    self.service_started = True
+                except:
+                    # пишу ошибку старта сервиса
+                    text_error = traceback.format_exc()
+                    print(text_error)
+                    traceback.print_exc(file=open(os.path.join(self.directory, 'error.log'), 'w'))
+                    os.makedirs(os.path.dirname(self.public_dir), exist_ok=True)
+                    copyfile(join(self.directory, 'error.log'),
+                             join(self.public_dir, 'error.log')
+                             )
 
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
@@ -322,7 +337,10 @@ class Disposals(MDApp):
     def refresh_list(self, *args):
         if self.nav_drawer.state == 'open':
             self.nav_drawer.set_state('close')
-        self.screen.ids.base.disposal_list.refresh_list(params={})
+        if self.check_permissions():
+            self.screen.ids.base.disposal_list.refresh_list(params={})
+        #стартуем сервис ( в процедуре проверка, если уже запущен)
+        self.start_service()
 
     def show_settings(self, *args):
         if self.nav_drawer.state == 'open':
