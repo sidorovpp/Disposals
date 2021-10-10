@@ -85,11 +85,14 @@ class Disposals(MDApp):
     #проверка доступов
     def check_permissions(self):
         res= True
+        print('Check')
         if platform == 'android':
             from android.permissions import Permission, check_permission, request_permissions
             perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE]
             if not all([check_permission(perm) for perm in perms]):
                 res = False
+                print('False Check')
+                print('all')
         return res
 
     def callback(self, permissions, grants):
