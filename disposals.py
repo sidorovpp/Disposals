@@ -97,9 +97,10 @@ class Disposals(MDApp):
         copyfile(join(self.public_dir, 'disposals.ini'),
                  join(self.directory, 'disposals.ini')
                  )
-        print('callback: ' + join(self.public_dir, 'disposals.ini'))
-        print('callback: ' + join(self.directory, 'disposals.ini'))
-        self.set_value_from_config()
+        try:
+            connect_manager.InitConnect()
+        except:
+            pass
 
     def build(self):
         self.theme_cls.theme_style = 'Light'
@@ -183,9 +184,7 @@ class Disposals(MDApp):
         self.lang = self.config.get('General', 'language')
         self.current_filter = self.config.get('General', 'filter')
         connect_manager.server = self.config.get('General', 'ip')
-        print(connect_manager.server)
         connect_manager.username = self.config.get('General', 'user')
-        print(connect_manager.username)
         connect_manager.password = self.config.get('General', 'password')
         connect_manager.sms = self.config.get('General', 'sms')
 
