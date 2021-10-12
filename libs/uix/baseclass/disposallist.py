@@ -3,7 +3,6 @@ from libs.uix.baseclass.disposalsdroid import connect_manager
 from kivymd.uix.button import MDFlatButton
 from kivy.app import App
 from kivymd.uix.label import MDLabel
-from kivymd.uix.dialog import MDDialog
 from kivy.metrics import dp
 import threading
 from kivy.clock import Clock, mainthread
