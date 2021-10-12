@@ -122,14 +122,18 @@
 
 <AddCommentButton>
 
+<AddFileButton>
+
 <Content>
     orientation: "vertical"
-    spacing: "12dp"
+    spacing: '12dp'
     size_hint_y: None
-    height: "120dp"
+    height: '300dp'
 
     MDTextField:
         id: comment_text
+        multiline: True
+        size_hint: 1, 1
         hint_text: app.translation._('Введите комментарий')
 
 
