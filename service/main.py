@@ -187,7 +187,7 @@ if __name__ == '__main__':
 
         count = check_disposals(0, True)
         while True:
-            sleep(300)
+            sleep(120)
             count = check_disposals(count, False)
 
     except Exception as E:
