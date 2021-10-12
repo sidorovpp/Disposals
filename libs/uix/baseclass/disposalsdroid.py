@@ -107,8 +107,6 @@ class ConnectManager():
         #стандартная аутентификация
         if self.sms == '':
             url = 'http://' + self.server + '/rest/datasnap/rest/TDisposalMethods/"getStaffID"'
-            print(url)
-            print(self.username + ' ' + self.password)
             res = OpenJsonUrl(url, {}, username=self.username, password=self.password, res_headers=headers)
 
             self.current_pragma = headers['Pragma'][:headers['Pragma'].find(',')]
