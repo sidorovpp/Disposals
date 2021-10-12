@@ -45,6 +45,19 @@ class Content(BoxLayout):
     pass
 
 
+# кнопка добавления файла
+class AddFileButton(MDFloatingActionButton):
+
+    def __init__(self, **kwargs):
+        super(AddFileButton, self).__init__(**kwargs)
+        self.app = App.get_running_app()
+
+    def on_press(self):
+        from plyer import filechooser
+        path = filechooser.open_file(title=self.app.translation._('Выберите файл'),
+                                     filters=[(self.app.translation._('Все файлы'), '*.*')])
+        print(path)
+
 # кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
 
