@@ -13,8 +13,6 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.button import MDFloatingActionButton
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.textfield import MDTextField
-from kivy.metrics import dp
 from libs.uix.baseclass.disposalsdroid import connect_manager
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
@@ -52,11 +50,31 @@ class AddFileButton(MDFloatingActionButton):
         super(AddFileButton, self).__init__(**kwargs)
         self.app = App.get_running_app()
 
+    def add_file(self, id, filename):
+        Clock.schedule_once(self.app.screen.ids.disposal.start_spinner, 0)
+        try:
+            byte_list = {}
+            with open(filename, 'rb') as f:
+                i = 1
+                while True:
+                    byte = f.read(1)
+                    if not byte:
+                        break
+                    byte_list[str(i)] = int.from_bytes(byte, 'big')
+                    i = i + 1
+            params = {'id':id, 'object_id':1127, 'fileName':os.path.basename(filename), 'body':byte_list}
+            print(params)
+            connect_manager.GetResult('uploadFile', params, [], prefix='TSysMethods')
+        finally:
+            self.app.screen.ids.disposal.stop_spinner()
+
     def on_press(self):
         from plyer import filechooser
         path = filechooser.open_file(title=self.app.translation._('Выберите файл'),
                                      filters=[(self.app.translation._('Все файлы'), '*.*')])
         print(path)
+        if len(path) > 0:
+            self.add_file(int(self.parent.number.text), path[0])
 
 # кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
@@ -178,19 +196,20 @@ class TaskLabel(ButtonBehavior, Label):
     def show_file(self, id, filename):
         Clock.schedule_once(self.app.screen.ids.disposal.start_spinner, 0)
 
-        # загружаем файл
-        res = connect_manager.GetResult('getFile', {'id': id}, [], prefix='TSysMethods')
+        try:
+            # загружаем файл
+            res = connect_manager.GetResult('getFile', {'id': id}, [], prefix='TSysMethods')
 
-        # сохраняем в пользовательскую папку
-        ext = os.path.splitext(filename)[1]
-        ext = ext.replace('docx', 'doc')
-        ext = ext.replace('xlsx', 'xls')
-        filename = join(self.app.user_data_dir, 'temp' + ext)
-        tfp = open(filename, 'wb')
-        with tfp:
-            tfp.write(bytes(res[0]))
-
-        self.app.screen.ids.disposal.stop_spinner()
+            # сохраняем в пользовательскую папку
+            ext = os.path.splitext(filename)[1]
+            ext = ext.replace('docx', 'doc')
+            ext = ext.replace('xlsx', 'xls')
+            filename = join(self.app.user_data_dir, 'temp' + ext)
+            tfp = open(filename, 'wb')
+            with tfp:
+                tfp.write(bytes(res[0]))
+        finally:
+            self.app.screen.ids.disposal.stop_spinner()
 
         # запускаем файл
         # webbrowser.open(filename)
