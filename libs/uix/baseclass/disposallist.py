@@ -64,6 +64,9 @@ class DisposalItem(MDFlatButton):
         theme = self.data['Theme']
         theme = theme.replace('\n', ' ')
         text = self.data['Task'].replace('\n', ' ')
+
+        if int(self.data['Urgency_id']) < 1:
+            self.data['Urgency_id'] = '1'
         self.theme_label.text = '[color={u_color}]{urgency}[/color] {text}'.format(
                 text = theme,
                 urgency=urgency_dict[self.data['Urgency_id']],
