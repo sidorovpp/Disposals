@@ -181,6 +181,8 @@ class ConnectManager():
             else:
                 if 'Result' in res['result'][0]:
                     c.append(res['result'][0]['Result'])
+                elif 'file' in res['result'][0]:
+                    c.append(res['result'][0]['file'])
                 else:
                     c.append(res['result'][0]['id'])
 

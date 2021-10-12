@@ -188,7 +188,7 @@ class TaskLabel(ButtonBehavior, Label):
         filename = join(self.app.user_data_dir, 'temp' + ext)
         tfp = open(filename, 'wb')
         with tfp:
-            tfp.write(bytes(res))
+            tfp.write(bytes(res[0]))
 
         self.app.screen.ids.disposal.stop_spinner()
 
