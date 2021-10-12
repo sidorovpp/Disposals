@@ -68,13 +68,17 @@ class AddFileButton(MDFloatingActionButton):
         finally:
             self.app.screen.ids.disposal.stop_spinner()
 
+    def handle_selection(self, selection):
+        print(selection)
+        if len(selection) > 0:
+            self.add_file(int(self.parent.number.text), selection[0])
+
     def on_press(self):
         from plyer import filechooser
         path = filechooser.open_file(title=self.app.translation._('Выберите файл'),
-                                     filters=[(self.app.translation._('Все файлы'), '*.*')])
-        print(path)
-        if len(path) > 0:
-            self.add_file(int(self.parent.number.text), path[0])
+                                    filters=[(self.app.translation._('Все файлы'), '*.*')],
+                                    on_selection=self.handle_selection
+                                     )
 
 # кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
