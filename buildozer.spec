@@ -36,7 +36,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements =  python3,kivy==master,https://github.com/kivymd/KivyMD/archive/master.zip,pygments,sdl2_ttf==2.0.15,pillow, pyjnius, jnius, git+https://github.com/kivy/plyer@master#egg=plyer
+requirements =  python3,kivy==2.0.0rc4,https://github.com/kivymd/KivyMD/archive/master.zip,pygments,sdl2_ttf==2.0.15,pillow, pyjnius, jnius, git+https://github.com/kivy/plyer@master#egg=plyer
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
