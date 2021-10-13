@@ -14,7 +14,7 @@ from kivy.uix.screenmanager import Screen
 from kivymd.uix.button import MDFloatingActionButton
 from kivymd.uix.dialog import MDDialog
 from libs.uix.baseclass.disposalsdroid import connect_manager
-from kivy.uix.recycleview import RecycleView
+from kivy.uix.recycleview import RecycleView, RecycleViewBehavior
 from kivy.uix.label import Label
 from kivy.utils import get_hex_from_color
 from kivy.app import App
@@ -53,18 +53,19 @@ class AddFileButton(MDFloatingActionButton):
     def add_file(self, id, filename):
         Clock.schedule_once(self.app.screen.ids.disposal.start_spinner, 0)
         try:
-            byte_list = {}
+            byte_list = []
             with open(filename, 'rb') as f:
-                i = 1
+                #i = 1
                 while True:
                     byte = f.read(1)
                     if not byte:
                         break
-                    byte_list[str(i)] = int.from_bytes(byte, 'big')
-                    i = i + 1
+                    #byte_list[str(i)] = int.from_bytes(byte, 'big')
+                    byte_list.append(int.from_bytes(byte, 'big'))
+                    #i = i + 1
             params = {'id':id, 'object_id':1127, 'fileName':os.path.basename(filename), 'body':byte_list}
-            print(params)
             connect_manager.GetResult('uploadFile', params, [], prefix='TSysMethods')
+            self.parent.load_files()
         finally:
             self.app.screen.ids.disposal.stop_spinner()
 
@@ -124,8 +125,14 @@ class AddCommentButton(MDFloatingActionButton):
         self.dialog.open()
 
 
+# файлы
+class Files(RecycleView, RecycleViewBehavior):
+    def __init__(self, **kwargs):
+        super(Files, self).__init__(**kwargs)
+        self.data = []
+
 # комментарии
-class Notes(RecycleView):
+class Notes(RecycleView, RecycleViewBehavior):
     def __init__(self, **kwargs):
         super(Notes, self).__init__(**kwargs)
         self.data = []
@@ -255,6 +262,17 @@ class Disposal(Screen):
     def stop_spinner(self, *args):
         self.spinner.active = False
 
+    def set_size(self):
+        if self.notes.data != []:
+            self.notes.size_hint_y = 0.4
+        else:
+            self.notes.size_hint_y = 0.05
+        if self.files.data != []:
+            self.files.size_hint_y = 0.3
+        else:
+            self.files.size_hint_y = 0.05
+
+
     def load_comments(self):
         Clock.schedule_once(self.start_spinner, 0)
         self.notes.data = []
@@ -273,13 +291,27 @@ class Disposal(Screen):
                 note_text = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', note_text).format(
                     link_color=get_hex_from_color(self.app.theme_cls.primary_color))
                 self.notes.data.append({'text': '{0}'.format(note_text)})
-            self.task.size_hint_y = 0.5
-            self.notes.size_hint_y = 0.5
-        else:
-            # pass
-            self.task.size_hint_y = 0.9
-            self.notes.size_hint_y = 0.1
+        self.set_size()
         self.stop_spinner()
+
+    def load_files(self):
+        Clock.schedule_once(self.start_spinner, 0)
+        # добавляем файлы
+        Files = connect_manager.GetResult('getFileList', {'object_id': 1127, 'line_id': int(self.ids.number.text)},
+                                          ['id', 'FileName'], prefix='TSysMethods')
+        self.files.data = []
+        for item in Files:
+            self.files.data.append({'text': r'[ref={url}][color={link_color}][u]{text}[/u][/color][/ref]'.format(
+                url=item[0] + ':' + ntpath.basename(item[1]),
+                text=ntpath.basename(item[1]),
+                link_color=get_hex_from_color(self.app.theme_cls.primary_color)
+            )})
+        self.set_size()
+        self.stop_spinner()
+
+    def refresh_view(self, *args):
+        self.files.refresh_from_data()
+        self.notes.refresh_from_data()
 
     def set_params(self, params):
         self.ids.number.text = params['Number']
@@ -324,15 +356,8 @@ class Disposal(Screen):
             k = s.find('\n')
         self.task.data.append({'text': s})
 
-        # добавляем файлы
-        Files = connect_manager.GetResult('getFileList', {'object_id': 1127, 'line_id': int(self.ids.number.text)},
-                                          ['id', 'FileName'], prefix='TSysMethods')
-        for item in Files:
-            self.task.data.append({'text': r'[ref={url}][color={link_color}][u]{text}[/u][/color][/ref]'.format(
-                url=item[0] + ':' + ntpath.basename(item[1]),
-                text=ntpath.basename(item[1]),
-                link_color=get_hex_from_color(self.app.theme_cls.primary_color)
-            )})
+        #загружаем файлы
+        self.load_files()
 
         # убрал загрузку потоком, иногда отваливалось при прорисовке
         self.load_comments()

@@ -131,7 +131,7 @@ class ConnectManager():
         c = []
 
         url = 'http://' + self.server + '/rest/datasnap/rest/' + prefix + '/"' + name + '"'
-
+        print('request: ' + url)
         if auth:
             #если не pragma пусто - инициализируем
             if self.current_pragma == '':
@@ -159,6 +159,8 @@ class ConnectManager():
                     raise error
         else:
             res = OpenJsonUrl(url, params)
+        print('request result:')
+        print(res)
 
         #если не массив - то возвращаю значение
         if not type(res['result'][0]) is dict:
