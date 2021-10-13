@@ -37,6 +37,7 @@ from libs.uix.baseclass.utils import urgency_dict
 from libs.uix.baseclass.utils import urgency_color
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.button import MDFlatButton
+from shutil import copyfile
 
 
 class Content(BoxLayout):
@@ -215,10 +216,15 @@ class TaskLabel(ButtonBehavior, Label):
             ext = os.path.splitext(filename)[1]
             ext = ext.replace('docx', 'doc')
             ext = ext.replace('xlsx', 'xls')
-            filename = join(self.app.public_dir, 'temp' + ext)
+            filename = join(self.app.directory, 'temp' + ext)
+            #filename = join(self.app.public_dir, 'temp' + ext)
             tfp = open(filename, 'wb')
             with tfp:
                 tfp.write(bytes(res[0]))
+                # копирую на карту
+            copyfile(join(self.app.directory, 'temp' + ext),
+                     join(self.app.public_dir, 'temp' + ext)
+                     )
         finally:
             self.app.screen.ids.disposal.stop_spinner()
 
