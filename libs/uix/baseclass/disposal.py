@@ -229,7 +229,8 @@ class TaskLabel(ButtonBehavior, Label):
             self.app.screen.ids.disposal.stop_spinner()
 
         # запускаем файл
-        webbrowser.open_new(filename)
+        #webbrowser.open_new(filename)
+        os.system(filename)
         #self.open_file(filename)
 
     def on_ref_press(self, url):
