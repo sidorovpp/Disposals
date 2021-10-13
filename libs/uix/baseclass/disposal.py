@@ -179,11 +179,30 @@ class TaskLabel(ButtonBehavior, Label):
 
     def open_file(self, filename):
         # webbrowser.open_new('file://' + filename)
-        if platform == 'android1':
+        if platform == 'android':
             try:
                 import jnius
                 import mimetypes
+                from jnius import autoclass
+                from android import mActivity
+                mime_type, _ = mimetypes.guess_type(filename)
+                File = autoclass('java.io.File')
 
+                Intent = autoclass('android.content.Intent')
+                FileProvider = autoclass('android.support.v4.content.FileProvider')
+
+                uri = FileProvider.getUriForFile(
+                    mActivity, 'com.pavelsof.wormhole.fileprovider', File(filename)
+                )
+
+                intent = Intent()
+                intent.setAction(Intent.ACTION_VIEW)
+                intent.setDataAndType(uri, mime_type)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                mActivity.startActivity(intent)
+                '''
                 PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
                 Intent = jnius.autoclass('android.content.Intent')
                 Uri = jnius.autoclass('android.net.Uri')
@@ -196,6 +215,7 @@ class TaskLabel(ButtonBehavior, Label):
                 intent.setDataAndType(Uri.parse(image_uri), mimetype)
                 currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
                 currentActivity.startActivity(intent)
+                '''
             except Exception as error:
                 print(str(error))
         elif sys.platform.startswith('darwin'):
