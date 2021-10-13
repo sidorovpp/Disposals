@@ -195,8 +195,8 @@ class TaskLabel(ButtonBehavior, Label):
                 intent.setDataAndType(Uri.parse(image_uri), mimetype)
                 currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
                 currentActivity.startActivity(intent)
-            except:
-                pass
+            except Exception as error:
+                print(str(error))
         elif sys.platform.startswith('darwin'):
             subprocess.call(('open', filename))
         elif os.name == 'nt':  # For Windows
