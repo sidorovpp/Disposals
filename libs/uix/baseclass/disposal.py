@@ -179,7 +179,7 @@ class TaskLabel(ButtonBehavior, Label):
 
     def open_file(self, filename):
         # webbrowser.open_new('file://' + filename)
-        if platform == 'android':
+        if platform == 'android1':
             try:
                 import jnius
                 import mimetypes
@@ -230,8 +230,8 @@ class TaskLabel(ButtonBehavior, Label):
 
         # запускаем файл
         #webbrowser.open_new(filename)
-        os.system(filename)
-        #self.open_file(filename)
+        #os.system(filename)
+        self.open_file(filename)
 
     def on_ref_press(self, url):
         if url[:13] == 'http://aisup/':
