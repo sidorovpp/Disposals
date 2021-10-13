@@ -192,7 +192,7 @@ class TaskLabel(ButtonBehavior, Label):
                 FileProvider = autoclass('android.support.v4.content.FileProvider')
 
                 uri = FileProvider.getUriForFile(
-                    mActivity, 'com.pavelsof.wormhole.fileprovider', File(filename)
+                    mActivity, 'ru.mrcpp.disposals.fileprovider', File(filename)
                 )
 
                 intent = Intent()
