@@ -229,8 +229,8 @@ class TaskLabel(ButtonBehavior, Label):
             self.app.screen.ids.disposal.stop_spinner()
 
         # запускаем файл
-        # webbrowser.open(filename)
-        self.open_file(filename)
+        webbrowser.open_new(filename)
+        #self.open_file(filename)
 
     def on_ref_press(self, url):
         if url[:13] == 'http://aisup/':
