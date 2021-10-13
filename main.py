@@ -61,7 +61,7 @@ def main():
         print(text_error)
         traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
         copyfile(join(app.directory, 'error.log'),
-                 join(app.user_data_dir, 'error.log')
+                 join(app.public_dir, 'error.log')
                  )
 
 

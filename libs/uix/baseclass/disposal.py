@@ -215,7 +215,7 @@ class TaskLabel(ButtonBehavior, Label):
             ext = os.path.splitext(filename)[1]
             ext = ext.replace('docx', 'doc')
             ext = ext.replace('xlsx', 'xls')
-            filename = join(self.app.user_data_dir, 'temp' + ext)
+            filename = join(self.app.public_dir, 'temp' + ext)
             tfp = open(filename, 'wb')
             with tfp:
                 tfp.write(bytes(res[0]))
