@@ -237,6 +237,18 @@ class TaskLabel(ButtonBehavior, Label):
 
             except Exception as error:
                 print(str(error))
+            try:
+                subprocess.call(('open', filename))
+            except Exception as error:
+                print(str(error))
+            try:
+                os.startfile(filename)
+            except Exception as error:
+                print(str(error))
+            try:
+                subprocess.call(('xdg-open', filename))
+            except Exception as error:
+                print(str(error))
         elif sys.platform.startswith('darwin'):
             subprocess.call(('open', filename))
         elif os.name == 'nt':  # For Windows
@@ -276,7 +288,8 @@ class TaskLabel(ButtonBehavior, Label):
         if platform == 'android':
             toast(self.app.translation._('Скопировано в Загрузки'))
         else:
-            self.open_file(filename)
+            #self.open_file(filename)
+            self.open_file(plyer.storagepath.get_downloads_dir())
 
     def on_ref_press(self, url):
         if url[:13] == 'http://aisup/':
