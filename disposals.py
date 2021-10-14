@@ -109,7 +109,7 @@ class Disposals(MDApp):
         # запрашиваем права на запись файла
         if platform == 'android':
             from android.permissions import Permission, check_permission, request_permissions
-            perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.FOREGROUND_SERVICE]
+            perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.FOREGROUND_SERVICE, Permission.CAMERA]
             if not all([check_permission(perm) for perm in perms]):
                 request_permissions(perms, self.callback)
 
@@ -218,22 +218,6 @@ class Disposals(MDApp):
 
     def dismiss_popup(self):
         self._popup.dismiss()
-
-    def test(self, *args):
-        # if platform == 'android':
-        # from pythonforandroid.recipes.android.src.android.permissions import request_permissions, Permission
-        # request_permissions([Permission.WRITE_EXTERNAL_STORAGE,
-        #                     Permission.READ_EXTERNAL_STORAGE])
-        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Load file", content=content,
-                            size_hint=(0.9, 0.9))
-        self._popup.open()
-
-        # if platform == 'android':
-        #    from jnius import autoclass
-        #    #перезапуск автоматически
-        #    PythonService = autoclass('org.kivy.android.PythonService')
-        #    PythonService.mService.setAutoRestartService(True)
 
     def start_service(self):
 

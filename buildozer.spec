@@ -75,7 +75,7 @@ fullscreen = 0
 android.presplash_color = #003380
 
 # (list) Permissions
-android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, FOREGROUND_SERVICE, ACCESS_FINE_LOCATION
+android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, FOREGROUND_SERVICE, ACCESS_FINE_LOCATION, CAMERA
 
 # (int) Target Android API, should be as high as possible.
 android.api = 28

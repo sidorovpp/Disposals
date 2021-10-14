@@ -19,7 +19,7 @@ from kivy.uix.label import Label
 from kivy.utils import get_hex_from_color
 from kivy.app import App
 from kivy.clock import Clock, mainthread
-from os.path import join
+from os.path import exists, join
 from kivy.utils import platform
 import ntpath
 import os
@@ -38,6 +38,7 @@ from libs.uix.baseclass.utils import urgency_color
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.button import MDFlatButton
 from shutil import copyfile
+
 
 
 class Content(BoxLayout):
@@ -177,12 +178,19 @@ class TaskLabel(ButtonBehavior, Label):
             toast(self.app.translation._('Скопировано в буфер'))
         return True
 
+    def camera_callback(self, filepath):
+        if exists(filepath):
+            print('saved')
+        else:
+            print('unable to save.')
+
     def open_file(self, filename):
         # webbrowser.open_new('file://' + filename)
         if platform == 'android':
             try:
                 import jnius
                 import mimetypes
+                #don't work
                 '''
                 from jnius import autoclass
                 from android import mActivity
@@ -204,6 +212,8 @@ class TaskLabel(ButtonBehavior, Label):
 
                 mActivity.startActivity(intent)
                 '''
+                #old version
+                '''
                 PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
                 Intent = jnius.autoclass('android.content.Intent')
                 Uri = jnius.autoclass('android.net.Uri')
@@ -216,6 +226,14 @@ class TaskLabel(ButtonBehavior, Label):
                 intent.setDataAndType(Uri.parse(image_uri), mimetype)
                 currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
                 currentActivity.startActivity(intent)
+                '''
+
+                #camera
+                from plyer import camera
+
+                file_name = join(self.app.public_dir, 'test.jpg')
+                camera.take_picture(filename=file_name, on_complete = self.camera_callback)
+
             except Exception as error:
                 print(str(error))
         elif sys.platform.startswith('darwin'):
