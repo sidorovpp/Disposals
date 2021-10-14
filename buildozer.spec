@@ -78,11 +78,11 @@ android.presplash_color = #003380
 android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, FOREGROUND_SERVICE, ACCESS_FINE_LOCATION
 
 # (int) Target Android API, should be as high as possible.
-android.api = 28
+android.api = 24
 # (int) Minimum API your APK will support.
 android.minapi = 21
 # (str) Android NDK version to use
-android.ndk = 19b
+#android.ndk = 19b
 
 #android.add_aars = ./libs/support-v4-24.1.1.aar
 
@@ -107,12 +107,12 @@ android.arch = armeabi-v7a
 p4a.branch = develop
 
 # (list) Gradle dependencies to add
-android.gradle_dependencies = androidx.work:work-runtime:2.2.0
+#android.gradle_dependencies = androidx.work:work-runtime:2.2.0
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
 # android.enable_androidx requires android.api >= 28
-android.enable_androidx = True
+#android.enable_androidx = True
 
 [buildozer]
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
