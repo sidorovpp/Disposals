@@ -75,14 +75,16 @@ fullscreen = 0
 android.presplash_color = #003380
 
 # (list) Permissions
-android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, FOREGROUND_SERVICE
+android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, FOREGROUND_SERVICE, ACCESS_FINE_LOCATION
 
 # (int) Target Android API, should be as high as possible.
-android.api = 28
+android.api = 24
 # (int) Minimum API your APK will support.
 android.minapi = 21
 # (str) Android NDK version to use
 android.ndk = 19b
+
+android.add_aars = ./libs/support-v4-24.1.1.aar
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = False
