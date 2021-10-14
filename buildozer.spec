@@ -84,7 +84,7 @@ android.minapi = 21
 # (str) Android NDK version to use
 android.ndk = 19b
 
-android.add_aars = ./libs/support-v4-24.1.1.aar
+#android.add_aars = ./libs/support-v4-24.1.1.aar
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = False
