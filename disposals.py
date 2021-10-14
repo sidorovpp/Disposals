@@ -109,7 +109,7 @@ class Disposals(MDApp):
         # запрашиваем права на запись файла
         if platform == 'android':
             from android.permissions import Permission, check_permission, request_permissions
-            perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.FOREGROUND_SERVICE, Permission.CAMERA]
+            perms = [Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.FOREGROUND_SERVICE]
             if not all([check_permission(perm) for perm in perms]):
                 request_permissions(perms, self.callback)
 

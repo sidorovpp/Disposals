@@ -28,6 +28,7 @@ import threading
 import re
 import webbrowser
 import subprocess
+import plyer
 from kivy.core.clipboard import Clipboard
 from libs.applibs.toast import toast
 from kivy.uix.behaviors import ButtonBehavior
@@ -254,14 +255,17 @@ class TaskLabel(ButtonBehavior, Label):
             ext = os.path.splitext(filename)[1]
             ext = ext.replace('docx', 'doc')
             ext = ext.replace('xlsx', 'xls')
-            filename = join(self.app.directory, 'temp' + ext)
+            filename_new = join(self.app.directory, 'temp' + ext)
             #filename = join(self.app.public_dir, 'temp' + ext)
-            tfp = open(filename, 'wb')
+            tfp = open(filename_new, 'wb')
             with tfp:
                 tfp.write(bytes(res[0]))
                 # копирую на карту
-            copyfile(join(self.app.directory, 'temp' + ext),
+            copyfile(filename_new,
                      join(self.app.public_dir, 'temp' + ext)
+                     )
+            copyfile(filename_new,
+                     join(plyer.storagepath.get_downloads_dir(), filename)
                      )
         finally:
             self.app.screen.ids.disposal.stop_spinner()
@@ -269,7 +273,10 @@ class TaskLabel(ButtonBehavior, Label):
         # запускаем файл
         #webbrowser.open_new(filename)
         #os.system(filename)
-        self.open_file(filename)
+        if platform == 'android':
+            toast(self.app.translation._('Скопировано в Загрузки'))
+        else:
+            self.open_file(filename)
 
     def on_ref_press(self, url):
         if url[:13] == 'http://aisup/':
