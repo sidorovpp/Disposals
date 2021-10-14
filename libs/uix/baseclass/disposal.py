@@ -183,6 +183,7 @@ class TaskLabel(ButtonBehavior, Label):
             try:
                 import jnius
                 import mimetypes
+                '''
                 from jnius import autoclass
                 from android import mActivity
                 mime_type, _ = mimetypes.guess_type(filename)
@@ -215,7 +216,6 @@ class TaskLabel(ButtonBehavior, Label):
                 intent.setDataAndType(Uri.parse(image_uri), mimetype)
                 currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
                 currentActivity.startActivity(intent)
-                '''
             except Exception as error:
                 print(str(error))
         elif sys.platform.startswith('darwin'):
