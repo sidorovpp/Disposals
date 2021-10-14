@@ -223,6 +223,8 @@ class TaskLabel(ButtonBehavior, Label):
                 intent = Intent()
                 intent.setAction(Intent.ACTION_VIEW)
                 intent.setDataAndType(Uri.parse(image_uri), mimetype)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
                 currentActivity.startActivity(intent)
 
