@@ -287,6 +287,7 @@ class TaskLabel(ButtonBehavior, Label):
         #os.system(filename)
         if platform == 'android':
             toast(self.app.translation._('Скопировано в Загрузки'))
+            self.open_file(plyer.storagepath.get_downloads_dir())
         else:
             #self.open_file(filename)
             self.open_file(plyer.storagepath.get_downloads_dir())
