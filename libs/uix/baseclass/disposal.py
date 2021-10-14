@@ -213,7 +213,6 @@ class TaskLabel(ButtonBehavior, Label):
                 mActivity.startActivity(intent)
                 '''
                 #old version
-                '''
                 PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
                 Intent = jnius.autoclass('android.content.Intent')
                 Uri = jnius.autoclass('android.net.Uri')
@@ -226,13 +225,12 @@ class TaskLabel(ButtonBehavior, Label):
                 intent.setDataAndType(Uri.parse(image_uri), mimetype)
                 currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
                 currentActivity.startActivity(intent)
-                '''
 
                 #camera
-                from plyer import camera
+                #from plyer import camera
 
-                file_name = join(self.app.public_dir, 'test.jpg')
-                camera.take_picture(filename=file_name, on_complete = self.camera_callback)
+                #file_name = join(self.app.public_dir, 'test.jpg')
+                #camera.take_picture(filename=file_name, on_complete = self.camera_callback)
 
             except Exception as error:
                 print(str(error))
