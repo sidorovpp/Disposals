@@ -25,7 +25,6 @@ import ntpath
 import os
 import sys
 import threading
-import re
 import webbrowser
 import subprocess
 import plyer
@@ -33,9 +32,7 @@ from kivy.core.clipboard import Clipboard
 from libs.applibs.toast import toast
 from kivy.uix.behaviors import ButtonBehavior
 from datetime import datetime
-from libs.uix.baseclass.utils import get_date
-from libs.uix.baseclass.utils import urgency_dict
-from libs.uix.baseclass.utils import urgency_color
+from libs.uix.baseclass.utils import get_date, urgency_dict, urgency_color, fill_hyperlinks
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.button import MDFlatButton
 from shutil import copyfile
@@ -148,7 +145,17 @@ class NoteLabel(ButtonBehavior, Label):
         self.app = App.get_running_app()
 
     def on_ref_press(self, url):
-        webbrowser.open(url)
+        if url[:13] == 'http://aisup/':
+            if url[13:25] == 'DS_Disposals':
+                self.app.screen.ids.base.number_search.text = url[26:]
+                self.app.screen.ids.base.disposal_list.refresh_list({})
+                self.app.manager.current = 'base'
+                self.app.screen.ids.base.number_search.text = ''
+            else:
+                if platform == 'android':
+                    toast(self.app.translation._('Не поддерживается!'))
+        else:
+            webbrowser.open(url)
 
     def on_release(self):
         # if self.collide_point(*touch.pos):
@@ -237,18 +244,6 @@ class TaskLabel(ButtonBehavior, Label):
 
             except Exception as error:
                 print(str(error))
-            try:
-                subprocess.call(('open', filename))
-            except Exception as error:
-                print(str(error))
-            try:
-                os.startfile(filename)
-            except Exception as error:
-                print(str(error))
-            try:
-                subprocess.call(('xdg-open', filename))
-            except Exception as error:
-                print(str(error))
         elif sys.platform.startswith('darwin'):
             subprocess.call(('open', filename))
         elif os.name == 'nt':  # For Windows
@@ -287,7 +282,7 @@ class TaskLabel(ButtonBehavior, Label):
         #os.system(filename)
         if platform == 'android':
             toast(self.app.translation._('Скопировано в Загрузки'))
-            self.open_file(plyer.storagepath.get_downloads_dir())
+            #self.open_file(plyer.storagepath.get_downloads_dir())
         else:
             #self.open_file(filename)
             self.open_file(plyer.storagepath.get_downloads_dir())
@@ -348,14 +343,7 @@ class Disposal(Screen):
             for item in Notes:
                 self.notes.data.append(
                     {'text': '[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
-                # заполняем гиперлинки
-                note_text = item[2]
-                # для функцции format
-                note_text = note_text.replace('{', '{{')
-                note_text = note_text.replace('}', '}}')
-                r = re.compile(r"(https://[^ \r]+)")
-                note_text = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', note_text).format(
-                    link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+                note_text = fill_hyperlinks(item[2], self.app.theme_cls.primary_color)
                 self.notes.data.append({'text': '{0}'.format(note_text)})
         self.set_size()
         self.stop_spinner()
@@ -403,15 +391,7 @@ class Disposal(Screen):
                 self.ids.theme.color = [0, 0, 1, 1]
 
         # заполняем гиперлинки
-        s = params['Task']
-        # для функции format
-        s = s.replace('{', '{{')
-        s = s.replace('}', '}}')
-        r = re.compile(r"(https://[^ \r]+)")
-        s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s)
-        r = re.compile(r"(http://[^ \r]+)")
-        s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s)
-        s = s.format(link_color=get_hex_from_color(self.app.theme_cls.primary_color))
+        s = fill_hyperlinks(params['Task'], self.app.theme_cls.primary_color)
 
         # бьём текст задачи на куски по Enter
         self.ids.task.data = []

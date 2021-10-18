@@ -2,7 +2,8 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.app import App
 from datetime import datetime
-from kivy.properties import ObjectProperty
+import re
+from kivy.utils import get_hex_from_color
 
 class CustomDialog():
     dialog = None
@@ -43,6 +44,17 @@ class CustomDialog():
                 )
             self.dialog.open()
 
+#форматируем текст с гиперссылками
+def fill_hyperlinks(s, color):
+    # для функции format
+    s = s.replace('{', '{{')
+    s = s.replace('}', '}}')
+    r = re.compile(r"(https://[^ \r]+)")
+    s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s)
+    r = re.compile(r"(http://[^ \r]+)")
+    s = r.sub(r'[ref=\1][color={link_color}][u]\1[/u][/color][/ref]', s)
+    s = s.format(link_color=get_hex_from_color(color))
+    return s
 
 # конвертация даты
 def get_date(str):
