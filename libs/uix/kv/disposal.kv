@@ -13,6 +13,8 @@
     number: number
     urgency: urgency
     spinner: spinner
+    notes_splitter: notes_splitter
+    files_splitter: files_splitter
 
     MDSpinner:
         id: spinner
@@ -97,33 +99,34 @@
                 orientation: 'vertical'
                 padding: [10, 10]
 
-        MDSeparator:
 
-        Files:
-            id: files
-            viewclass: 'TaskLabel'
-            RecycleBoxLayout:
-                default_size: None, dp(56)
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
-                padding: [10, 10]
+        Splitter:
+            id: files_splitter
+            sizable_from: 'top'
+            Files:
+                id: files
+                viewclass: 'TaskLabel'
+                RecycleBoxLayout:
+                    default_size: None, dp(56)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    padding: [10, 10]
 
-        MDSeparator:
-
-        Notes:
-            id: notes
-            viewclass: 'NoteLabel'
-            RecycleBoxLayout:
-                id: notes_layout
-                default_size: None, dp(56)
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
-
-        MDSeparator:
+        Splitter:
+            id: notes_splitter
+            sizable_from: 'top'
+            Notes:
+                id: notes
+                viewclass: 'NoteLabel'
+                RecycleBoxLayout:
+                    id: notes_layout
+                    default_size: None, dp(56)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
 
     AddFileButton:
         id: file_button

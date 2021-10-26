@@ -325,13 +325,15 @@ class Disposal(Screen):
 
     def set_size(self):
         if self.notes.data != []:
-            self.notes.size_hint_y = 0.4
+            self.notes_splitter.size_hint_y = 0.4
         else:
-            self.notes.size_hint_y = 0.05
+            self.notes_splitter.size_hint_y = 0.05
         if self.files.data != []:
-            self.files.size_hint_y = 0.3
+            self.files_splitter.size_hint_y = 0.3
         else:
-            self.files.size_hint_y = 0.05
+            self.files_splitter.size_hint_y = 0.05
+
+        self.task.size_hint_y = 1 - (self.notes_splitter.size_hint_y + self.files_splitter.size_hint_y)
 
 
     def load_comments(self):
