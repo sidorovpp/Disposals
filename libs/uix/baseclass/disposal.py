@@ -38,7 +38,6 @@ from kivymd.uix.button import MDFlatButton
 from shutil import copyfile
 
 
-
 class Content(BoxLayout):
     pass
 
@@ -55,15 +54,15 @@ class AddFileButton(MDFloatingActionButton):
         try:
             byte_list = []
             with open(filename, 'rb') as f:
-                #i = 1
+                # i = 1
                 while True:
                     byte = f.read(1)
                     if not byte:
                         break
-                    #byte_list[str(i)] = int.from_bytes(byte, 'big')
+                    # byte_list[str(i)] = int.from_bytes(byte, 'big')
                     byte_list.append(int.from_bytes(byte, 'big'))
-                    #i = i + 1
-            params = {'id':id, 'object_id':1127, 'fileName':os.path.basename(filename), 'body':byte_list}
+                    # i = i + 1
+            params = {'id': id, 'object_id': 1127, 'fileName': os.path.basename(filename), 'body': byte_list}
             connect_manager.GetResult('uploadFile', params, [], prefix='TSysMethods')
             self.parent.load_files()
         finally:
@@ -77,9 +76,10 @@ class AddFileButton(MDFloatingActionButton):
     def on_press(self):
         from plyer import filechooser
         path = filechooser.open_file(title=self.app.translation._('Выберите файл'),
-                                    filters=[(self.app.translation._('Все файлы'), '*.*')],
-                                    on_selection=self.handle_selection
+                                     filters=[(self.app.translation._('Все файлы'), '*.*')],
+                                     on_selection=self.handle_selection
                                      )
+
 
 # кнопка добавления комментария
 class AddCommentButton(MDFloatingActionButton):
@@ -93,7 +93,8 @@ class AddCommentButton(MDFloatingActionButton):
         if self.dialog.content_cls.ids.comment_text.text.strip() != "":
             try:
                 connect_manager.GetResult('SendComment', {'disposal_id': int(self.parent.number.text),
-                                                          'comment': self.dialog.content_cls.ids.comment_text.text.strip()}, [])
+                                                          'comment': self.dialog.content_cls.ids.comment_text.text.strip()},
+                                          [])
                 connect_manager.GetResult('SetTaskRead', {'id': int(self.parent.number.text)}, [])
             except:
                 pass
@@ -130,6 +131,7 @@ class Files(RecycleView, RecycleViewBehavior):
     def __init__(self, **kwargs):
         super(Files, self).__init__(**kwargs)
         self.data = []
+
 
 # комментарии
 class Notes(RecycleView, RecycleViewBehavior):
@@ -198,7 +200,7 @@ class TaskLabel(ButtonBehavior, Label):
             try:
                 import jnius
                 import mimetypes
-                #don't work
+                # don't work
                 '''
                 from jnius import autoclass
                 from android import mActivity
@@ -220,7 +222,7 @@ class TaskLabel(ButtonBehavior, Label):
 
                 mActivity.startActivity(intent)
                 '''
-                #old version
+                # old version
                 PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
                 Intent = jnius.autoclass('android.content.Intent')
                 Uri = jnius.autoclass('android.net.Uri')
@@ -236,11 +238,11 @@ class TaskLabel(ButtonBehavior, Label):
                 currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
                 currentActivity.startActivity(intent)
 
-                #camera
-                #from plyer import camera
+                # camera
+                # from plyer import camera
 
-                #file_name = join(self.app.public_dir, 'test.jpg')
-                #camera.take_picture(filename=file_name, on_complete = self.camera_callback)
+                # file_name = join(self.app.public_dir, 'test.jpg')
+                # camera.take_picture(filename=file_name, on_complete = self.camera_callback)
 
             except Exception as error:
                 print(str(error))
@@ -263,7 +265,7 @@ class TaskLabel(ButtonBehavior, Label):
             ext = ext.replace('docx', 'doc')
             ext = ext.replace('xlsx', 'xls')
             filename_new = join(self.app.directory, 'temp' + ext)
-            #filename = join(self.app.public_dir, 'temp' + ext)
+            # filename = join(self.app.public_dir, 'temp' + ext)
             tfp = open(filename_new, 'wb')
             with tfp:
                 tfp.write(bytes(res[0]))
@@ -278,13 +280,13 @@ class TaskLabel(ButtonBehavior, Label):
             self.app.screen.ids.disposal.stop_spinner()
 
         # запускаем файл
-        #webbrowser.open_new(filename)
-        #os.system(filename)
+        # webbrowser.open_new(filename)
+        # os.system(filename)
         if platform == 'android':
             toast(self.app.translation._('Скопировано в Загрузки'))
-            #self.open_file(plyer.storagepath.get_downloads_dir())
+            # self.open_file(plyer.storagepath.get_downloads_dir())
         else:
-            #self.open_file(filename)
+            # self.open_file(filename)
             self.open_file(plyer.storagepath.get_downloads_dir())
 
     def on_ref_press(self, url):
@@ -324,25 +326,29 @@ class Disposal(Screen):
         self.spinner.active = False
 
     def set_size(self):
-        if self.notes.data != []:
+        if self.notes.data:
             self.notes_splitter.size_hint_y = 0.4
+            self.notes_splitter.min_size = 100
         else:
-            self.notes_splitter.size_hint_y = 0.05
-        if self.files.data != []:
+            self.notes_splitter.size_hint_y = 0.01
+            self.notes_splitter.min_size = 0
+        if self.files.data:
             self.files_splitter.size_hint_y = 0.3
+            self.files_splitter.min_size = 100
         else:
-            self.files_splitter.size_hint_y = 0.05
+            self.files_splitter.size_hint_y = 0.01
+            self.files_splitter.min_size = 0
 
         self.task.size_hint_y = 1 - (self.notes_splitter.size_hint_y + self.files_splitter.size_hint_y)
 
-
     def load_comments(self):
+        # добавляем комментарии
         Clock.schedule_once(self.start_spinner, 0)
         self.notes.data = []
-        Notes = connect_manager.GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)},
+        notes_data = connect_manager.GetResult('getDisposalNotes', {'disposal_id': int(self.ids.number.text)},
                                           ['DateCreate', 'UserName', 'Unnamed3'])
-        if Notes != []:
-            for item in Notes:
+        if notes_data:
+            for item in notes_data:
                 self.notes.data.append(
                     {'text': '[color=ff3333]{0}[/color]  [color=00881D]{1}[/color]'.format(item[0], item[1])})
                 note_text = fill_hyperlinks(item[2], self.app.theme_cls.primary_color)
@@ -351,12 +357,12 @@ class Disposal(Screen):
         self.stop_spinner()
 
     def load_files(self):
-        Clock.schedule_once(self.start_spinner, 0)
         # добавляем файлы
-        Files = connect_manager.GetResult('getFileList', {'object_id': 1127, 'line_id': int(self.ids.number.text)},
-                                          ['id', 'FileName'], prefix='TSysMethods')
+        Clock.schedule_once(self.start_spinner, 0)
         self.files.data = []
-        for item in Files:
+        files_data = connect_manager.GetResult('getFileList', {'object_id': 1127, 'line_id': int(self.ids.number.text)},
+                                          ['id', 'FileName'], prefix='TSysMethods')
+        for item in files_data:
             self.files.data.append({'text': r'[ref={url}][color={link_color}][u]{text}[/u][/color][/ref]'.format(
                 url=item[0] + ':' + ntpath.basename(item[1]),
                 text=ntpath.basename(item[1]),
@@ -404,7 +410,7 @@ class Disposal(Screen):
             k = s.find('\n')
         self.task.data.append({'text': s})
 
-        #загружаем файлы
+        # загружаем файлы
         self.load_files()
 
         # убрал загрузку потоком, иногда отваливалось при прорисовке

@@ -88,23 +88,11 @@
 
         MDSeparator:
 
-        Task:
-            id: task
-            viewclass: 'TaskLabel'
-            RecycleBoxLayout:
-                default_size: None, dp(56)
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
-                padding: [10, 10]
+        BoxLayout:
+            orientation: 'vertical'
 
-
-        Splitter:
-            id: files_splitter
-            sizable_from: 'top'
-            Files:
-                id: files
+            Task:
+                id: task
                 viewclass: 'TaskLabel'
                 RecycleBoxLayout:
                     default_size: None, dp(56)
@@ -114,19 +102,33 @@
                     orientation: 'vertical'
                     padding: [10, 10]
 
-        Splitter:
-            id: notes_splitter
-            sizable_from: 'top'
-            Notes:
-                id: notes
-                viewclass: 'NoteLabel'
-                RecycleBoxLayout:
-                    id: notes_layout
-                    default_size: None, dp(56)
-                    default_size_hint: 1, None
-                    size_hint_y: None
-                    height: self.minimum_height
-                    orientation: 'vertical'
+            Splitter:
+                id: files_splitter
+                sizable_from: 'top'
+                Files:
+                    id: files
+                    viewclass: 'TaskLabel'
+                    RecycleBoxLayout:
+                        default_size: None, dp(56)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: 'vertical'
+                        padding: [10, 10]
+
+            Splitter:
+                id: notes_splitter
+                sizable_from: 'top'
+                Notes:
+                    id: notes
+                    viewclass: 'NoteLabel'
+                    RecycleBoxLayout:
+                        id: notes_layout
+                        default_size: None, dp(56)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: 'vertical'
 
     AddFileButton:
         id: file_button
