@@ -123,6 +123,7 @@ class AddCommentButton(MDFloatingActionButton):
                                         ),
                                    ],
                                    )
+        self.dialog.content_cls.ids.comment_text.text = ''
         self.dialog.open()
 
 
