@@ -21,10 +21,10 @@ class NumberLabel(MDLabel):
     def on_ref_press(self, url):
         app = App.get_running_app()
         app.screen.ids.base.disposal_list.refresh_list(literal_eval('{' + url + '}'))
-        button = self.parent.parent
+        #button = self.parent.parent
 
         #отключаем прорисовку нажатия кнопки при клике на ссылку
-        button.fade_bg.stop_property(button, '_current_button_color')
+        #button.animation_fade_bg.stop_property(button, 'md_bg_color')
         return super(MDLabel, self).on_ref_press(url)
 
 
