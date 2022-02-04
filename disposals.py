@@ -9,7 +9,7 @@
 # <kivydevelopment@gmail.com>
 # 
 # LICENSE: MIT
-
+import datetime
 import os
 import traceback
 from ast import literal_eval
@@ -67,7 +67,7 @@ class Disposals(MDApp):
         self.manager = None
         self.window_language = None
         self.window_filter = None
-        self.exit_interval = False
+        self.exit_time = datetime.datetime.now()
         self.dict_language = literal_eval(
             open(
                 os.path.join(self.directory, 'data', 'locales', 'locales.txt')).read()
@@ -391,23 +391,13 @@ class Disposals(MDApp):
         self.window_language.open()
 
     def dialog_exit(self):
-        def check_interval_press(interval):
-            self.exit_interval += interval
-            if self.exit_interval > 5:
-                self.exit_interval = False
-                Clock.unschedule(check_interval_press)
-
-        if self.exit_interval:
+        t = datetime.datetime.now()
+        k = t - self.exit_time
+        # повторное нажатие в течение 3 секунд
+        if k.total_seconds() < 3:
             self.stop()
-
-        Clock.schedule_interval(check_interval_press, 0.5)
+        self.exit_time = t
         toast(self.translation._('Нажмите еще раз для выхода'))
-
-        # Прячу приложение, при выходе выдаёт ошибку (пока не разобрался)
-        #    if platform == 'android':
-        #        from jnius import autoclass
-        #        activity = autoclass('org.kivy.android.PythonActivity').mActivity
-        #        activity.moveTaskToBack(True)
 
     def on_resume(self):
         # стартуем сервис уведомлений
