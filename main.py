@@ -34,6 +34,8 @@ from kivy.config import Config
 Config.set('kivy', 'keyboard_mode', 'system')
 Config.set('kivy', 'log_enable', 0)
 
+import plyer
+
 from kivy import platform
 if platform == 'android':
     from plyer import orientation
@@ -63,8 +65,9 @@ def main():
         copyfile(join(app.directory, 'error.log'),
                  join(app.public_dir, 'error.log')
                  )
-
-
+        copyfile(join(app.directory, 'error.log'),
+                 join(plyer.storagepath.get_downloads_dir(), 'error.log')
+                 )
 
 if __name__ in ('__main__', '__android__'):
     main()
