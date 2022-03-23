@@ -77,23 +77,23 @@ class DisposalItem(MDFlatButton):
         # иконка и цвет выполнения
         if self.data['IsComplete'] == '0':
             if (self.data['PlanDateTo'] != '') and (datetime.now() > get_date(self.data['PlanDateTo'])):
-                self.icon.text_color = [1, 0, 0, 1]
+                self.icon_label.text_color = [1, 0, 0, 1]
             else:
-                self.icon.text_color = [0, 0, 0, 1]
-            self.icon.icon_text = 'clock'
+                self.icon_label.text_color = [0, 0, 0, 1]
+            self.icon_label.icon_text = 'clock'
         else:
-            self.icon.icon_text = 'calendar-check'
+            self.icon_label.icon_text = 'calendar-check'
             if self.data['IsConfirmed'] != '':
-                self.icon.text_color = [0, 0, 1, 1]
+                self.icon_label.text_color = [0, 0, 1, 1]
             else:
-                self.icon.text_color = [0, 1, 0, 1]
+                self.icon_label.text_color = [0, 1, 0, 1]
 
         if self.data['IsReaded'] == '0':
             self.theme_label.text = '[b]{0}[/b]'.format(self.theme_label.text)
             self.text_label.text = '[b]{0}[/b]'.format(self.text_label.text)
         # иконка и шрифт отклонения
         if self.data['IsDisallowed'] == '1':
-            self.icon.icon_text = 'stop'
+            self.icon_label.icon_text = 'stop'
 
     data = property(get_data, set_data)
 
