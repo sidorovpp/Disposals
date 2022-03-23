@@ -16,13 +16,16 @@ from libs.uix.baseclass.utils import get_date
 from libs.uix.baseclass.utils import urgency_dict
 from libs.uix.baseclass.utils import urgency_color
 from libs.uix.baseclass.utils import custom_dialog
+from common.utils import write_debug_log
 
 class NumberLabel(MDLabel):
     def on_ref_press(self, url):
+        write_debug_log('ref_press_start')
         app = App.get_running_app()
+        write_debug_log('ref_press_app')
         app.screen.ids.base.disposal_list.refresh_list(literal_eval('{' + url + '}'))
+        write_debug_log('ref_press_end')
         #button = self.parent.parent
-
         #отключаем прорисовку нажатия кнопки при клике на ссылку
         #button.animation_fade_bg.stop_property(button, 'md_bg_color')
         return super(MDLabel, self).on_ref_press(url)
