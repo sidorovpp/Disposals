@@ -328,6 +328,7 @@ class Disposals(MDApp):
             self.nav_drawer.set_state('close')
         if self.check_permissions():
             self.screen.ids.base.disposal_list.refresh_list(params={})
+        self.k.print()
         #стартуем сервис ( в процедуре проверка, если уже запущен)
         self.start_service()
 
