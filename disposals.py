@@ -54,8 +54,8 @@ class Disposals(MDApp):
         super().__init__(**kwargs)
 
         self.public_dir = self.user_data_dir
-        if platform == 'android':
-            self.public_dir = '/sdcard/disposals'
+        #if platform == 'android':
+        #    self.public_dir = '/sdcard/disposals'
         Window.bind(on_keyboard=self.events_program)
         Window.soft_input_mode = 'below_target'
         self._lang = 'ru'
