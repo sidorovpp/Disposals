@@ -7,10 +7,8 @@ from os.path import realpath
 from kivy.config import ConfigParser
 from kivy.utils import platform
 from plyer import notification
-from plyer import vibrator
-from kivy.core.audio import SoundLoader
+from plyer import storagepath
 import traceback
-from common.utils import write_debug_log
 
 #проверка непрочитанных задач и уведомление
 def check_disposals(count, first):
@@ -30,8 +28,6 @@ def check_disposals(count, first):
         message = 'Все задачи прочитаны'
 
     ticker = 'Уведомление'
-    #kwargs = {'title': title, 'message': message}
-    #kwargs['app_name'] = 'disposals'
 
     kwargs = {'title': title, 'message': message, 'ticker': ticker, 'app_name': 'Disposals'}
     if platform == "win":
@@ -42,66 +38,7 @@ def check_disposals(count, first):
         kwargs['app_icon'] = join(dirname(realpath(__file__)),
                                   'notify.png')
     notification.notify(**kwargs)
-    '''
-    if platform != 'android':
-        if (len(res) != count):
-            title = title
-            message = message
-            ticker = ticker
-            app_ico = join(dirname(realpath(__file__)), 'notify.ico')
-
-            #показываем уведомление
-            notification.notify(app_icon=app_ico, title=title, message=message, ticker=ticker, timeout=10)
-            # звук
-            play_sound()
-    else:
-        if (len(res) != count) or first:
-            if len(res) > 0:
-                id = res[0][0]
-            else:
-                id = '0'
-            show_notification(title, message)
-            if (len(res) > 0):
-                from jnius import autoclass
-                AudioManager = autoclass('android.media.AudioManager')
-                Context = autoclass('android.content.Context')
-                service = autoclass('org.kivy.android.PythonService').mService
-                audioManager = service.getSystemService(Context.AUDIO_SERVICE)
-                # проверяем режим телефона
-                if audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL:
-                    #звук
-                    play_sound()
-                elif audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE:
-                    # вибрируем
-                    vibrator.vibrate(1)
-                    sleep(1)
-                    vibrator.cancel()
-    '''
     return len(res)
-
-def play_sound():
-    if platform != 'android':
-        #не везде работает (win 7 не сработало)
-        try:
-            sound = SoundLoader.load('new.wav')
-            if sound:
-                sound.play()
-        except:
-            pass
-    else:
-        from jnius import autoclass
-
-        # MediaPlayer
-        MediaPlayer = autoclass('android.media.MediaPlayer')
-
-        # проигрываем звук
-        mPlayer = MediaPlayer()
-        mPlayer.setDataSource(join(dirname(realpath(__file__)), 'new.wav'))
-        mPlayer.prepare()
-        duration = mPlayer.getDuration()
-        mPlayer.start()
-        sleep(int(duration + 1))
-        mPlayer.release()
 
 def show_notification(title, message):
     import jnius
@@ -194,11 +131,7 @@ if __name__ == '__main__':
         print('Service error:')
         text_error = traceback.format_exc()
         print(text_error)
-        if platform == 'android':
-            # пишу в папку на карту ошибку (андроид)
-            f = '/sdcard/disposals/service_error.log'
-        else:
-            f = join(dirname(realpath(__file__)), pardir,  'service_error.log')
+        f = join(storagepath.get_downloads_dir(), 'service_error.log)')
         with open(f, 'w+') as f:
                 f.write(str(E))
 

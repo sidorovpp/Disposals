@@ -62,9 +62,9 @@ def main():
         text_error = traceback.format_exc()
         print(text_error)
         traceback.print_exc(file=open(os.path.join(directory, 'error.log'), 'w'))
-        copyfile(join(app.directory, 'error.log'),
-                 join(app.public_dir, 'error.log')
-                 )
+        #copyfile(join(app.directory, 'error.log'),
+        #         join(app.public_dir, 'error.log')
+        #         )
         copyfile(join(app.directory, 'error.log'),
                  join(plyer.storagepath.get_downloads_dir(), 'error.log')
                  )
