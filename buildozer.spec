@@ -80,9 +80,9 @@ android.permissions = INTERNET, VIBRATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_S
 # (int) Target Android API, should be as high as possible.
 android.api = 28
 # (int) Minimum API your APK will support.
-android.minapi = 21
+#android.minapi = 21
 # (str) Android NDK version to use
-android.ndk = 23
+#android.ndk = 23
 
 #android.add_aars = ./libs/support-v4-24.1.1.aar
 
@@ -92,27 +92,27 @@ android.ndk = 23
 # (bool) If True, then skip trying to update the Android sdk
 # This can be useful to avoid excess Internet downloads or save time
 # when an update is due and you just want to test/build your package
-android.skip_update = False
+#android.skip_update = False
 # (bool) If True, then automatically accept SDK license
 # agreements. This is intended for automation only. If set to False,
 # the default, you will be shown the license when first running
 # buildozer.
-android.accept_sdk_license = True
+#android.accept_sdk_license = True
 # (str) Android logcat filters to use
 # android.logcat_filters = *:S python:D
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
-android.arch = armeabi-v7a
+android.archs = armeabi-v7a
 
 #добавил для Notifications
-p4a.branch = develop
+#p4a.branch = develop
 
 # (list) Gradle dependencies to add
-android.gradle_dependencies = androidx.work:work-runtime:2.2.0
+#android.gradle_dependencies = androidx.work:work-runtime:2.2.0
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
 # android.enable_androidx requires android.api >= 28
-android.enable_androidx = True
+#android.enable_androidx = True
 
 [buildozer]
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
