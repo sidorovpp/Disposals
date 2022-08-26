@@ -36,7 +36,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements =  python3,kivy==2.1.0, kivymd==1.0.2, sdl2_ttf == 2.0.15, pillow, pyjnius, jnius, git+https://github.com/kivy/plyer@master#egg=plyer
+requirements =  python3,kivy==2.1.0,kivymd==1.0.2,pygments,pillow, pyjnius, jnius, git+https://github.com/kivy/plyer@master#egg=plyer
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -60,7 +60,7 @@ services = Disposals:./service/main.py:sticky
 #
 # OSX Specific
 #
-osx.python_version = 3
+
 #
 # author = © Copyright Info
 
