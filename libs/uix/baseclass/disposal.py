@@ -281,8 +281,6 @@ class TaskLabel(ButtonBehavior, Label):
             self.app.screen.ids.disposal.stop_spinner()
 
         # запускаем файл
-        # webbrowser.open_new(filename)
-        # os.system(filename)
         if platform == 'android':
             toast(self.app.translation._('Скопировано в Загрузки'))
             # self.open_file(plyer.storagepath.get_downloads_dir())
