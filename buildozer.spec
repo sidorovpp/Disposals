@@ -82,7 +82,7 @@ android.api = 28
 # (int) Minimum API your APK will support.
 android.minapi = 21
 # (str) Android NDK version to use
-android.ndk = 23
+android.ndk = 25
 
 #android.add_aars = ./libs/support-v4-24.1.1.aar
 
