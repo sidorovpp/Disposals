@@ -110,7 +110,7 @@ if __name__ == '__main__':
         connect_manager.sms = config.get('General', 'sms')
 
         #системные настройки
-        config.read(join(dirname(realpath(__file__)), pardir,  'server.ini'))
+        config.read(join(dirname(realpath(__file__)), pardir,  'server_.ini'))
         connect_manager.sysusername = config.get('Access', 'user')
         connect_manager.syspassword = config.get('Access', 'password')
 

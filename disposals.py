@@ -189,7 +189,7 @@ class Disposals(MDApp):
         connect_manager.sms = self.config.get('General', 'sms')
 
         # системные настройки
-        self.sysconfig.read(join(self.directory, 'server.ini'))
+        self.sysconfig.read(join(self.directory, 'server_.ini'))
         connect_manager.sysusername = self.sysconfig.get('Access', 'user')
         connect_manager.syspassword = self.sysconfig.get('Access', 'password')
 
